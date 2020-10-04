@@ -43,10 +43,13 @@ void Game::gameLoop()
  **/
 void Game::debugLog(Input i)
 {
-  std::cout << std::endl;
-  std::cout << "device: " << i.device << std::endl;
-  std::cout << "code: " << i.keyMap.code << std::endl;
-  std::cout << "action: " << i.keyMap.action << std::endl;
-  std::cout << "x: " << i.x << std::endl;
-  std::cout << "y: " << i.y << std::endl;
+  if (i.keyMap.code != "DEBUG_NO_LOG")
+  {
+    std::cout << std::endl;
+    std::cout << "device: " << i.device << std::endl;
+    std::cout << "code: " << i.keyMap.code << std::endl;
+    std::cout << "action: " << i.keyMap.action << std::endl;
+    std::cout << "x: " << i.x << std::endl;
+    std::cout << "y: " << i.y << std::endl;
+  }
 }
