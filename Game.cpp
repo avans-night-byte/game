@@ -43,7 +43,7 @@ void Game::gameLoop()
  **/
 void Game::debugLog(Input i)
 {
-  if (i.keyMap.code != "DEBUG_NO_LOG")
+  if (i.device != Input::NONE)
   {
     std::cout << std::endl;
     std::cout << "device: " << i.device << std::endl;
