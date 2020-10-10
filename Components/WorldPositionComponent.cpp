@@ -1,7 +1,3 @@
-//
-// Created by sasch on 05/10/2020.
-//
-
 #include "WorldPositionComponent.hpp"
 
 

@@ -1,11 +1,4 @@
-//
-// Created by sasch on 05/10/2020.
-//
-
-#ifndef NIGHTBYTE_WORLDPOSITIONCOMPONENT_HPP
-#define NIGHTBYTE_WORLDPOSITIONCOMPONENT_HPP
-
-
+#pragma once
 #include "Component.hpp"
 
 class WorldPositionComponent : public Component {
@@ -17,4 +10,3 @@ public:
     WorldPositionComponent(EntityId id) : Component(id) {}
 };
 
-#endif //NIGHTBYTE_WORLDPOSITIONCOMPONENT_HPP

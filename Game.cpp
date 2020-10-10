@@ -5,7 +5,7 @@
 // TODO: Remove
 #include "../Engine/Engine.hpp"
 #include "../API/Input/EngineInputAPI.hpp"
-#include "../Engine/Input/Adapter/SDLInputEngineAdapter.hpp"
+#include "../API/Rendering/EngineRenderingAPI.hpp"
 
 /**
  * Gameloop does a looptyloop
@@ -16,20 +16,58 @@ void Game::gameLoop()
   SDLInputEngineAdapter inputAdapter;
   EngineInputAPI engineInputAPI;
 
+
+  RenderingEngineAdapter renderingEngineAdapter;
+  EngineRenderingAPI engineRenderingAPI;
+
+
+  bool load = EngineRenderingAPI::GetTextureManager()->load("boar.bmp", "boar", Engine::getRenderer());
+  Spritesheet* loadSprite = engineRenderingAPI.createSpriteSheet(renderingEngineAdapter, "spritememe.png", "spritesheet", 8, 11, 100, 105, Engine::getRenderer());
+
+  std::cout << load << std::endl;
+
+
+  loadSprite->select_sprite(0, 0);
+
+  int memer = 0;
   while (true)
   {
     Input i = engineInputAPI.getInput(inputAdapter);
 
+    engineRenderingAPI.drawTexture(renderingEngineAdapter, "boar", 100 + memer / 200, 100, 100, 100, 1, 0, Engine::getRenderer(), SDL_FLIP_NONE);
 
+    loadSprite->draw_selected_sprite(200, 200);
     /**
-     * When the received input contains the action QUIT, call the Engine to close the window and break the game loop.
-     * We should move this to an API so we don't call the Engine from the Game.
-     **/
+    * When the received input contains the action QUIT, call the Engine to close the window and break the game loop.
+    * We should move this to an API so we don't call the Engine from the Game.
+    **/
     if (i.keyMap.action == "QUIT")
     {
       Engine::closeWindow();
+      EngineRenderingAPI::GetTextureManager()->clearFromTextureMap("boar");
       break;
     }
+
+
+    if(i.keyMap.action == "UP"){
+        loadSprite->select_sprite(0, 2);
+    }
+    if(i.keyMap.action == "DOWN"){
+          loadSprite->select_sprite(0, 4);
+    }
+    if(i.keyMap.action == "LEFT"){
+      loadSprite->select_sprite(0, 5);
+    }
+
+    if(i.keyMap.action == "RIGHT"){
+      loadSprite->select_sprite(0, 7);
+    }
+
+
+    // Render the backbuffer.
+    SDL_RenderPresent(Engine::getRenderer());
+    SDL_RenderClear(Engine::getRenderer());
+    memer++;
   }
 }
 

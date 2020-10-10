@@ -1,9 +1,4 @@
-//
-// Created by sasch on 05/10/2020.
-//
-
-#ifndef NIGHTBYTE_COMPONENT_HPP
-#define NIGHTBYTE_COMPONENT_HPP
+#pragma once
 
 
 #include <map>
@@ -26,4 +21,3 @@ public:
 };
 
 
-#endif //NIGHTBYTE_COMPONENT_HPP

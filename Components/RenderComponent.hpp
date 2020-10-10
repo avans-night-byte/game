@@ -1,9 +1,4 @@
-//
-// Created by sasch on 05/10/2020.
-//
-
-#ifndef NIGHTBYTE_RENDERCOMPONENT_HPP
-#define NIGHTBYTE_RENDERCOMPONENT_HPP
+#pragma once
 
 #include <SDL_render.h>
 #include "./Component.hpp"
@@ -28,4 +23,3 @@ class RenderComponent : Component {
 };
 
 
-#endif //NIGHTBYTE_RENDERCOMPONENT_HPP

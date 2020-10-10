@@ -18,6 +18,7 @@ private:
     std::list<EntityId> entities;
     std::map<PlayerId, EntityId> players;
 
+
 public:
     static void gameLoop();
     static void debugLog(Input i);
