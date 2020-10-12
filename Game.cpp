@@ -2,13 +2,13 @@
 
 #include "./Game.hpp"
 
-// TODO: Remove
+// TODO: Move dependencies
 #include "../Engine/Engine.hpp"
 #include "../API/Input/EngineInputAPI.hpp"
 #include "../Engine/Input/Adapter/SDLInputEngineAdapter.hpp"
 
 /**
- * Gameloop does a looptyloop
+ * Gameloop
  **/
 void Game::gameLoop()
 {
@@ -20,6 +20,7 @@ void Game::gameLoop()
   {
     Input i = engineInputAPI.getInput(inputAdapter);
 
+    // Temporary logger for received Inputs. We will create a logger later.
     debugLog(i);
 
     /**
