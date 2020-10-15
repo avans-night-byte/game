@@ -13,12 +13,12 @@
 void Game::gameLoop()
 {
 
-  SDLInputEngineAdapter inputAdapter;
-  EngineInputAPI engineInputAPI;
+  SDLInputEngineAdapter* inputAdapter;
+  EngineInputAPI* engineInputAPI = new EngineInputAPI(inputAdapter);
 
   while (true)
   {
-    Input i = engineInputAPI.getInput(inputAdapter);
+    Input i = engineInputAPI->getInput();
 
     // Temporary logger for received Inputs. We will create a logger later.
     debugLog(i);
