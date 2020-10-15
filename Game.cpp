@@ -13,7 +13,7 @@
 void Game::gameLoop()
 {
 
-  SDLInputEngineAdapter* inputAdapter;
+  SDLInputEngineAdapter* inputAdapter = new SDLInputEngineAdapter();
   EngineInputAPI* engineInputAPI = new EngineInputAPI(inputAdapter);
 
   while (true)
