@@ -2,15 +2,16 @@
 
 #include "./Game.hpp"
 
-// TODO: Remove
+// TODO: Move dependencies
 #include "../Engine/Engine.hpp"
 #include "../API/Input/EngineInputAPI.hpp"
 #include "../API/Rendering/EngineRenderingAPI.hpp"
 
 /**
- * Gameloop does a looptyloop
+ * Gameloop
  **/
-void Game::gameLoop() {
+void Game::gameLoop()
+{
 
     SDLInputEngineAdapter inputAdapter;
     EngineInputAPI engineInputAPI;
@@ -47,6 +48,8 @@ void Game::gameLoop() {
         // Render the backbuffer.
         SDL_RenderPresent(Engine::getRenderer());
         SDL_RenderClear(Engine::getRenderer());
+         // Temporary logger for received Inputs. We will create a logger later.
+         debugLog(i);
 
         /**
         * When the received input contains the action QUIT, call the Engine to close the window and break the game loop.
@@ -68,15 +71,17 @@ void Game::gameLoop() {
  * 
  * @param Input An Input struct
  **/
-void Game::debugLog(Input i) {
-    if (i.keyMap.code != "DEBUG_NO_LOG") {
-        std::cout << std::endl;
-        std::cout << "device: " << i.device << std::endl;
-        std::cout << "code: " << i.keyMap.code << std::endl;
-        std::cout << "action: " << i.keyMap.action << std::endl;
-        std::cout << "x: " << i.x << std::endl;
-        std::cout << "y: " << i.y << std::endl;
-    }
+void Game::debugLog(Input i)
+{
+  if (i.device != Input::NONE)
+  {
+    std::cout << std::endl;
+    std::cout << "device: " << i.device << std::endl;
+    std::cout << "code: " << i.keyMap.code << std::endl;
+    std::cout << "action: " << i.keyMap.action << std::endl;
+    std::cout << "x: " << i.x << std::endl;
+    std::cout << "y: " << i.y << std::endl;
+  }
 }
 
 
