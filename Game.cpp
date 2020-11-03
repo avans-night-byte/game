@@ -1,11 +1,12 @@
 #include <iostream>
 
 #include "./Game.hpp"
-
-// TODO: Move dependencies
-#include "../Engine/Engine.hpp"
 #include "../API/Input/EngineInputAPI.hpp"
 #include "../API/Rendering/EngineRenderingAPI.hpp"
+#include "../API/Engine/EngineWindowAPI.hpp"
+
+const int width = 640;
+const int height = 480;
 
 /**
  * Gameloop
@@ -13,25 +14,38 @@
 void Game::gameLoop()
 {
 
+    // APIs init
     SDLInputEngineAdapter *inputAdapter = new SDLInputEngineAdapter();
     EngineInputAPI *engineInputAPI = new EngineInputAPI(inputAdapter);
 
-    RenderingEngineAdapter renderingEngineAdapter;
-    auto engineRenderingAPI = EngineRenderingAPI(renderingEngineAdapter);
+    Engine *engine = new Engine();
+    EngineWindowAPI *engineWindowAPI = new EngineWindowAPI(engine);
 
+    RenderingEngineAdapter renderingEngineAdapter;
+    auto engineRenderingAPI = EngineRenderingAPI(renderingEngineAdapter, engine);
+
+    // Create Window
+    engine->initWindow(width, height);
+
+    // Sprites
     bool load = engineRenderingAPI.loadTexture("boar.bmp", "boar");
     Spritesheet *loadSprite = engineRenderingAPI.createSpriteSheet("spritememe.png", "spritesheet", 8, 11, 100, 105);
 
     std::cout << load << std::endl;
 
-    //Select a sprite based on the width/ height specified in creating the spritesheet.
+    // Select a sprite based on the width/ height specified in creating the spritesheet.
     loadSprite->select_sprite(0, 0);
 
+    // Gameloop
     while (true)
     {
+        // Poll input
         Input i = engineInputAPI->getInput();
+
+        // Load sprite
         loadSprite->draw_selected_sprite(200, 200);
 
+        // Move sprite
         if (i.keyMap.action == "UP")
         {
             loadSprite->select_sprite(0, 2);
@@ -51,8 +65,9 @@ void Game::gameLoop()
         }
 
         // Render the backbuffer.
-        SDL_RenderPresent(Engine::getRenderer());
-        SDL_RenderClear(Engine::getRenderer());
+        SDL_RenderPresent(engineWindowAPI->getRenderer());
+        SDL_RenderClear(engineWindowAPI->getRenderer());
+        
         // Temporary logger for received Inputs. We will create a logger later.
         debugLog(i);
 
@@ -64,7 +79,7 @@ void Game::gameLoop()
         {
             EngineRenderingAPI::GetTextureManager()->clearFromTextureMap("boar");
             EngineRenderingAPI::GetTextureManager()->clearFromTextureMap("spritesheets");
-            Engine::closeWindow();
+            engineWindowAPI->closeWindow();
             break;
         }
     }
