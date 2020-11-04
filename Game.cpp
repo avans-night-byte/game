@@ -1,11 +1,15 @@
 #include <iostream>
 
 #include "./Game.hpp"
-
-// TODO: Move dependencies
-#include "../Engine/Engine.hpp"
 #include "../API/Input/EngineInputAPI.hpp"
 #include "../API/Rendering/EngineRenderingAPI.hpp"
+#include "../API/Engine/EngineWindowAPI.hpp"
+
+// Fixme: No hardie
+#include "./Scenes/Menu/MainMenu.cpp"
+
+const int width = 1920;
+const int height = 1080;
 
 /**
  * Gameloop
@@ -16,43 +20,27 @@ void Game::gameLoop()
     SDLInputEngineAdapter *inputAdapter = new SDLInputEngineAdapter();
     EngineInputAPI *engineInputAPI = new EngineInputAPI(inputAdapter);
 
+    Engine *engine = new Engine();
+    EngineWindowAPI *engineWindowAPI = new EngineWindowAPI(engine);
+
+    // Create Window
+    engine->initWindow(width, height);
+
     RenderingEngineAdapter renderingEngineAdapter;
-    auto engineRenderingAPI = EngineRenderingAPI(renderingEngineAdapter);
+    auto engineRenderingAPI = EngineRenderingAPI(renderingEngineAdapter, engine);
 
-    bool load = engineRenderingAPI.loadTexture("boar.bmp", "boar");
-    Spritesheet *loadSprite = engineRenderingAPI.createSpriteSheet("spritememe.png", "spritesheet", 8, 11, 100, 105);
+    // Open Main Menu, this could be the game state
+    MainMenu::init(engineRenderingAPI, engineWindowAPI);
 
-    std::cout << load << std::endl;
-
-    //Select a sprite based on the width/ height specified in creating the spritesheet.
-    loadSprite->select_sprite(0, 0);
-
+    // Gameloop
     while (true)
     {
+        // Poll input
         Input i = engineInputAPI->getInput();
-        loadSprite->draw_selected_sprite(200, 200);
 
-        if (i.keyMap.action == "UP")
-        {
-            loadSprite->select_sprite(0, 2);
-        }
-        if (i.keyMap.action == "DOWN")
-        {
-            loadSprite->select_sprite(0, 4);
-        }
-        if (i.keyMap.action == "LEFT")
-        {
-            loadSprite->select_sprite(0, 5);
-        }
+        // Render Main Menu, this could be game state
+        MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
 
-        if (i.keyMap.action == "RIGHT")
-        {
-            loadSprite->select_sprite(0, 7);
-        }
-
-        // Render the backbuffer.
-        SDL_RenderPresent(Engine::getRenderer());
-        SDL_RenderClear(Engine::getRenderer());
         // Temporary logger for received Inputs. We will create a logger later.
         debugLog(i);
 
@@ -64,7 +52,7 @@ void Game::gameLoop()
         {
             EngineRenderingAPI::GetTextureManager()->clearFromTextureMap("boar");
             EngineRenderingAPI::GetTextureManager()->clearFromTextureMap("spritesheets");
-            Engine::closeWindow();
+            engineWindowAPI->closeWindow();
             break;
         }
     }
