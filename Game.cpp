@@ -21,10 +21,16 @@ void Game::gameLoop()
     EngineInputAPI *engineInputAPI = new EngineInputAPI(inputAdapter);
 
     Engine *engine = new Engine();
+
     EngineWindowAPI *engineWindowAPI = new EngineWindowAPI(engine);
+    AudioAPI *audioApi = new AudioAPI();
+
+    AudioType s = sound;
+    std::string path = "oof.wav";
+    audioApi->loadInMemory(path, s);
 
     // Create Window
-    engine->initWindow(width, height);
+    Engine::initWindow(width, height);
 
     RenderingEngineAdapter renderingEngineAdapter;
     auto engineRenderingAPI = EngineRenderingAPI(renderingEngineAdapter, engine);

@@ -6,6 +6,8 @@
 #include <list>
 #include <map>
 #include <SDL_render.h>
+#include "../API/Audio/AudioAPI.hpp"
+#include "../Engine/Audio/AudioType.h"
 
 class Game {
 
