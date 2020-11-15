@@ -12,8 +12,8 @@
 
 class Game {
 private:
-    static Game *instance_;
-    static std::mutex mutex_;
+    static Game *instance;
+    static std::mutex mutex;
 
 private:
     System<Component> components;

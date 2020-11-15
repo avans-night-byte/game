@@ -160,8 +160,8 @@ System<T> Game::getComponents(EntityId id) {
 /**
  * Static methods should be defined outside the class.
  */
-Game *Game::instance_{};
-std::mutex Game::mutex_;
+Game *Game::instance{};
+std::mutex Game::mutex;
 
 /**
  * The first time we call GetInstance we will lock the storage location
@@ -169,10 +169,10 @@ std::mutex Game::mutex_;
  *      set the value.
  */
 Game *Game::getInstance() {
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (instance_ == nullptr) {
-        instance_ = new Game();
+    std::lock_guard<std::mutex> lock(mutex);
+    if (instance == nullptr) {
+        instance = new Game();
     }
 
-    return instance_;
+    return instance;
 }
