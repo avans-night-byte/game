@@ -4,6 +4,7 @@
 #include "../API/Input/EngineInputAPI.hpp"
 #include "../API/Rendering/EngineRenderingAPI.hpp"
 #include "../API/Engine/EngineWindowAPI.hpp"
+#include "../API/Physics/EnginePhysicsAPI.hpp"
 
 // Fixme: No hardie
 #include "./Scenes/Menu/MainMenu.cpp"
@@ -178,5 +179,5 @@ Game *Game::getInstance() {
 }
 
 void Game::initialize() {
-
+    physicsAPI = make_unique<EnginePhysicsAPI>();
 }

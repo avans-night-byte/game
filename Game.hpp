@@ -43,11 +43,12 @@ public:
     static Game *getInstance();
 
 public:
-    void initialize();
-
     static void gameLoop();
 
     static void debugLog(Input i);
+
+public:
+    void initialize();
 
     EntityId createEntity();
 
@@ -60,4 +61,9 @@ public:
 
     template<typename T>
     System<T> getComponents(EntityId id);
+
+    inline const unique_ptr<PhysicsAPI>& getPhysicsAPI()
+    {
+        return physicsAPI;
+    }
 };
