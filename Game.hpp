@@ -2,17 +2,23 @@
 
 // TODO: Remove this
 #include "../Engine/Input/Input.hpp"
+#include "../Engine/Audio/AudioType.h"
+
 #include "Components/Component.hpp"
 #include <list>
 #include <map>
+#include "memory"
 #include <SDL_render.h>
+
 #include "../API/Audio/AudioAPI.hpp"
-#include "../Engine/Audio/AudioType.h"
+#include "../API/Physics/PhysicsAPI.hpp"
+
+using namespace std;
 
 class Game {
-
 private:
     System<Component> components;
+    unique_ptr<PhysicsAPI> physicsAPI;
     SDL_Renderer *sdlRenderer;
     SDL_Window *window;
 

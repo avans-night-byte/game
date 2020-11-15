@@ -33,7 +33,7 @@ void Game::gameLoop()
     Engine::initWindow(width, height);
 
     RenderingEngineAdapter renderingEngineAdapter;
-    auto engineRenderingAPI = EngineRenderingAPI(renderingEngineAdapter, engine);
+    EngineRenderingAPI engineRenderingAPI = EngineRenderingAPI(renderingEngineAdapter, engine);
 
     // Open Main Menu, this could be the game state
     MainMenu::init(engineRenderingAPI, engineWindowAPI);
