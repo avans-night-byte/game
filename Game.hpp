@@ -6,10 +6,14 @@
 #include <list>
 #include <map>
 #include <SDL_render.h>
+#include <mutex>
 #include "../API/Audio/AudioAPI.hpp"
 #include "../Engine/Audio/AudioType.h"
 
 class Game {
+private:
+    static Game *instance;
+    static std::mutex mutex;
 
 private:
     System<Component> components;
@@ -19,7 +23,21 @@ private:
     std::list<EntityId> entities;
     std::map<PlayerId, EntityId> players;
 
+protected:
+    Game() = default;
+
+    ~Game() = default;
+
 public:
+    Game(Game &other) = delete;
+
+    void operator=(const Game &) = delete;
+
+    static Game *getInstance();
+
+public:
+    void initialize();
+
     static void gameLoop();
 
     static void debugLog(Input i);
