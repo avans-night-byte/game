@@ -6,18 +6,34 @@
 #include <list>
 #include <map>
 #include <SDL_render.h>
+#include <mutex>
 #include "../API/Audio/AudioAPI.hpp"
 #include "../Engine/Audio/AudioType.h"
 
 class Game {
+private:
+    static Game *instance_;
+    static std::mutex mutex_;
 
 private:
     System<Component> components;
-    SDL_Renderer *sdlRenderer;
-    SDL_Window *window;
+    SDL_Renderer *sdlRenderer{};
+    SDL_Window *window{};
 
     std::list<EntityId> entities;
     std::map<PlayerId, EntityId> players;
+
+protected:
+    Game() = default;
+
+    ~Game() = default;
+
+public:
+    Game(Game &other) = delete;
+
+    void operator=(const Game &) = delete;
+
+    static Game *getInstance();
 
 public:
     static void gameLoop();
