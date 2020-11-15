@@ -176,3 +176,7 @@ Game *Game::getInstance() {
 
     return instance;
 }
+
+void Game::initialize() {
+
+}

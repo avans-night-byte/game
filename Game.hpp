@@ -17,8 +17,8 @@ private:
 
 private:
     System<Component> components;
-    SDL_Renderer *sdlRenderer{};
-    SDL_Window *window{};
+    SDL_Renderer *sdlRenderer;
+    SDL_Window *window;
 
     std::list<EntityId> entities;
     std::map<PlayerId, EntityId> players;
@@ -36,6 +36,8 @@ public:
     static Game *getInstance();
 
 public:
+    void initialize();
+
     static void gameLoop();
 
     static void debugLog(Input i);
