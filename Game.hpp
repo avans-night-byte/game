@@ -9,6 +9,7 @@
 #include <map>
 #include "memory"
 #include <SDL_render.h>
+#include <mutex>
 
 #include "../API/Audio/AudioAPI.hpp"
 #include "../API/Physics/PhysicsAPI.hpp"
@@ -16,6 +17,10 @@
 using namespace std;
 
 class Game {
+private:
+    static Game *instance;
+    static std::mutex mutex;
+
 private:
     System<Component> components;
     unique_ptr<PhysicsAPI> physicsAPI;
@@ -25,7 +30,21 @@ private:
     std::list<EntityId> entities;
     std::map<PlayerId, EntityId> players;
 
+protected:
+    Game() = default;
+
+    ~Game() = default;
+
 public:
+    Game(Game &other) = delete;
+
+    void operator=(const Game &) = delete;
+
+    static Game *getInstance();
+
+public:
+    void initialize();
+
     static void gameLoop();
 
     static void debugLog(Input i);
