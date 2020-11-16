@@ -25,7 +25,7 @@ void Game::initialize() {
     audioApi = new AudioAPI();
 
     // Open Main Menu, this could be the game state
-    MainMenu::init(engineRenderingAPI, engineWindowAPI);
+    MainMenu::init(engineRenderingAPI, engineWindowAPI, audioApi);
 }
 
 /**

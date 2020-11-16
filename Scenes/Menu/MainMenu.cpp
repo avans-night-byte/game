@@ -6,11 +6,16 @@ Spritesheet *characterSpriteSheet;
 Spritesheet *buttonSpriteSheet;
 Spritesheet *settingsSpriteSheet;
 
-void MainMenu::init(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI)
+void MainMenu::init(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi)
 {
   // Load textures
   bool background = engineRenderingAPI->loadTexture("../../Resources/Sprites/background.png", "background");
   bool menu_bar = engineRenderingAPI->loadTexture("../../Resources/Sprites/menu_bar.png", "menu_bar");
+
+  // Background music
+  AudioType s = sound;
+  std::string path = "../../Resources/Sounds/background.flac";
+  audioApi->playFromPath(path, s);
 
   // Load sprites
   characterSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/character.png", "spritesheet_char", 8, 11, 100, 105);
@@ -71,7 +76,6 @@ void MainMenu::render(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *e
   settingsSpriteSheet->draw_selected_sprite(1920-215, 1080-130);
   settingsSpriteSheet->select_sprite(0, 2);
   settingsSpriteSheet->draw_selected_sprite(1920-145, 1080-147);
-
 
   // Render the backbuffer.
   SDL_RenderPresent(engineWindowAPI->getRenderer());
