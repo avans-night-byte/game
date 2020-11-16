@@ -17,9 +17,6 @@ private:
 
 private:
     System<Component> components;
-    SDL_Renderer *sdlRenderer;
-    SDL_Window *window;
-
     std::list<EntityId> entities;
     std::map<PlayerId, EntityId> players;
 
