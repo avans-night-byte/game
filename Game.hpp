@@ -43,7 +43,7 @@ public:
     static Game *getInstance();
 
 public:
-    static void gameLoop();
+    void gameLoop();
 
     static void debugLog(Input i);
 

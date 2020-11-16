@@ -1,3 +1,4 @@
+
 #include <iostream>
 
 #include "./Game.hpp"
@@ -8,6 +9,9 @@
 
 // Fixme: No hardie
 #include "./Scenes/Menu/MainMenu.cpp"
+#include "Scenes/Example/ExampleScene.hpp"
+
+typedef signed int int32;
 
 const int width = 1920;
 const int height = 1080;
@@ -36,15 +40,24 @@ void Game::gameLoop() {
     EngineRenderingAPI engineRenderingAPI = EngineRenderingAPI(renderingEngineAdapter, engine);
 
     // Open Main Menu, this could be the game state
-    MainMenu::init(engineRenderingAPI, engineWindowAPI);
+//    MainMenu::init(engineRenderingAPI, engineWindowAPI);
+    ExampleScene exampleScene = ExampleScene();
+    exampleScene.initialize();
+
+    float timeStep = 1.0f / 60.0f;
+    int32 velocityIterations = 6;
+    int32 positionIterations = 2;
 
     // Gameloop
     while (true) {
+        physicsAPI->update(timeStep, velocityIterations, positionIterations);
+        physicsAPI->DebugDraw(engineRenderingAPI, *engineWindowAPI->getRenderer());
+
         // Poll input
         Input i = engineInputAPI->getInput();
 
         // Render Main Menu, this could be game state
-        MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
+//        MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
 
         // Temporary logger for received Inputs. We will create a logger later.
         debugLog(i);
