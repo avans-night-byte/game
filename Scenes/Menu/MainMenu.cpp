@@ -9,13 +9,13 @@ Spritesheet *settingsSpriteSheet;
 void MainMenu::init(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI)
 {
   // Load textures
-  bool background = engineRenderingAPI.loadTexture("../../Resources/Sprites/background.png", "background");
-  bool menu_bar = engineRenderingAPI.loadTexture("../../Resources/Sprites/menu_bar.png", "menu_bar");
+  bool background = engineRenderingAPI->loadTexture("../../Resources/Sprites/background.png", "background");
+  bool menu_bar = engineRenderingAPI->loadTexture("../../Resources/Sprites/menu_bar.png", "menu_bar");
 
   // Load sprites
-  characterSpriteSheet = engineRenderingAPI.createSpriteSheet("../../Resources/Sprites/character.png", "spritesheet_char", 8, 11, 100, 105);
-  buttonSpriteSheet = engineRenderingAPI.createSpriteSheet("../../Resources/Sprites/buttons.png", "spritesheet_buttons", 2, 3, 914, 226);
-  settingsSpriteSheet = engineRenderingAPI.createSpriteSheet("../../Resources/Sprites/settings.png", "spritesheet_settings", 0, 4, 232, 122);
+  characterSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/character.png", "spritesheet_char", 8, 11, 100, 105);
+  buttonSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/buttons.png", "spritesheet_buttons", 2, 3, 914, 226);
+  settingsSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/settings.png", "spritesheet_settings", 0, 4, 232, 122);
 
   // Init character state
   characterSpriteSheet->select_sprite(0, 0);
@@ -48,7 +48,7 @@ void MainMenu::render(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *e
   characterSpriteSheet->draw_selected_sprite(0, 0);
 
   // Draw buttons
-  engineRenderingAPI.drawTexture("menu_bar", 60, 0, 990, 1080, 1, 1);
+  engineRenderingAPI->drawTexture("menu_bar", 60, 0, 990, 1080, 1, 1);
 
   buttonSpriteSheet->select_sprite(0, 0);
   buttonSpriteSheet->draw_selected_sprite(100, 26);
