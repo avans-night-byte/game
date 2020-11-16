@@ -53,7 +53,7 @@ void MainMenu::render(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *e
   characterSpriteSheet->draw_selected_sprite(0, 0);
 
   // Draw buttons
-  engineRenderingAPI->drawTexture("menu_bar", 60, 0, 990, 1080, 1, 1);
+  engineRenderingAPI->drawTexture("menu_bar", 60, -45, 990, 1170, 1, 1);
 
   buttonSpriteSheet->select_sprite(0, 0);
   buttonSpriteSheet->draw_selected_sprite(100, 26);
