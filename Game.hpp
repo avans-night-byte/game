@@ -36,7 +36,7 @@ public:
     static Game *getInstance();
 
 public:
-    void initialize();
+    static void initialize();
 
     static void gameLoop();
 

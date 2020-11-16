@@ -11,33 +11,30 @@
 const int width = 1920;
 const int height = 1080;
 
+Engine *engine;
+EngineInputAPI *engineInputAPI;
+EngineWindowAPI *engineWindowAPI;
+EngineRenderingAPI *engineRenderingAPI;
+AudioAPI *audioApi;
+
+void Game::initialize() {
+    Engine::initWindow(width, height);
+    engineRenderingAPI = new EngineRenderingAPI(engine);
+    engineInputAPI = new EngineInputAPI();
+    engineWindowAPI = new EngineWindowAPI(engine);
+    audioApi = new AudioAPI();
+
+    // Open Main Menu, this could be the game state
+    MainMenu::init(engineRenderingAPI, engineWindowAPI);
+}
+
 /**
  * Gameloop
  **/
 void Game::gameLoop() {
 
-    SDLInputEngineAdapter *inputAdapter = new SDLInputEngineAdapter();
-    EngineInputAPI *engineInputAPI = new EngineInputAPI(inputAdapter);
+    initialize();
 
-    Engine *engine = new Engine();
-
-    EngineWindowAPI *engineWindowAPI = new EngineWindowAPI(engine);
-    AudioAPI *audioApi = new AudioAPI();
-
-    AudioType s = sound;
-    std::string path = "oof.wav";
-    audioApi->loadInMemory(path, s);
-
-    // Create Window
-    Engine::initWindow(width, height);
-
-    RenderingEngineAdapter renderingEngineAdapter;
-    auto engineRenderingAPI = EngineRenderingAPI(renderingEngineAdapter, engine);
-
-    // Open Main Menu, this could be the game state
-    MainMenu::init(engineRenderingAPI, engineWindowAPI);
-
-    // Gameloop
     while (true) {
         // Poll input
         Input i = engineInputAPI->getInput();
@@ -48,13 +45,7 @@ void Game::gameLoop() {
         // Temporary logger for received Inputs. We will create a logger later.
         debugLog(i);
 
-        /**
-        * When the received input contains the action QUIT, call the Engine to close the window and break the game loop.
-        * We should move this to an API so we don't call the Engine from the Game.
-        **/
         if (i.keyMap.action == "QUIT") {
-            EngineRenderingAPI::GetTextureManager()->clearFromTextureMap("boar");
-            EngineRenderingAPI::GetTextureManager()->clearFromTextureMap("spritesheets");
             engineWindowAPI->closeWindow();
             break;
         }
@@ -177,6 +168,3 @@ Game *Game::getInstance() {
     return instance;
 }
 
-void Game::initialize() {
-
-}
