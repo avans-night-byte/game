@@ -75,6 +75,11 @@ void Game::debugLog(Input i) {
  * it with your feature, just mage sure to check because some components are not completely done.
  */
 
+/**
+ * Creates an entity and pushes it to the entity collection.
+ *
+ * @return EntityId id - The id of the newly created entity.
+ */
 EntityId Game::createEntity() {
     auto it = entities.begin();
     std::advance(it, entities.size());

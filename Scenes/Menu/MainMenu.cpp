@@ -9,8 +9,8 @@ Spritesheet *settingsSpriteSheet;
 void MainMenu::init(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi)
 {
   // Load textures
-  bool background = engineRenderingAPI->loadTexture("../../Resources/Sprites/background.png", "background");
-  bool menu_bar = engineRenderingAPI->loadTexture("../../Resources/Sprites/menu_bar.png", "menu_bar");
+  engineRenderingAPI->loadTexture("../../Resources/Sprites/background.png", "background");
+  engineRenderingAPI->loadTexture("../../Resources/Sprites/menu_bar.png", "menu_bar");
 
   // Background music
   AudioType s = sound;

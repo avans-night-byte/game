@@ -5,7 +5,6 @@
 #include "Components/Component.hpp"
 #include <list>
 #include <map>
-#include <SDL_render.h>
 #include <mutex>
 #include "../API/Audio/AudioAPI.hpp"
 #include "../Engine/Audio/AudioType.h"
