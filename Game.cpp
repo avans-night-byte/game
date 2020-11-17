@@ -48,10 +48,40 @@ void Game::gameLoop() {
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
 
+    SDL_Renderer *renderer = engineWindowAPI->getRenderer();
+
+    const int updateFPS = 60;
+    const float deltaTime = 1.0f / updateFPS;
+
+    float elapsedTime = 0.0f;
+    float accumulator = 0.0f;
+
+    Uint32 currentTime = SDL_GetTicks();
     // Gameloop
     while (true) {
-        physicsAPI->update(timeStep, velocityIterations, positionIterations);
-        physicsAPI->DebugDraw(engineRenderingAPI, *engineWindowAPI->getRenderer());
+
+        const Uint32 newTime = SDL_GetTicks();
+        float frameTime = static_cast<float> (newTime - currentTime) / 250.0f;
+
+        if(frameTime > 0.25f)
+            frameTime = 0.25f;
+
+        currentTime = newTime;
+        accumulator += frameTime;
+
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+        SDL_RenderClear(renderer);
+
+        while(accumulator >= deltaTime)
+        {
+            physicsAPI->update(deltaTime, velocityIterations, positionIterations);
+
+            elapsedTime += deltaTime;
+            accumulator -= deltaTime;
+        }
+
+        physicsAPI->DebugDraw(engineRenderingAPI, *renderer);
+        SDL_RenderPresent(renderer);
 
         // Poll input
         Input i = engineInputAPI->getInput();
