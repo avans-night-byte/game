@@ -76,8 +76,4 @@ void MainMenu::render(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *e
   settingsSpriteSheet->draw_selected_sprite(1920-215, 1080-130);
   settingsSpriteSheet->select_sprite(0, 2);
   settingsSpriteSheet->draw_selected_sprite(1920-145, 1080-147);
-
-  // Render the backbuffer.
-  SDL_RenderPresent(engineWindowAPI->getRenderer());
-  SDL_RenderClear(engineWindowAPI->getRenderer());
 }

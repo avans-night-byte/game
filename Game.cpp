@@ -1,12 +1,17 @@
+
 #include <iostream>
 
 #include "./Game.hpp"
 #include "../API/Input/EngineInputAPI.hpp"
 #include "../API/Rendering/EngineRenderingAPI.hpp"
 #include "../API/Engine/EngineWindowAPI.hpp"
+#include "../API/Physics/EnginePhysicsAPI.hpp"
 
 // Fixme: No hardie
 #include "./Scenes/Menu/MainMenu.cpp"
+#include "Scenes/Example/ExampleScene.hpp"
+
+typedef signed int int32;
 
 const int width = 1920;
 const int height = 1080;
@@ -15,6 +20,7 @@ Engine *engine;
 EngineInputAPI *engineInputAPI;
 EngineWindowAPI *engineWindowAPI;
 EngineRenderingAPI *engineRenderingAPI;
+unique_ptr<PhysicsAPI> physicsAPI;
 AudioAPI *audioApi;
 
 void Game::initialize() {
@@ -23,6 +29,7 @@ void Game::initialize() {
     engineInputAPI = new EngineInputAPI();
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
+    physicsAPI = make_unique<EnginePhysicsAPI>();
 
     // Open Main Menu, this could be the game state
     MainMenu::init(engineRenderingAPI, engineWindowAPI, audioApi);
@@ -32,16 +39,70 @@ void Game::initialize() {
  * Gameloop
  **/
 void Game::gameLoop() {
+    // Open Main Menu, this could be the game state
+    unique_ptr<ExampleScene> exampleScene = nullptr;
 
-    initialize();
+    float timeStep = 1.0f / 60.0f;
+    int32 velocityIterations = 6;
+    int32 positionIterations = 2;
 
+    const int updateFPS = 60;
+    const float deltaTime = 1.0f / updateFPS;
+
+    float elapsedTime = 0.0f;
+    float accumulator = 0.0f;
+
+    Uint32 currentTime = SDL_GetTicks();
+
+    bool isDebuggingPhysics = false;
+    // Gameloop
     while (true) {
+
+        const Uint32 newTime = SDL_GetTicks();
+        float frameTime = static_cast<float> (newTime - currentTime) / 250.0f;
+
+        if(frameTime > 0.25f)
+            frameTime = 0.25f;
+
+        currentTime = newTime;
+        accumulator += frameTime;
+
+        SDL_SetRenderDrawColor(engineWindowAPI->getRenderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
+        SDL_RenderClear(engineWindowAPI->getRenderer());
+
+        while(accumulator >= deltaTime)
+        {
+            physicsAPI->update(deltaTime, velocityIterations, positionIterations);
+
+            elapsedTime += deltaTime;
+            accumulator -= deltaTime;
+        }
+
         // Poll input
         Input i = engineInputAPI->getInput();
 
-        // Render Main Menu, this could be game state
-        MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
+        if(i.keyMap.action == "1")
+        {
+            isDebuggingPhysics = true;
+        }
 
+        if(!isDebuggingPhysics)
+        {
+            MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
+        }
+        else
+        {
+            if(exampleScene == nullptr)
+            {
+                exampleScene = make_unique<ExampleScene>();
+                exampleScene->initialize();
+            }
+            physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
+        }
+
+
+        SDL_RenderPresent(engineWindowAPI->getRenderer());
+        SDL_RenderClear(engineWindowAPI->getRenderer());
         // Temporary logger for received Inputs. We will create a logger later.
         debugLog(i);
 
@@ -171,5 +232,9 @@ Game *Game::getInstance() {
     }
 
     return instance;
+}
+
+const unique_ptr<PhysicsAPI> &Game::getPhysicsAPI() {
+    return physicsAPI;
 }
 

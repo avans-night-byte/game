@@ -2,12 +2,18 @@
 
 // TODO: Remove this
 #include "../Engine/Input/Input.hpp"
+#include "../Engine/Audio/AudioType.h"
+
 #include "Components/Component.hpp"
 #include <list>
 #include <map>
+#include "memory"
 #include <mutex>
+
 #include "../API/Audio/AudioAPI.hpp"
-#include "../Engine/Audio/AudioType.h"
+#include "../API/Physics/PhysicsAPI.hpp"
+
+using namespace std;
 
 class Game {
 private:
@@ -38,6 +44,7 @@ public:
 
     static void debugLog(Input i);
 
+public:
     EntityId createEntity();
 
     void addComponent(EntityId id, Component *comp);
@@ -49,4 +56,6 @@ public:
 
     template<typename T>
     System<T> getComponents(EntityId id);
+
+    const unique_ptr<PhysicsAPI>& getPhysicsAPI();
 };
