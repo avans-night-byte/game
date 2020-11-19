@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../Game/Game.hpp"
 #include "Component.hpp"
 #include "../../API/Physics/EnginePhysicsAPI.hpp"
 
