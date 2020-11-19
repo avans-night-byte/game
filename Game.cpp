@@ -39,10 +39,6 @@ void Game::initialize() {
  * Gameloop
  **/
 void Game::gameLoop() {
-    AudioType s = sound;
-    std::string path = "oof.wav";
-    audioApi->loadInMemory(path, s);
-
     // Open Main Menu, this could be the game state
     unique_ptr<ExampleScene> exampleScene = nullptr;
 
