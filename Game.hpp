@@ -22,7 +22,6 @@ private:
 
 private:
     System<Component> components;
-    unique_ptr<PhysicsAPI> physicsAPI;
     std::list<EntityId> entities;
     std::map<PlayerId, EntityId> players;
 
@@ -58,8 +57,5 @@ public:
     template<typename T>
     System<T> getComponents(EntityId id);
 
-    inline const unique_ptr<PhysicsAPI>& getPhysicsAPI()
-    {
-        return physicsAPI;
-    }
+    const unique_ptr<PhysicsAPI>& getPhysicsAPI();
 };

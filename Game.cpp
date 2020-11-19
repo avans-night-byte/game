@@ -20,6 +20,7 @@ Engine *engine;
 EngineInputAPI *engineInputAPI;
 EngineWindowAPI *engineWindowAPI;
 EngineRenderingAPI *engineRenderingAPI;
+unique_ptr<PhysicsAPI> physicsAPI;
 AudioAPI *audioApi;
 
 void Game::initialize() {
@@ -28,6 +29,7 @@ void Game::initialize() {
     engineInputAPI = new EngineInputAPI();
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
+    physicsAPI = make_unique<EnginePhysicsAPI>();
 
     // Open Main Menu, this could be the game state
     MainMenu::init(engineRenderingAPI, engineWindowAPI, audioApi);
@@ -37,28 +39,12 @@ void Game::initialize() {
  * Gameloop
  **/
 void Game::gameLoop() {
-
-    initialize();
-
-    Engine *engine = new Engine();
-
-    EngineWindowAPI *engineWindowAPI = new EngineWindowAPI(engine);
-    AudioAPI *audioApi = new AudioAPI();
-
     AudioType s = sound;
     std::string path = "oof.wav";
     audioApi->loadInMemory(path, s);
 
-    // Create Window
-    Engine::initWindow(width, height);
-
-    RenderingEngineAdapter renderingEngineAdapter;
-    EngineRenderingAPI engineRenderingAPI = EngineRenderingAPI(renderingEngineAdapter, engine);
-
     // Open Main Menu, this could be the game state
-//    MainMenu::init(engineRenderingAPI, engineWindowAPI);
-    ExampleScene exampleScene = ExampleScene();
-    exampleScene.initialize();
+    unique_ptr<ExampleScene> exampleScene = nullptr;
 
     float timeStep = 1.0f / 60.0f;
     int32 velocityIterations = 6;
@@ -73,6 +59,8 @@ void Game::gameLoop() {
     float accumulator = 0.0f;
 
     Uint32 currentTime = SDL_GetTicks();
+
+    bool isDebuggingPhysics = false;
     // Gameloop
     while (true) {
 
@@ -96,15 +84,32 @@ void Game::gameLoop() {
             accumulator -= deltaTime;
         }
 
-        physicsAPI->DebugDraw(engineRenderingAPI, *renderer);
-        SDL_RenderPresent(renderer);
-
         // Poll input
         Input i = engineInputAPI->getInput();
 
-        // Render Main Menu, this could be game state
-//        MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
+        if(i.keyMap.action == "1")
+        {
+            isDebuggingPhysics = true;
+        }
 
+        if(!isDebuggingPhysics)
+        {
+            // Render Main Menu, this could be game state
+            MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
+        }
+        else
+        {
+            if(exampleScene == nullptr)
+            {
+                exampleScene = make_unique<ExampleScene>();
+                exampleScene->initialize();
+            }
+            physicsAPI->DebugDraw(*engineRenderingAPI, *renderer);
+        }
+
+
+        SDL_RenderPresent(engineWindowAPI->getRenderer());
+        SDL_RenderClear(engineWindowAPI->getRenderer());
         // Temporary logger for received Inputs. We will create a logger later.
         debugLog(i);
 
@@ -236,7 +241,7 @@ Game *Game::getInstance() {
     return instance;
 }
 
-void Game::initialize() {
-    physicsAPI = make_unique<EnginePhysicsAPI>();
+const unique_ptr<PhysicsAPI> &Game::getPhysicsAPI() {
+    return physicsAPI;
 }
 
