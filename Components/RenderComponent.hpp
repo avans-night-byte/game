@@ -1,5 +1,4 @@
 #pragma once
-#include <SDL_render.h>
 #include "./Component.hpp"
 #include "../../API/Rendering/EngineRenderingAPI.hpp"
 #include "WorldPositionComponent.hpp"

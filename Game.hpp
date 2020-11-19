@@ -8,7 +8,6 @@
 #include <list>
 #include <map>
 #include "memory"
-#include <SDL_render.h>
 #include <mutex>
 
 #include "../API/Audio/AudioAPI.hpp"
@@ -24,9 +23,6 @@ private:
 private:
     System<Component> components;
     unique_ptr<PhysicsAPI> physicsAPI;
-    SDL_Renderer *sdlRenderer;
-    SDL_Window *window;
-
     std::list<EntityId> entities;
     std::map<PlayerId, EntityId> players;
 
@@ -43,13 +39,13 @@ public:
     static Game *getInstance();
 
 public:
-    void gameLoop();
+    static void initialize();
+
+    static void gameLoop();
 
     static void debugLog(Input i);
 
 public:
-    void initialize();
-
     EntityId createEntity();
 
     void addComponent(EntityId id, Component *comp);

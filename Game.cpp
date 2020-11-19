@@ -16,13 +16,29 @@ typedef signed int int32;
 const int width = 1920;
 const int height = 1080;
 
+Engine *engine;
+EngineInputAPI *engineInputAPI;
+EngineWindowAPI *engineWindowAPI;
+EngineRenderingAPI *engineRenderingAPI;
+AudioAPI *audioApi;
+
+void Game::initialize() {
+    Engine::initWindow(width, height);
+    engineRenderingAPI = new EngineRenderingAPI(engine);
+    engineInputAPI = new EngineInputAPI();
+    engineWindowAPI = new EngineWindowAPI(engine);
+    audioApi = new AudioAPI();
+
+    // Open Main Menu, this could be the game state
+    MainMenu::init(engineRenderingAPI, engineWindowAPI, audioApi);
+}
+
 /**
  * Gameloop
  **/
 void Game::gameLoop() {
 
-    SDLInputEngineAdapter *inputAdapter = new SDLInputEngineAdapter();
-    EngineInputAPI *engineInputAPI = new EngineInputAPI(inputAdapter);
+    initialize();
 
     Engine *engine = new Engine();
 
@@ -92,13 +108,7 @@ void Game::gameLoop() {
         // Temporary logger for received Inputs. We will create a logger later.
         debugLog(i);
 
-        /**
-        * When the received input contains the action QUIT, call the Engine to close the window and break the game loop.
-        * We should move this to an API so we don't call the Engine from the Game.
-        **/
         if (i.keyMap.action == "QUIT") {
-            EngineRenderingAPI::GetTextureManager()->clearFromTextureMap("boar");
-            EngineRenderingAPI::GetTextureManager()->clearFromTextureMap("spritesheets");
             engineWindowAPI->closeWindow();
             break;
         }
@@ -128,6 +138,11 @@ void Game::debugLog(Input i) {
  * it with your feature, just mage sure to check because some components are not completely done.
  */
 
+/**
+ * Creates an entity and pushes it to the entity collection.
+ *
+ * @return EntityId id - The id of the newly created entity.
+ */
 EntityId Game::createEntity() {
     auto it = entities.begin();
     std::advance(it, entities.size());
@@ -224,3 +239,4 @@ Game *Game::getInstance() {
 void Game::initialize() {
     physicsAPI = make_unique<EnginePhysicsAPI>();
 }
+
