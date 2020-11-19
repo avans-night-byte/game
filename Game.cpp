@@ -90,7 +90,6 @@ void Game::gameLoop() {
 
         if(!isDebuggingPhysics)
         {
-            // Render Main Menu, this could be game state
             MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
         }
         else
