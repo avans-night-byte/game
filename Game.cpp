@@ -46,8 +46,6 @@ void Game::gameLoop() {
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
 
-    SDL_Renderer *renderer = engineWindowAPI->getRenderer();
-
     const int updateFPS = 60;
     const float deltaTime = 1.0f / updateFPS;
 
@@ -69,8 +67,8 @@ void Game::gameLoop() {
         currentTime = newTime;
         accumulator += frameTime;
 
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-        SDL_RenderClear(renderer);
+        SDL_SetRenderDrawColor(engineWindowAPI->getRenderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
+        SDL_RenderClear(engineWindowAPI->getRenderer());
 
         while(accumulator >= deltaTime)
         {
@@ -99,7 +97,7 @@ void Game::gameLoop() {
                 exampleScene = make_unique<ExampleScene>();
                 exampleScene->initialize();
             }
-            physicsAPI->DebugDraw(*engineRenderingAPI, *renderer);
+            physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
         }
 
 

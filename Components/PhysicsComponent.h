@@ -2,6 +2,7 @@
 
 #include "Component.hpp"
 #include "../../API/Physics/EnginePhysicsAPI.hpp"
+#include "../Game.hpp"
 
 class PhysicsComponent : public Component {
 private:
