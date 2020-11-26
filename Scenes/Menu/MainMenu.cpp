@@ -14,7 +14,7 @@ void MainMenu::init(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *eng
 
   // Background music
   AudioType s = sound;
-  std::string path = "../../Resources/Sounds/background.flac";
+  std::string path = "../../Resources/Sounds/background.wav";
   audioApi->playFromPath(path, s);
 
   // Load sprites

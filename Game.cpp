@@ -9,7 +9,8 @@
 
 // Fixme: No hardie
 #include "./Scenes/Menu/MainMenu.cpp"
-#include "Scenes/Example/ExampleScene.hpp"
+#include "./Scenes/Example/ExampleScene.hpp"
+#include "./Scenes/Credits/Credits.hpp"
 
 typedef signed int int32;
 
@@ -23,6 +24,8 @@ EngineRenderingAPI *engineRenderingAPI;
 unique_ptr<PhysicsAPI> physicsAPI;
 AudioAPI *audioApi;
 
+int currentState = 1;
+
 void Game::initialize() {
     Engine::initWindow(width, height);
     engineRenderingAPI = new EngineRenderingAPI(engine);
@@ -31,8 +34,9 @@ void Game::initialize() {
     audioApi = new AudioAPI();
     physicsAPI = make_unique<EnginePhysicsAPI>();
 
-    // Open Main Menu, this could be the game state
+    // We should normally init when switching state.
     MainMenu::init(engineRenderingAPI, engineWindowAPI, audioApi);
+    Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
 }
 
 /**
@@ -52,64 +56,67 @@ void Game::gameLoop() {
     float elapsedTime = 0.0f;
     float accumulator = 0.0f;
 
+    // TODO: Move
     Uint32 currentTime = SDL_GetTicks();
 
     bool isDebuggingPhysics = false;
+
     // Gameloop
     while (true) {
 
         const Uint32 newTime = SDL_GetTicks();
         float frameTime = static_cast<float> (newTime - currentTime) / 250.0f;
 
-        if(frameTime > 0.25f)
+        if (frameTime > 0.25f)
             frameTime = 0.25f;
 
         currentTime = newTime;
         accumulator += frameTime;
 
-        SDL_SetRenderDrawColor(engineWindowAPI->getRenderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
-        SDL_RenderClear(engineWindowAPI->getRenderer());
-
-        while(accumulator >= deltaTime)
-        {
+        while (accumulator >= deltaTime) {
             physicsAPI->update(deltaTime, velocityIterations, positionIterations);
 
             elapsedTime += deltaTime;
             accumulator -= deltaTime;
         }
 
-        // Poll input
+        // Poll input and keep track of lastInput
         Input i = engineInputAPI->getInput();
+        debugLog(i);
 
-        if(i.keyMap.action == "1")
-        {
-            isDebuggingPhysics = true;
+        if (i.keyMap.action == "1" || i.keyMap.action == "2" || i.keyMap.action == "3") {
+            currentState = std::stoi(i.keyMap.action);
         }
 
-        if(!isDebuggingPhysics)
-        {
+        // Temporary State
+        if (currentState == 1) {
             MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
         }
-        else
-        {
-            if(exampleScene == nullptr)
-            {
+
+        if (currentState == 2) {
+            Credits::render(engineRenderingAPI, engineWindowAPI, i);
+        }
+
+        if (currentState == 3) {
+            if (exampleScene == nullptr) {
                 exampleScene = make_unique<ExampleScene>();
                 exampleScene->initialize();
             }
+            // TODO: Move
+            SDL_SetRenderDrawColor(engineWindowAPI->getRenderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
+            SDL_RenderClear(engineWindowAPI->getRenderer());
+
             physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
         }
-
-
-        SDL_RenderPresent(engineWindowAPI->getRenderer());
-        SDL_RenderClear(engineWindowAPI->getRenderer());
-        // Temporary logger for received Inputs. We will create a logger later.
-        debugLog(i);
 
         if (i.keyMap.action == "QUIT") {
             engineWindowAPI->closeWindow();
             break;
         }
+
+        // TODO: Move
+        SDL_RenderPresent(engineWindowAPI->getRenderer());
+        SDL_RenderClear(engineWindowAPI->getRenderer());
     }
 }
 
