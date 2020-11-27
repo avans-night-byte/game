@@ -21,7 +21,7 @@ Engine *engine;
 EngineInputAPI *engineInputAPI;
 EngineWindowAPI *engineWindowAPI;
 EngineRenderingAPI *engineRenderingAPI;
-unique_ptr<PhysicsAPI> physicsAPI;
+PhysicsAPI *physicsAPI;
 AudioAPI *audioApi;
 
 int currentState = 1;
@@ -32,7 +32,7 @@ void Game::initialize() {
     engineInputAPI = new EngineInputAPI();
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
-    physicsAPI = make_unique<EnginePhysicsAPI>();
+    physicsAPI = new EnginePhysicsAPI();
 
     // We should normally init when switching state.
     MainMenu::init(engineRenderingAPI, engineWindowAPI, audioApi);
@@ -241,7 +241,7 @@ Game *Game::getInstance() {
     return instance;
 }
 
-const unique_ptr<PhysicsAPI> &Game::getPhysicsAPI() {
+const PhysicsAPI *Game::getPhysicsAPI() {
     return physicsAPI;
 }
 

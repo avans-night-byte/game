@@ -10,6 +10,12 @@ void ExampleScene::initialize() {
                                                                BodyType::Dynamic,
                                                                Vector2(450, 50),
                                                                Vector2(100, 50));
+    EntityId object5 = game->createEntity();
+    PhysicsComponent *physicsComponent5 = new PhysicsComponent(object1,
+                                                               BodyType::Dynamic,
+                                                               Vector2(450, 50),
+                                                               50.0f);
+
 
     EntityId object2 = game->createEntity();
     PhysicsComponent *physicsComponent2 = new PhysicsComponent(object2,
@@ -33,5 +39,6 @@ void ExampleScene::initialize() {
     game->addComponent(object1, physicsComponent1);
     game->addComponent(object2, physicsComponent2);
     game->addComponent(object3, physicsComponent3);
-    game->addComponent(object3, physicsComponent4);
+    game->addComponent(object4, physicsComponent4);
+    game->addComponent(object5, physicsComponent5);
 }

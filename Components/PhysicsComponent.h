@@ -6,7 +6,7 @@
 
 class PhysicsComponent : public Component {
 private:
-    const unique_ptr<PhysicsAPI> &enginePhysicsAPI;
+    const PhysicsAPI *enginePhysicsAPI;
     const unsigned int bodyId;
 
 public:
@@ -14,6 +14,12 @@ public:
             : Component(id),
               enginePhysicsAPI(Game::getInstance()->getPhysicsAPI()),
               bodyId(enginePhysicsAPI->createStaticBody(bodyType, position, size)) {
+    }
+
+    explicit PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, float radius)
+            : Component(id),
+              enginePhysicsAPI(Game::getInstance()->getPhysicsAPI()),
+              bodyId(enginePhysicsAPI->createStaticBody(bodyType, position, radius)) {
     }
 
     void update() override;
