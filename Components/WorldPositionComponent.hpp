@@ -8,7 +8,7 @@ public:
 public:
     void update() override;
 
-    void SetLocation(int x, int y);
+    void setLocation(int x, int y);
 
     WorldPositionComponent(EntityId id) : Component(id) {}
 };

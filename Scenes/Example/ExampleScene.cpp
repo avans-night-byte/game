@@ -1,5 +1,4 @@
 #include "ExampleScene.hpp"
-#include "../../Game.hpp"
 #include "../../Components/PhysicsComponent.h"
 
 void ExampleScene::initialize() {
@@ -41,4 +40,9 @@ void ExampleScene::initialize() {
     game->addComponent(object3, physicsComponent3);
     game->addComponent(object4, physicsComponent4);
     game->addComponent(object5, physicsComponent5);
+}
+
+void ExampleScene::update() {
+
+    characterComponent->update();
 }

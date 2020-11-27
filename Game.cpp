@@ -99,12 +99,13 @@ void Game::gameLoop() {
 
         if (currentState == 3) {
             if (exampleScene == nullptr) {
-                exampleScene = make_unique<ExampleScene>();
+                exampleScene = make_unique<ExampleScene>(engineRenderingAPI);
                 exampleScene->initialize();
             }
             // TODO: Move
             SDL_SetRenderDrawColor(engineWindowAPI->getRenderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderClear(engineWindowAPI->getRenderer());
+            exampleScene->update();
 
             physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
         }

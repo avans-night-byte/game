@@ -1,6 +1,6 @@
 #include "WorldPositionComponent.hpp"
 
-void WorldPositionComponent::SetLocation(int x, int y) {
+void WorldPositionComponent::setLocation(int x, int y) {
     this->x = x;
     this->y = y;
 }
