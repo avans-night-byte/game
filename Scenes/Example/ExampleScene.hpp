@@ -33,7 +33,9 @@ public:
 
     void initialize();
 
-    void update();
+    void fixedUpdate(const float &deltaTime);
+
+    void update(const Input &inputSystem);
 };
 
 

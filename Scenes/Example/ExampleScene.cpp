@@ -7,12 +7,12 @@ void ExampleScene::initialize() {
     EntityId object1 = game->createEntity();
     PhysicsComponent *physicsComponent1 = new PhysicsComponent(object1,
                                                                BodyType::Dynamic,
-                                                               Vector2(450, 50),
+                                                               Vector2(450, 150),
                                                                Vector2(100, 50));
     EntityId object5 = game->createEntity();
     PhysicsComponent *physicsComponent5 = new PhysicsComponent(object1,
                                                                BodyType::Dynamic,
-                                                               Vector2(450, 50),
+                                                               Vector2(450, 150),
                                                                50.0f);
 
 
@@ -42,7 +42,12 @@ void ExampleScene::initialize() {
     game->addComponent(object5, physicsComponent5);
 }
 
-void ExampleScene::update() {
 
-    characterComponent->update();
+
+void ExampleScene::fixedUpdate(const float &deltaTime) {
+    characterComponent->fixedUpdate(deltaTime);
+}
+
+void ExampleScene::update(const Input &inputSystem) {
+    characterComponent->update(inputSystem);
 }

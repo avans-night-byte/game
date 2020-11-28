@@ -46,43 +46,45 @@ void Game::gameLoop() {
     // Open Main Menu, this could be the game state
     unique_ptr<ExampleScene> exampleScene = nullptr;
 
-    float timeStep = 1.0f / 60.0f;
-    int32 velocityIterations = 6;
-    int32 positionIterations = 2;
-
-    const int updateFPS = 60;
-    const float deltaTime = 1.0f / updateFPS;
-
-    float elapsedTime = 0.0f;
-    float accumulator = 0.0f;
-
-    // TODO: Move
-    Uint32 currentTime = SDL_GetTicks();
 
     bool isDebuggingPhysics = false;
 
+    int32 velocityIterations = 6;
+    int32 positionIterations = 2;
+
+    float t = 0.0f;
+    float dt = 0.01f;
+
+    float currentTime = SDL_GetPerformanceCounter();
+    float accumulator = 0.0;
+
     // Gameloop
     while (true) {
-
-        const Uint32 newTime = SDL_GetTicks();
-        float frameTime = static_cast<float> (newTime - currentTime) / 250.0f;
-
-        if (frameTime > 0.25f)
-            frameTime = 0.25f;
-
-        currentTime = newTime;
-        accumulator += frameTime;
-
-        while (accumulator >= deltaTime) {
-            physicsAPI->update(deltaTime, velocityIterations, positionIterations);
-
-            elapsedTime += deltaTime;
-            accumulator -= deltaTime;
-        }
-
         // Poll input and keep track of lastInput
         Input i = engineInputAPI->getInput();
         debugLog(i);
+
+        /**   PHYSICS      */
+        float newTime  = SDL_GetPerformanceCounter();
+        float frameTime = newTime - currentTime;
+        if(frameTime > 0.25f)
+            frameTime = 0.25f;
+        currentTime = newTime;
+
+        accumulator += frameTime;
+
+        while(accumulator >= dt)
+        {
+            physicsAPI->update(dt, velocityIterations, positionIterations);
+            if(exampleScene)
+            {
+                exampleScene->fixedUpdate(dt);
+            }
+
+            t += dt;
+            accumulator -= dt;
+        }
+        /**  */
 
         if (i.keyMap.action == "1" || i.keyMap.action == "2" || i.keyMap.action == "3") {
             currentState = std::stoi(i.keyMap.action);
@@ -102,10 +104,9 @@ void Game::gameLoop() {
                 exampleScene = make_unique<ExampleScene>(engineRenderingAPI);
                 exampleScene->initialize();
             }
-            // TODO: Move
             SDL_SetRenderDrawColor(engineWindowAPI->getRenderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderClear(engineWindowAPI->getRenderer());
-            exampleScene->update();
+            exampleScene->update(i);
 
             physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
         }
@@ -115,7 +116,6 @@ void Game::gameLoop() {
             break;
         }
 
-        // TODO: Move
         SDL_RenderPresent(engineWindowAPI->getRenderer());
         SDL_RenderClear(engineWindowAPI->getRenderer());
     }

@@ -35,7 +35,7 @@ void RenderComponent::setColor(int red, int blue, int green) {
  */
 void RenderComponent::render() {
     //Render the texture
-    _engineRenderingApi.drawTexture(_textureId, position->x, position->y, 859, 840, 2, 0);
+    _engineRenderingApi.drawTexture(_textureId, *position->x, *position->y, 859, 840, 2, 0);
 }
 
 
