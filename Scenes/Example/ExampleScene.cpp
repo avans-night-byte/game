@@ -31,8 +31,8 @@ void ExampleScene::initialize() {
     EntityId object4 = game->createEntity();
     PhysicsComponent *physicsComponent4 = new PhysicsComponent(object4,
                                                                BodyType::Static,
-                                                               Vector2(500, 800),
-                                                               Vector2(600, 50));
+                                                               Vector2(0, 800),
+                                                               Vector2(10000, 50));
 
     // TODO: Create Entity class which stores all the components as smart pointers?
     game->addComponent(object1, physicsComponent1);

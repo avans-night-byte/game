@@ -11,6 +11,7 @@
 #include "./Scenes/Menu/MainMenu.cpp"
 #include "./Scenes/Example/ExampleScene.hpp"
 #include "./Scenes/Credits/Credits.hpp"
+#include "./Scenes/Level1/Level1.hpp";
 
 typedef signed int int32;
 
@@ -25,7 +26,7 @@ PhysicsAPI *physicsAPI;
 AudioAPI *audioApi;
 
 int currentState = 1;
-
+Level1* _level1;
 void Game::initialize() {
     Engine::initWindow(width, height);
     engineRenderingAPI = new EngineRenderingAPI(engine);
@@ -37,6 +38,8 @@ void Game::initialize() {
     // We should normally init when switching state.
     MainMenu::init(engineRenderingAPI, engineWindowAPI, audioApi);
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
+
+    _level1 = new Level1(*engineRenderingAPI);
 }
 
 /**
@@ -93,7 +96,8 @@ void Game::gameLoop() {
 
         // Temporary State
         if (currentState == 1) {
-            MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
+//            MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
+            _level1->render(*engineRenderingAPI);
         }
 
         if (currentState == 2) {
@@ -112,6 +116,7 @@ void Game::gameLoop() {
             physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
         }
 
+        physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
 
 
         SDL_RenderPresent(engineWindowAPI->getRenderer());
@@ -119,6 +124,7 @@ void Game::gameLoop() {
 
 
         if (i.keyMap.action == "QUIT") {
+            delete _level1;
             engineWindowAPI->closeWindow();
             break;
         }
