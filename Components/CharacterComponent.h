@@ -19,10 +19,11 @@ class CharacterComponent : public Component {
     };
 
 private:
-    MovementDirection currentMovementDirection;
+    std::map<MovementDirection, bool> currentMovementDirection;
     Spritesheet *spriteSheet;
     unique_ptr<WorldPositionComponent> worldPosition;
     unique_ptr<PhysicsComponent> physicsComponent;
+    void resetMovement();
 
 public:
     explicit CharacterComponent(EntityId id,
@@ -30,6 +31,7 @@ public:
                                 const Vector2 &position) : Component(id) {
         Game *game = Game::getInstance();
 
+        this->resetMovement();
         physicsComponent = make_unique<PhysicsComponent>(id,
                                                          BodyType::Dynamic,
                                                          Vector2(750, 350),
@@ -48,7 +50,6 @@ public:
 
         const RPosition &rPosition = physicsComponent->getRPosition();
         worldPosition->setLocation(rPosition.X, rPosition.Y);
-
 
         spriteSheet->select_sprite(0, 0);
     }

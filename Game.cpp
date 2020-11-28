@@ -53,9 +53,9 @@ void Game::gameLoop() {
     int32 positionIterations = 2;
 
     float t = 0.0f;
-    float dt = 0.01f;
+    double dt = 1 / 60.0;
 
-    float currentTime = SDL_GetPerformanceCounter();
+    auto currentTime = std::chrono::high_resolution_clock::now();
     float accumulator = 0.0;
 
     // Gameloop
@@ -65,12 +65,13 @@ void Game::gameLoop() {
         debugLog(i);
 
         /**   PHYSICS      */
-        float newTime  = SDL_GetPerformanceCounter();
-        float frameTime = newTime - currentTime;
-        if(frameTime > 0.25f)
-            frameTime = 0.25f;
-        currentTime = newTime;
+        auto newTime  = std::chrono::high_resolution_clock::now();
 
+        // Gets the time in microseconds and converts them into seconds.
+        float frameTime = std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 100000.0f;
+
+
+        currentTime = newTime;
         accumulator += frameTime;
 
         while(accumulator >= dt)
@@ -111,13 +112,17 @@ void Game::gameLoop() {
             physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
         }
 
+
+
+        SDL_RenderPresent(engineWindowAPI->getRenderer());
+        SDL_RenderClear(engineWindowAPI->getRenderer());
+
+
         if (i.keyMap.action == "QUIT") {
             engineWindowAPI->closeWindow();
             break;
         }
 
-        SDL_RenderPresent(engineWindowAPI->getRenderer());
-        SDL_RenderClear(engineWindowAPI->getRenderer());
     }
 }
 
