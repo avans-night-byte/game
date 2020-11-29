@@ -39,6 +39,9 @@ public:
     static Game *getInstance();
     static void SetCurrentState(int state);
 
+    // TODO: Remove this before after sprint
+    static int &GameState();
+
 public:
     static void initialize();
 
@@ -61,4 +64,5 @@ public:
 
     const PhysicsAPI *getPhysicsAPI();
 
+    static void setCurrentState(int state);
 };
