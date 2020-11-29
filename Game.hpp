@@ -60,5 +60,7 @@ public:
     template<typename T>
     System<T> getComponents(EntityId id);
 
-    const unique_ptr<PhysicsAPI>& getPhysicsAPI();
+    const PhysicsAPI *getPhysicsAPI();
+
+    static void setCurrentState(int state);
 };

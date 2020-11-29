@@ -11,6 +11,7 @@
 #include "./Scenes/Menu/MainMenu.cpp"
 #include "./Scenes/Example/ExampleScene.hpp"
 #include "./Scenes/Credits/Credits.hpp"
+#include "./Scenes/Level1/Level1.hpp"
 
 typedef signed int int32;
 
@@ -26,13 +27,17 @@ AudioAPI *audioApi;
 
 int currentState = 1;
 
-void Game::initialize() {
+
+void Game::initialize()
+{
     Engine::initWindow(width, height);
     engineRenderingAPI = new EngineRenderingAPI(engine);
     engineInputAPI = new EngineInputAPI();
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
     physicsAPI = make_unique<EnginePhysicsAPI>();
+
+    
 
     // We should normally init when switching state.
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
@@ -41,12 +46,17 @@ void Game::initialize() {
 /**
  * Gameloop
  **/
-void Game::gameLoop() {
+void Game::gameLoop()
+{
     // Open Main Menu, this could be the game state
     unique_ptr<ExampleScene> exampleScene = nullptr;
+
     unique_ptr<MainMenu> mainMenu = make_unique<MainMenu>(engineRenderingAPI, engineWindowAPI, audioApi);
 
-    float timeStep = 1.0f / 60.0f;
+    unique_ptr<Level1> level1 = nullptr;
+
+    bool isDebuggingPhysics = false;
+
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
 
@@ -62,19 +72,28 @@ void Game::gameLoop() {
     bool isDebuggingPhysics = false;
 
     // Gameloop
-    while (true) {
+    while (true)
+    {
+        // Poll input and keep track of lastInput
+        Input i = engineInputAPI->getInput();
+        debugLog(i);
 
-        const Uint32 newTime = SDL_GetTicks();
-        float frameTime = static_cast<float> (newTime - currentTime) / 250.0f;
+        /**   PHYSICS      */
+        auto newTime = std::chrono::high_resolution_clock::now();
 
-        if (frameTime > 0.25f)
-            frameTime = 0.25f;
+        // Gets the time in microseconds and converts them into seconds.
+        float frameTime = std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 100000.0f;
 
         currentTime = newTime;
         accumulator += frameTime;
 
-        while (accumulator >= deltaTime) {
-            physicsAPI->update(deltaTime, velocityIterations, positionIterations);
+        while (accumulator >= dt)
+        {
+            physicsAPI->update(dt, velocityIterations, positionIterations);
+            if (exampleScene)
+            {
+                exampleScene->fixedUpdate(dt);
+            }
 
             elapsedTime += deltaTime;
             accumulator -= deltaTime;
@@ -84,23 +103,27 @@ void Game::gameLoop() {
         Input i = engineInputAPI->getInput();
         debugLog(i);
 
-        if (i.keyMap.action == "1" || i.keyMap.action == "2" || i.keyMap.action == "3") {
-            currentState = std::stoi(i.keyMap.action);
+        if (i.keyMap.action == "1" || i.keyMap.action == "2" || i.keyMap.action == "3" || i.keyMap.action == "4")
+        {
+            setCurrentState(std::stoi(i.keyMap.action));
         }
 
         // Temporary State
-        if (currentState == 1) {
+        if (currentState == 1)
+        {
             mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
-//            MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
         }
 
-        if (currentState == 2) {
+        if (currentState == 2)
+        {
             Credits::render(engineRenderingAPI, engineWindowAPI, i);
         }
 
-        if (currentState == 3) {
-            if (exampleScene == nullptr) {
-                exampleScene = make_unique<ExampleScene>();
+        if (currentState == 3)
+        {
+            if (exampleScene == nullptr)
+            {
+                exampleScene = make_unique<ExampleScene>(engineRenderingAPI);
                 exampleScene->initialize();
             }
             // TODO: Move
@@ -110,14 +133,27 @@ void Game::gameLoop() {
             physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
         }
 
-        if (i.keyMap.action == "QUIT") {
+        if (currentState == 4)
+        {
+            if (level1 == nullptr)
+            {
+                level1 = make_unique<Level1>(*engineRenderingAPI);
+            }
+            level1->render(*engineRenderingAPI);
+            level1->update(i);
+            level1->fixedUpdate(dt);
+        }
+
+        physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
+
+        SDL_RenderPresent(engineWindowAPI->getRenderer());
+        SDL_RenderClear(engineWindowAPI->getRenderer());
+
+        if (currentState == 0)
+        {
             engineWindowAPI->closeWindow();
             break;
         }
-
-        // TODO: Move
-        SDL_RenderPresent(engineWindowAPI->getRenderer());
-        SDL_RenderClear(engineWindowAPI->getRenderer());
     }
 }
 
@@ -128,8 +164,10 @@ void Game::gameLoop() {
  * 
  * @param Input An Input struct
  **/
-void Game::debugLog(Input i) {
-    if (i.device != Input::NONE) {
+void Game::debugLog(Input i)
+{
+    if (i.device != Input::NONE)
+    {
         std::cout << std::endl;
         std::cout << "device: " << i.device << std::endl;
         std::cout << "code: " << i.keyMap.code << std::endl;
@@ -149,7 +187,8 @@ void Game::debugLog(Input i) {
  *
  * @return EntityId id - The id of the newly created entity.
  */
-EntityId Game::createEntity() {
+EntityId Game::createEntity()
+{
     auto it = entities.begin();
     std::advance(it, entities.size());
     EntityId next = (*it) + 1;
@@ -163,11 +202,12 @@ EntityId Game::createEntity() {
  * @param id
  * @param comp
  */
-void Game::addComponent(EntityId id, Component *comp) {
+void Game::addComponent(EntityId id, Component *comp)
+{
     components.components.insert(std::pair<EntityId, Component *>(id, comp));
 }
 
-template<typename T>
+template <typename T>
 
 /**
  * Gets a single component of specified type.
@@ -175,10 +215,13 @@ template<typename T>
  * @param id
  * @return
  */
-T *Game::getComponent(EntityId id) {
-    for (auto &component : components.components) {
-        if ((component.first == id) && dynamic_cast<const T *>(component.second) != nullptr) {
-            return (T *) component.second;
+T *Game::getComponent(EntityId id)
+{
+    for (auto &component : components.components)
+    {
+        if ((component.first == id) && dynamic_cast<const T *>(component.second) != nullptr)
+        {
+            return (T *)component.second;
         }
     }
 
@@ -190,11 +233,14 @@ T *Game::getComponent(EntityId id) {
  * @param id
  * @return
  */
-System<Component> Game::getComponents(EntityId id) {
+System<Component> Game::getComponents(EntityId id)
+{
     System<Component> returnComps;
 
-    for (auto &component : components.components) {
-        if (component.first == id) {
+    for (auto &component : components.components)
+    {
+        if (component.first == id)
+        {
             returnComps.components.insert(std::pair<EntityId, Component *>(id, component.second));
         }
     }
@@ -208,13 +254,16 @@ System<Component> Game::getComponents(EntityId id) {
  * @param id
  * @return
  */
-template<typename T>
-System<T> Game::getComponents(EntityId id) {
+template <typename T>
+System<T> Game::getComponents(EntityId id)
+{
     System<Component> returnComps;
 
-    for (auto &it : components.components) {
+    for (auto &it : components.components)
+    {
         T *component = dynamic_cast<const T *>(it.second);
-        if (it.first == id && component != nullptr) {
+        if (it.first == id && component != nullptr)
+        {
             returnComps.components.insert(std::pair<EntityId, T *>(id, component));
         }
     }
@@ -233,20 +282,24 @@ std::mutex Game::mutex;
  *      and then we make sure again that the variable is null and then we
  *      set the value.
  */
-Game *Game::getInstance() {
+Game *Game::getInstance()
+{
     std::lock_guard<std::mutex> lock(mutex);
-    if (instance == nullptr) {
+    if (instance == nullptr)
+    {
         instance = new Game();
     }
 
     return instance;
 }
 
-const unique_ptr<PhysicsAPI> &Game::getPhysicsAPI() {
+const PhysicsAPI *Game::getPhysicsAPI()
+{
     return physicsAPI;
 }
 
-int &Game::GameState() {
-    return currentState;
+void Game::setCurrentState(int state)
+{
+    currentState = state;
 }
 

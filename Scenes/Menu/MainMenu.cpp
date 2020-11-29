@@ -2,29 +2,24 @@
 
 #include "./MainMenu.hpp"
 
+MainMenu::MainMenu(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi)
+{
+  // Load textures
+  engineRenderingAPI->loadTexture("../../Resources/Sprites/background.png", "background");
+  engineRenderingAPI->loadTexture("../../Resources/Sprites/menu_bar.png", "menu_bar");
 
-//void MainMenu::init()
-//{
-//
-//}
+  // Background music
+  AudioType s = sound;
+  std::string path = "../../Resources/Sounds/background.wav";
+  audioApi->playFromPath(path, s);
 
-MainMenu::MainMenu(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi) {
-    // Load textures
-    engineRenderingAPI->loadTexture("../../Resources/Sprites/background.png", "background");
-    engineRenderingAPI->loadTexture("../../Resources/Sprites/menu_bar.png", "menu_bar");
+  // Load sprites
+  characterSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/character.png", "spritesheet_char", 8, 11, 100, 105);
+  buttonSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/main_menu_buttons.png", "spritesheet_buttons", 2, 3, 779, 112);
+  settingsSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/settings.png", "spritesheet_settings", 0, 4, 232, 122);
 
-    // Background music
-    AudioType s = sound;
-    std::string path = "../../Resources/Sounds/background.wav";
-    audioApi->playFromPath(path, s);
-
-    // Load sprites
-    characterSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/character.png", "spritesheet_char", 8, 11, 100, 105);
-    buttonSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/main_menu_buttons.png", "spritesheet_buttons", 2, 3, 779, 112);
-    settingsSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/settings.png", "spritesheet_settings", 0, 4, 232, 122);
-
-    // Init character state
-    characterSpriteSheet->select_sprite(0, 0);
+  // Init character state
+  characterSpriteSheet->select_sprite(0, 0);
 }
 
 
@@ -57,43 +52,57 @@ void MainMenu::render(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *e
   // Draw buttons
   engineRenderingAPI->drawTexture("menu_bar", 60, -45, 990, 1170, 1, 1);
 
-  // Play Button
+  // Menu buttons
   buttonSpriteSheet->select_sprite(0, 0);
   buttonSpriteSheet->draw_selected_sprite(menuButtonX, playButtonY);
-
   buttonSpriteSheet->select_sprite(0, 1);
   buttonSpriteSheet->draw_selected_sprite(menuButtonX, helpButtonY);
-
   buttonSpriteSheet->select_sprite(0, 2);
   buttonSpriteSheet->draw_selected_sprite(menuButtonX, creditsButtonY);
-
   buttonSpriteSheet->select_sprite(1, 0);
   buttonSpriteSheet->draw_selected_sprite(menuButtonX, exitButtonY);
 
+  // Settings buttons
   settingsSpriteSheet->select_sprite(0, 1);
-  settingsSpriteSheet->draw_selected_sprite(settingFadeX, settingsFadeY);
+  settingsSpriteSheet->draw_selected_sprite(settingsFadeX, settingsFadeY);
   settingsSpriteSheet->select_sprite(0, 3);
-  settingsSpriteSheet->draw_selected_sprite(1920 - 157, 1080 - 140);
+  settingsSpriteSheet->draw_selected_sprite(settingsBarX, settingsButtonY);
   settingsSpriteSheet->select_sprite(0, 0);
-  settingsSpriteSheet->draw_selected_sprite(1920 - 215, 1080 - 130);
+  settingsSpriteSheet->draw_selected_sprite(githubButtonX, settingsButtonY + 10);
   settingsSpriteSheet->select_sprite(0, 2);
-  settingsSpriteSheet->draw_selected_sprite(1920 - 145, 1080 - 147);
+  settingsSpriteSheet->draw_selected_sprite(settingsButtonX, settingsButtonY - 10);
 
   // Click on menu buttons
   if (i.keyMap.action == "CLICK_LEFT")
   {
-    clicked(i.x, i.y);
+    if (clicked(i, menuButtonX, playButtonY))
+    {
+      std::cout << "Clicked PLAY button" << std::endl;
+      Game::setCurrentState(4);
+    }
+
+    if (clicked(i, menuButtonX, helpButtonY))
+    {
+      std::cout << "Clicked HELP button" << std::endl;
+    }
+
+    if (clicked(i, menuButtonX, creditsButtonY))
+    {
+      std::cout << "Clicked CREDITS button" << std::endl;
+      Game::setCurrentState(2);
+    }
+
+    if (clicked(i, menuButtonX, exitButtonY))
+    {
+      std::cout << "Clicked EXIT button" << std::endl;
+      Game::setCurrentState(0);
+    }
   }
 }
 
-void MainMenu::clicked(int x, int y) const
+bool MainMenu::clicked(Input i, int x, int y) const
 {
-  std::cout << "CLICKED!" << std::endl;
-  if (x >= menuButtonX && y >= playButtonY 
-  && x <= (menuButtonX + menuButtonWidth) && y <= (playButtonY + menuButtonHeight))
-  {
-    std::cout << "Clicked PLAY button" << std::endl;
-  }
+  return (i.x >= x && i.y >= y && i.x <= (x + menuButtonWidth) && i.y <= (y + menuButtonHeight));
 }
 
 
