@@ -8,12 +8,15 @@ LevelCharlie::~LevelCharlie() {
     delete _level;
 }
 
-LevelCharlie::LevelCharlie(EngineRenderingAPI& engineRenderingApi) {
+LevelCharlie::LevelCharlie(CharacterComponent& characterComponent,
+                           EngineRenderingAPI& engineRenderingApi,
+                           PhysicsAPI& enginePhysicsApi) : characterComponent(characterComponent) {
+
     const char *levelName = "../../Resources/LevelCharlie.tmx";
     const char *spritesheetName = "../../Resources/Sprites/Overworld.png";
     const char *spriteId = "Overworld";
 
-    _level = new Level( levelName, spritesheetName, spriteId, engineRenderingApi);
+    _level = new Level( levelName, spritesheetName, spriteId, engineRenderingApi, *enginePhysicsApi.getPhysicsEngineAdapter());
 
 
     Game *game = Game::getInstance();
@@ -25,21 +28,15 @@ LevelCharlie::LevelCharlie(EngineRenderingAPI& engineRenderingApi) {
                                                    Vector2(10, 10));
 
     game->addComponent(object1, physicsComponent1);
-
-    EntityId characterEntityId;
-    characterEntityId = game->createEntity();
-    characterComponent = make_unique<CharacterComponent>(characterEntityId, &engineRenderingApi, Vector2(100, 250));
-
-    game->addComponent(characterEntityId, characterComponent.get());
 }
 
 
 void LevelCharlie::fixedUpdate(const float &deltaTime) {
-    characterComponent->fixedUpdate(deltaTime);
+    characterComponent.fixedUpdate(deltaTime);
 }
 
 void LevelCharlie::update(const Input &inputSystem) {
-    characterComponent->update(inputSystem);
+    characterComponent.update(inputSystem);
 }
 
 

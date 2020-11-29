@@ -110,9 +110,9 @@ void Game::gameLoop() {
             {
                 level1->fixedUpdate(dt);
             }
-            if(level1)
+            if(levelCharlie)
             {
-                level1->fixedUpdate(dt);
+                levelCharlie->fixedUpdate(dt);
             }
 
             t += dt;
@@ -157,25 +157,38 @@ void Game::gameLoop() {
         {
             if(levelCharlie == nullptr)
             {
-                levelCharlie = make_unique<LevelCharlie>(*engineRenderingAPI);
+                levelCharlie = make_unique<LevelCharlie>(*characterComponent, *engineRenderingAPI, *physicsAPI);
             }
 
             levelCharlie->render(*engineRenderingAPI);
             levelCharlie->update(i);
+        }
+        else{
+            if(levelCharlie)
+            {
+                levelCharlie = nullptr;
+            }
         }
 
         if (currentState == 4)
         {
             if (level1 == nullptr)
             {
-                level1 = make_unique<Level1>(*engineRenderingAPI);
+                level1 = make_unique<Level1>(*characterComponent, *engineRenderingAPI, *physicsAPI);
             }
             level1->render(*engineRenderingAPI);
             level1->update(i);
-            level1->fixedUpdate(dt);
+        }
+        else
+        {
+            if(level1)
+            {
+                level1 = nullptr;
+            }
         }
 
-        physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
+        if(isDebuggingPhysics)
+            physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
 
         SDL_RenderPresent(engineWindowAPI->getRenderer());
         SDL_RenderClear(engineWindowAPI->getRenderer());
@@ -184,6 +197,15 @@ void Game::gameLoop() {
         {
             engineWindowAPI->closeWindow();
             break;
+        }
+
+        if(i.keyMap.code == "]")
+        {
+            isDebuggingPhysics = true;
+        }
+        else if(i.keyMap.code == "\\")
+        {
+            isDebuggingPhysics = false;
         }
     }
 }

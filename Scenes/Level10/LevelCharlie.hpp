@@ -7,9 +7,10 @@
 class LevelCharlie {
 private:
     Level* _level;
-    unique_ptr<CharacterComponent> characterComponent;
+    CharacterComponent& characterComponent;
+
 public:
-    LevelCharlie(EngineRenderingAPI& engineRenderingApi);
+    LevelCharlie(CharacterComponent& characterComponent, EngineRenderingAPI& engineRenderingApi, PhysicsAPI& enginePhysicsApi);
     ~LevelCharlie();
     void render(EngineRenderingAPI& engineRenderingAPI);
 

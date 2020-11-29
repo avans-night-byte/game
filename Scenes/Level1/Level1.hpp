@@ -7,9 +7,10 @@
 class Level1 {
 private:
     Level* _level;
-    unique_ptr<CharacterComponent> characterComponent;
+    CharacterComponent& characterComponent;
+
 public:
-    Level1(EngineRenderingAPI& engineRenderingApi);
+    explicit Level1(CharacterComponent& characterComponent, EngineRenderingAPI& engineRenderingApi, PhysicsAPI& enginePhysicsApi);
     ~Level1();
     void render(EngineRenderingAPI& engineRenderingAPI);
 
