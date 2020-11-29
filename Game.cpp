@@ -11,7 +11,7 @@
 #include "./Scenes/Menu/MainMenu.cpp"
 #include "./Scenes/Example/ExampleScene.hpp"
 #include "./Scenes/Credits/Credits.hpp"
-#include "./Scenes/Level1/Level1.hpp";
+#include "./Scenes/Level1/Level1.hpp"
 
 typedef signed int int32;
 
@@ -257,5 +257,9 @@ Game *Game::getInstance() {
 
 const PhysicsAPI *Game::getPhysicsAPI() {
     return physicsAPI;
+}
+
+void Game::SetCurrentState(int state) {
+    currentState = state;
 }
 
