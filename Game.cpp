@@ -11,6 +11,7 @@
 #include "./Scenes/Menu/MainMenu.cpp"
 #include "./Scenes/Example/ExampleScene.hpp"
 #include "./Scenes/Credits/Credits.hpp"
+#include "./Scenes/Level1/Level1.hpp";
 
 typedef signed int int32;
 
@@ -21,22 +22,24 @@ Engine *engine;
 EngineInputAPI *engineInputAPI;
 EngineWindowAPI *engineWindowAPI;
 EngineRenderingAPI *engineRenderingAPI;
-unique_ptr<PhysicsAPI> physicsAPI;
+PhysicsAPI *physicsAPI;
 AudioAPI *audioApi;
 
 int currentState = 1;
-
+Level1* _level1;
 void Game::initialize() {
     Engine::initWindow(width, height);
     engineRenderingAPI = new EngineRenderingAPI(engine);
     engineInputAPI = new EngineInputAPI();
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
-    physicsAPI = make_unique<EnginePhysicsAPI>();
+    physicsAPI = new EnginePhysicsAPI();
 
     // We should normally init when switching state.
     MainMenu::init(engineRenderingAPI, engineWindowAPI, audioApi);
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
+
+    _level1 = new Level1(*engineRenderingAPI);
 }
 
 /**
@@ -46,43 +49,46 @@ void Game::gameLoop() {
     // Open Main Menu, this could be the game state
     unique_ptr<ExampleScene> exampleScene = nullptr;
 
-    float timeStep = 1.0f / 60.0f;
-    int32 velocityIterations = 6;
-    int32 positionIterations = 2;
-
-    const int updateFPS = 60;
-    const float deltaTime = 1.0f / updateFPS;
-
-    float elapsedTime = 0.0f;
-    float accumulator = 0.0f;
-
-    // TODO: Move
-    Uint32 currentTime = SDL_GetTicks();
 
     bool isDebuggingPhysics = false;
 
+    int32 velocityIterations = 6;
+    int32 positionIterations = 2;
+
+    float t = 0.0f;
+    double dt = 1 / 60.0;
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    float accumulator = 0.0;
+
     // Gameloop
     while (true) {
+        // Poll input and keep track of lastInput
+        Input i = engineInputAPI->getInput();
+        debugLog(i);
 
-        const Uint32 newTime = SDL_GetTicks();
-        float frameTime = static_cast<float> (newTime - currentTime) / 250.0f;
+        /**   PHYSICS      */
+        auto newTime  = std::chrono::high_resolution_clock::now();
 
-        if (frameTime > 0.25f)
-            frameTime = 0.25f;
+        // Gets the time in microseconds and converts them into seconds.
+        float frameTime = std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 100000.0f;
+
 
         currentTime = newTime;
         accumulator += frameTime;
 
-        while (accumulator >= deltaTime) {
-            physicsAPI->update(deltaTime, velocityIterations, positionIterations);
+        while(accumulator >= dt)
+        {
+            physicsAPI->update(dt, velocityIterations, positionIterations);
+            if(exampleScene)
+            {
+                exampleScene->fixedUpdate(dt);
+            }
 
-            elapsedTime += deltaTime;
-            accumulator -= deltaTime;
+            t += dt;
+            accumulator -= dt;
         }
-
-        // Poll input and keep track of lastInput
-        Input i = engineInputAPI->getInput();
-        debugLog(i);
+        /**  */
 
         if (i.keyMap.action == "1" || i.keyMap.action == "2" || i.keyMap.action == "3") {
             currentState = std::stoi(i.keyMap.action);
@@ -90,7 +96,10 @@ void Game::gameLoop() {
 
         // Temporary State
         if (currentState == 1) {
-            MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
+//            MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
+            _level1->render(*engineRenderingAPI);
+            _level1->update(i);
+            _level1->fixedUpdate(dt);
         }
 
         if (currentState == 2) {
@@ -99,24 +108,29 @@ void Game::gameLoop() {
 
         if (currentState == 3) {
             if (exampleScene == nullptr) {
-                exampleScene = make_unique<ExampleScene>();
+                exampleScene = make_unique<ExampleScene>(engineRenderingAPI);
                 exampleScene->initialize();
             }
-            // TODO: Move
             SDL_SetRenderDrawColor(engineWindowAPI->getRenderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderClear(engineWindowAPI->getRenderer());
+            exampleScene->update(i);
 
             physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
         }
 
+        physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
+
+
+        SDL_RenderPresent(engineWindowAPI->getRenderer());
+        SDL_RenderClear(engineWindowAPI->getRenderer());
+
+
         if (i.keyMap.action == "QUIT") {
+            delete _level1;
             engineWindowAPI->closeWindow();
             break;
         }
 
-        // TODO: Move
-        SDL_RenderPresent(engineWindowAPI->getRenderer());
-        SDL_RenderClear(engineWindowAPI->getRenderer());
     }
 }
 
@@ -241,7 +255,7 @@ Game *Game::getInstance() {
     return instance;
 }
 
-const unique_ptr<PhysicsAPI> &Game::getPhysicsAPI() {
+const PhysicsAPI *Game::getPhysicsAPI() {
     return physicsAPI;
 }
 

@@ -4,11 +4,12 @@
 
 class WorldPositionComponent : public Component {
 public:
-    int x = 0, y = 0;
+    const float *x = 0;
+    const float *y = 0;
 public:
     void update() override;
 
-    void SetLocation(int x, int y);
+    void setLocation(const float &x, const float &y);
 
     WorldPositionComponent(EntityId id) : Component(id) {}
 };
