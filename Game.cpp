@@ -35,7 +35,6 @@ void Game::initialize() {
     physicsAPI = make_unique<EnginePhysicsAPI>();
 
     // We should normally init when switching state.
-    MainMenu::init(engineRenderingAPI, engineWindowAPI, audioApi);
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
 }
 
@@ -45,6 +44,7 @@ void Game::initialize() {
 void Game::gameLoop() {
     // Open Main Menu, this could be the game state
     unique_ptr<ExampleScene> exampleScene = nullptr;
+    unique_ptr<MainMenu> mainMenu = make_unique<MainMenu>(engineRenderingAPI, engineWindowAPI, audioApi);
 
     float timeStep = 1.0f / 60.0f;
     int32 velocityIterations = 6;
@@ -90,7 +90,8 @@ void Game::gameLoop() {
 
         // Temporary State
         if (currentState == 1) {
-            MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
+            mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
+//            MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
         }
 
         if (currentState == 2) {
@@ -243,5 +244,9 @@ Game *Game::getInstance() {
 
 const unique_ptr<PhysicsAPI> &Game::getPhysicsAPI() {
     return physicsAPI;
+}
+
+int &Game::GameState() {
+    return currentState;
 }
 

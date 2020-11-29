@@ -2,43 +2,31 @@
 
 #include "./MainMenu.hpp"
 
-Spritesheet *characterSpriteSheet;
-Spritesheet *buttonSpriteSheet;
-Spritesheet *settingsSpriteSheet;
 
-// Coords
-int menuButtonWidth = 779;
-int menuButtonHeight = 108;
-int menuButtonX = 100;
-int playButtonY = 26;
-int helpButtonY = 152;
-int creditsButtonY = 278;
-int exitButtonY = 704;
-// Draw settings buttons
-int settingFadeX = 1680;
-int settingsFadeY = 925;
-int settingsBarX = 1760;
-int settingsBarY = 940;
+//void MainMenu::init()
+//{
+//
+//}
 
-void MainMenu::init(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi)
-{
-  // Load textures
-  engineRenderingAPI->loadTexture("../../Resources/Sprites/background.png", "background");
-  engineRenderingAPI->loadTexture("../../Resources/Sprites/menu_bar.png", "menu_bar");
+MainMenu::MainMenu(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi) {
+    // Load textures
+    engineRenderingAPI->loadTexture("../../Resources/Sprites/background.png", "background");
+    engineRenderingAPI->loadTexture("../../Resources/Sprites/menu_bar.png", "menu_bar");
 
-  // Background music
-  AudioType s = sound;
-  std::string path = "../../Resources/Sounds/background.wav";
-  audioApi->playFromPath(path, s);
+    // Background music
+    AudioType s = sound;
+    std::string path = "../../Resources/Sounds/background.wav";
+    audioApi->playFromPath(path, s);
 
-  // Load sprites
-  characterSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/character.png", "spritesheet_char", 8, 11, 100, 105);
-  buttonSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/main_menu_buttons.png", "spritesheet_buttons", 2, 3, 914, 226);
-  settingsSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/settings.png", "spritesheet_settings", 0, 4, 232, 122);
+    // Load sprites
+    characterSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/character.png", "spritesheet_char", 8, 11, 100, 105);
+    buttonSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/main_menu_buttons.png", "spritesheet_buttons", 2, 3, 779, 112);
+    settingsSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/settings.png", "spritesheet_settings", 0, 4, 232, 122);
 
-  // Init character state
-  characterSpriteSheet->select_sprite(0, 0);
+    // Init character state
+    characterSpriteSheet->select_sprite(0, 0);
 }
+
 
 void MainMenu::render(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI, Input i)
 {
@@ -98,7 +86,7 @@ void MainMenu::render(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *e
   }
 }
 
-void MainMenu::clicked(int x, int y)
+void MainMenu::clicked(int x, int y) const
 {
   std::cout << "CLICKED!" << std::endl;
   if (x >= menuButtonX && y >= playButtonY 
@@ -107,3 +95,5 @@ void MainMenu::clicked(int x, int y)
     std::cout << "Clicked PLAY button" << std::endl;
   }
 }
+
+

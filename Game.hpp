@@ -37,6 +37,9 @@ public:
 
     static Game *getInstance();
 
+    // TODO: Remove this before after sprint
+    static int &GameState();
+
 public:
     static void initialize();
 
