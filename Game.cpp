@@ -26,8 +26,10 @@ PhysicsAPI *physicsAPI;
 AudioAPI *audioApi;
 
 int currentState = 1;
-Level1* _level1;
-void Game::initialize() {
+
+void Game::initialize()
+{
+
     Engine::initWindow(width, height);
     engineRenderingAPI = new EngineRenderingAPI(engine);
     engineInputAPI = new EngineInputAPI();
@@ -35,20 +37,24 @@ void Game::initialize() {
     audioApi = new AudioAPI();
     physicsAPI = new EnginePhysicsAPI();
 
+    
+
     // We should normally init when switching state.
-    MainMenu::init(engineRenderingAPI, engineWindowAPI, audioApi);
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
 
-    _level1 = new Level1(*engineRenderingAPI);
 }
 
 /**
  * Gameloop
  **/
-void Game::gameLoop() {
+void Game::gameLoop()
+{
     // Open Main Menu, this could be the game state
     unique_ptr<ExampleScene> exampleScene = nullptr;
+  
+    unique_ptr<MainMenu> mainMenu = make_unique<MainMenu>(engineRenderingAPI, engineWindowAPI, audioApi);
 
+    unique_ptr<Level1> level1 = nullptr;
 
     bool isDebuggingPhysics = false;
 
@@ -62,25 +68,25 @@ void Game::gameLoop() {
     float accumulator = 0.0;
 
     // Gameloop
-    while (true) {
+    while (true)
+    {
         // Poll input and keep track of lastInput
         Input i = engineInputAPI->getInput();
         debugLog(i);
 
         /**   PHYSICS      */
-        auto newTime  = std::chrono::high_resolution_clock::now();
+        auto newTime = std::chrono::high_resolution_clock::now();
 
         // Gets the time in microseconds and converts them into seconds.
         float frameTime = std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 100000.0f;
 
-
         currentTime = newTime;
         accumulator += frameTime;
-
-        while(accumulator >= dt)
+      
+        while (accumulator >= dt)
         {
             physicsAPI->update(dt, velocityIterations, positionIterations);
-            if(exampleScene)
+            if (exampleScene)
             {
                 exampleScene->fixedUpdate(dt);
             }
@@ -90,24 +96,26 @@ void Game::gameLoop() {
         }
         /**  */
 
-        if (i.keyMap.action == "1" || i.keyMap.action == "2" || i.keyMap.action == "3") {
-            currentState = std::stoi(i.keyMap.action);
+        if (i.keyMap.action == "1" || i.keyMap.action == "2" || i.keyMap.action == "3" || i.keyMap.action == "4")
+        {
+            setCurrentState(std::stoi(i.keyMap.action));
         }
 
         // Temporary State
-        if (currentState == 1) {
-//            MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
-            _level1->render(*engineRenderingAPI);
-            _level1->update(i);
-            _level1->fixedUpdate(dt);
+        if (currentState == 1)
+        {
+            mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
         }
 
-        if (currentState == 2) {
+        if (currentState == 2)
+        {
             Credits::render(engineRenderingAPI, engineWindowAPI, i);
         }
 
-        if (currentState == 3) {
-            if (exampleScene == nullptr) {
+        if (currentState == 3)
+        {
+            if (exampleScene == nullptr)
+            {
                 exampleScene = make_unique<ExampleScene>(engineRenderingAPI);
                 exampleScene->initialize();
             }
@@ -118,19 +126,27 @@ void Game::gameLoop() {
             physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
         }
 
-        physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
+        if (currentState == 4)
+        {
+            if (level1 == nullptr)
+            {
+                level1 = make_unique<Level1>(*engineRenderingAPI);
+            }
+            level1->render(*engineRenderingAPI);
+            level1->update(i);
+            level1->fixedUpdate(dt);
+        }
 
+        physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
 
         SDL_RenderPresent(engineWindowAPI->getRenderer());
         SDL_RenderClear(engineWindowAPI->getRenderer());
 
-
-        if (i.keyMap.action == "QUIT") {
-            delete _level1;
+        if (currentState == 0)
+        {
             engineWindowAPI->closeWindow();
             break;
         }
-
     }
 }
 
@@ -141,8 +157,10 @@ void Game::gameLoop() {
  * 
  * @param Input An Input struct
  **/
-void Game::debugLog(Input i) {
-    if (i.device != Input::NONE) {
+void Game::debugLog(Input i)
+{
+    if (i.device != Input::NONE)
+    {
         std::cout << std::endl;
         std::cout << "device: " << i.device << std::endl;
         std::cout << "code: " << i.keyMap.code << std::endl;
@@ -162,7 +180,8 @@ void Game::debugLog(Input i) {
  *
  * @return EntityId id - The id of the newly created entity.
  */
-EntityId Game::createEntity() {
+EntityId Game::createEntity()
+{
     auto it = entities.begin();
     std::advance(it, entities.size());
     EntityId next = (*it) + 1;
@@ -176,11 +195,12 @@ EntityId Game::createEntity() {
  * @param id
  * @param comp
  */
-void Game::addComponent(EntityId id, Component *comp) {
+void Game::addComponent(EntityId id, Component *comp)
+{
     components.components.insert(std::pair<EntityId, Component *>(id, comp));
 }
 
-template<typename T>
+template <typename T>
 
 /**
  * Gets a single component of specified type.
@@ -188,10 +208,13 @@ template<typename T>
  * @param id
  * @return
  */
-T *Game::getComponent(EntityId id) {
-    for (auto &component : components.components) {
-        if ((component.first == id) && dynamic_cast<const T *>(component.second) != nullptr) {
-            return (T *) component.second;
+T *Game::getComponent(EntityId id)
+{
+    for (auto &component : components.components)
+    {
+        if ((component.first == id) && dynamic_cast<const T *>(component.second) != nullptr)
+        {
+            return (T *)component.second;
         }
     }
 
@@ -203,11 +226,14 @@ T *Game::getComponent(EntityId id) {
  * @param id
  * @return
  */
-System<Component> Game::getComponents(EntityId id) {
+System<Component> Game::getComponents(EntityId id)
+{
     System<Component> returnComps;
 
-    for (auto &component : components.components) {
-        if (component.first == id) {
+    for (auto &component : components.components)
+    {
+        if (component.first == id)
+        {
             returnComps.components.insert(std::pair<EntityId, Component *>(id, component.second));
         }
     }
@@ -221,13 +247,16 @@ System<Component> Game::getComponents(EntityId id) {
  * @param id
  * @return
  */
-template<typename T>
-System<T> Game::getComponents(EntityId id) {
+template <typename T>
+System<T> Game::getComponents(EntityId id)
+{
     System<Component> returnComps;
 
-    for (auto &it : components.components) {
+    for (auto &it : components.components)
+    {
         T *component = dynamic_cast<const T *>(it.second);
-        if (it.first == id && component != nullptr) {
+        if (it.first == id && component != nullptr)
+        {
             returnComps.components.insert(std::pair<EntityId, T *>(id, component));
         }
     }
@@ -246,20 +275,24 @@ std::mutex Game::mutex;
  *      and then we make sure again that the variable is null and then we
  *      set the value.
  */
-Game *Game::getInstance() {
+Game *Game::getInstance()
+{
     std::lock_guard<std::mutex> lock(mutex);
-    if (instance == nullptr) {
+    if (instance == nullptr)
+    {
         instance = new Game();
     }
 
     return instance;
 }
 
-const PhysicsAPI *Game::getPhysicsAPI() {
+const PhysicsAPI *Game::getPhysicsAPI()
+{
     return physicsAPI;
 }
 
-void Game::SetCurrentState(int state) {
+void Game::setCurrentState(int state)
+{
     currentState = state;
 }
 
