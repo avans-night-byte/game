@@ -98,6 +98,8 @@ void Game::gameLoop() {
         if (currentState == 1) {
 //            MainMenu::render(engineRenderingAPI, engineWindowAPI, i);
             _level1->render(*engineRenderingAPI);
+            _level1->update(i);
+            _level1->fixedUpdate(dt);
         }
 
         if (currentState == 2) {

@@ -4,6 +4,7 @@
 
 #include "Level1.hpp"
 #include "../../Components/PhysicsComponent.h"
+#include "../../Components/CharacterComponent.h"
 
 void Level1::render(EngineRenderingAPI &engineRenderingAPI) {
     _level->render(engineRenderingAPI);
@@ -31,4 +32,21 @@ Level1::Level1(EngineRenderingAPI& engineRenderingApi) {
 
     game->addComponent(object1, physicsComponent1);
 
+    EntityId characterEntityId;
+    characterEntityId = game->createEntity();
+    characterComponent = make_unique<CharacterComponent>(characterEntityId, &engineRenderingApi, Vector2(30, 30));
+
+    game->addComponent(characterEntityId, characterComponent.get());
+
 }
+
+
+void Level1::fixedUpdate(const float &deltaTime) {
+    characterComponent->fixedUpdate(deltaTime);
+}
+
+void Level1::update(const Input &inputSystem) {
+    characterComponent->update(inputSystem);
+}
+
+

@@ -34,7 +34,7 @@ public:
         this->resetMovement();
         physicsComponent = make_unique<PhysicsComponent>(id,
                                                          BodyType::Dynamic,
-                                                         Vector2(750, 350),
+                                                         Vector2(position.x, position.y),
                                                          Vector2(20, 40));
         physicsComponent->setFixedRotation(true);
         physicsComponent->setVelocity(Vector2());
