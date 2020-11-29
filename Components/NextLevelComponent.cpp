@@ -7,7 +7,7 @@
 
 void NextLevelComponent::startContact() {
     // TODO: Hardcoded
-    Game::SetCurrentState(10);
+    Game::setCurrentState(10);
 }
 
 void NextLevelComponent::endContact() {

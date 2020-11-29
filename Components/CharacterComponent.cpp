@@ -3,13 +3,6 @@
 
 
 void CharacterComponent::update(const Input &inputSystem) {
-    if(inputSystem.keyMap.action == "INVENTORY")
-    {
-        Game::SetCurrentState(3);
-    }
-
-    // TODO: Need input system that detects also UpKey (currently only down key is supported)
-
     bool stopped = false;
 
     if(inputSystem.keyMap.type == SDL_KEYUP){

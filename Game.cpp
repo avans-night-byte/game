@@ -69,6 +69,7 @@ void Game::gameLoop() {
   
     unique_ptr<MainMenu> mainMenu = make_unique<MainMenu>(engineRenderingAPI, engineWindowAPI, audioApi);
 
+    unique_ptr<LevelCharlie> levelCharlie = nullptr;
     unique_ptr<Level1> level1 = nullptr;
 
     bool isDebuggingPhysics = false;
@@ -105,13 +106,13 @@ void Game::gameLoop() {
             {
                 exampleScene->fixedUpdate(dt);
             }
-            if(_level1)
+            if(level1)
             {
-                _level1->fixedUpdate(dt);
+                level1->fixedUpdate(dt);
             }
-            if(levelCharlie)
+            if(level1)
             {
-                levelCharlie->fixedUpdate(dt);
+                level1->fixedUpdate(dt);
             }
 
             t += dt;

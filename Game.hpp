@@ -37,10 +37,6 @@ public:
     void operator=(const Game &) = delete;
 
     static Game *getInstance();
-    static void SetCurrentState(int state);
-
-    // TODO: Remove this before after sprint
-    static int &GameState();
 
 public:
     static void initialize();
