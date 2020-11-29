@@ -1,10 +1,4 @@
-//
-// Created by sascha on 11/27/20.
-//
-
-#ifndef NIGHTBYTE_LEVEL1_HPP
-#define NIGHTBYTE_LEVEL1_HPP
-
+#pragma once
 
 #include "../../../Engine/Rendering/Level.hpp"
 #include "../../../Engine/Input/Input.hpp"
@@ -23,6 +17,3 @@ public:
 
     void update(const Input &inputSystem);
 };
-
-
-#endif //NIGHTBYTE_LEVEL1_HPP

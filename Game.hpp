@@ -4,7 +4,6 @@
 #include "../Engine/Input/Input.hpp"
 #include "../Engine/Audio/AudioType.h"
 
-#include "Components/Component.hpp"
 #include <list>
 #include <map>
 #include "memory"
@@ -12,6 +11,8 @@
 
 #include "../API/Audio/AudioAPI.hpp"
 #include "../API/Physics/PhysicsAPI.hpp"
+
+#include "Components/Component.hpp"
 
 using namespace std;
 
@@ -59,4 +60,5 @@ public:
     System<T> getComponents(EntityId id);
 
     const PhysicsAPI *getPhysicsAPI();
+
 };

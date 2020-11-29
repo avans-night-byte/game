@@ -22,6 +22,10 @@ public:
               bodyId(enginePhysicsAPI->createStaticBody(bodyType, position, radius)) {
     }
 
+    ~PhysicsComponent(){
+        enginePhysicsAPI->destroyBody(bodyId);
+    }
+
     inline RPosition getRPosition() {
         return enginePhysicsAPI->getRPosition(bodyId);
     }

@@ -6,7 +6,6 @@
 #include "../Game.hpp"
 
 void NextLevelComponent::startContact() {
-    cout << "HOLY FUCK MOTHERFUCKER" << endl;
     // TODO: Hardcoded
     Game::SetCurrentState(10);
 }
