@@ -22,25 +22,27 @@ Engine *engine;
 EngineInputAPI *engineInputAPI;
 EngineWindowAPI *engineWindowAPI;
 EngineRenderingAPI *engineRenderingAPI;
-unique_ptr<PhysicsAPI> physicsAPI;
+PhysicsAPI *physicsAPI;
 AudioAPI *audioApi;
 
 int currentState = 1;
 
-
 void Game::initialize()
 {
+
     Engine::initWindow(width, height);
     engineRenderingAPI = new EngineRenderingAPI(engine);
     engineInputAPI = new EngineInputAPI();
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
-    physicsAPI = make_unique<EnginePhysicsAPI>();
+    physicsAPI = new EnginePhysicsAPI();
 
     
 
     // We should normally init when switching state.
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
+
+    _level1 = new Level1(*engineRenderingAPI);
 }
 
 /**
@@ -50,7 +52,7 @@ void Game::gameLoop()
 {
     // Open Main Menu, this could be the game state
     unique_ptr<ExampleScene> exampleScene = nullptr;
-
+  
     unique_ptr<MainMenu> mainMenu = make_unique<MainMenu>(engineRenderingAPI, engineWindowAPI, audioApi);
 
     unique_ptr<Level1> level1 = nullptr;
@@ -60,16 +62,11 @@ void Game::gameLoop()
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
 
-    const int updateFPS = 60;
-    const float deltaTime = 1.0f / updateFPS;
+    float t = 0.0f;
+    double dt = 1 / 60.0;
 
-    float elapsedTime = 0.0f;
-    float accumulator = 0.0f;
-
-    // TODO: Move
-    Uint32 currentTime = SDL_GetTicks();
-
-    bool isDebuggingPhysics = false;
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    float accumulator = 0.0;
 
     // Gameloop
     while (true)
@@ -86,7 +83,7 @@ void Game::gameLoop()
 
         currentTime = newTime;
         accumulator += frameTime;
-
+      
         while (accumulator >= dt)
         {
             physicsAPI->update(dt, velocityIterations, positionIterations);
@@ -95,13 +92,10 @@ void Game::gameLoop()
                 exampleScene->fixedUpdate(dt);
             }
 
-            elapsedTime += deltaTime;
-            accumulator -= deltaTime;
+            t += dt;
+            accumulator -= dt;
         }
-
-        // Poll input and keep track of lastInput
-        Input i = engineInputAPI->getInput();
-        debugLog(i);
+        /**  */
 
         if (i.keyMap.action == "1" || i.keyMap.action == "2" || i.keyMap.action == "3" || i.keyMap.action == "4")
         {
@@ -126,9 +120,9 @@ void Game::gameLoop()
                 exampleScene = make_unique<ExampleScene>(engineRenderingAPI);
                 exampleScene->initialize();
             }
-            // TODO: Move
             SDL_SetRenderDrawColor(engineWindowAPI->getRenderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderClear(engineWindowAPI->getRenderer());
+            exampleScene->update(i);
 
             physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
         }
