@@ -1,38 +1,37 @@
 #include "ExampleScene.hpp"
-#include "../../Components/PhysicsComponent.h"
 
 void ExampleScene::initialize() {
     Game *game = Game::getInstance();
 
     EntityId object1 = game->createEntity();
-    PhysicsComponent *physicsComponent1 = new PhysicsComponent(object1,
-                                                               BodyType::Dynamic,
-                                                               Vector2(450, 150),
-                                                               Vector2(100, 50));
+    auto *physicsComponent1 = new PhysicsComponent(object1,
+                                                   BodyType::Dynamic,
+                                                   Vector2(450, 150),
+                                                   Vector2(100, 50));
     EntityId object5 = game->createEntity();
-    PhysicsComponent *physicsComponent5 = new PhysicsComponent(object1,
-                                                               BodyType::Dynamic,
-                                                               Vector2(450, 150),
-                                                               50.0f);
+    auto *physicsComponent5 = new PhysicsComponent(object1,
+                                                   BodyType::Dynamic,
+                                                   Vector2(450, 150),
+                                                   50.0f);
 
 
     EntityId object2 = game->createEntity();
-    PhysicsComponent *physicsComponent2 = new PhysicsComponent(object2,
-                                                               BodyType::Static,
-                                                               Vector2(640, 200),
-                                                               Vector2(100, 50));
+    auto *physicsComponent2 = new PhysicsComponent(object2,
+                                                   BodyType::Static,
+                                                   Vector2(640, 200),
+                                                   Vector2(100, 50));
 
     EntityId object3 = game->createEntity();
-    PhysicsComponent *physicsComponent3 = new PhysicsComponent(object3,
-                                                               BodyType::Static,
-                                                               Vector2(1000, 500),
-                                                               Vector2(600, 50));
+    auto *physicsComponent3 = new PhysicsComponent(object3,
+                                                   BodyType::Static,
+                                                   Vector2(1000, 500),
+                                                   Vector2(600, 50));
 
     EntityId object4 = game->createEntity();
-    PhysicsComponent *physicsComponent4 = new PhysicsComponent(object4,
-                                                               BodyType::Static,
-                                                               Vector2(0, 800),
-                                                               Vector2(10000, 50));
+    auto *physicsComponent4 = new PhysicsComponent(object4,
+                                                   BodyType::Static,
+                                                   Vector2(0, 800),
+                                                   Vector2(10000, 50));
 
     // TODO: Create Entity class which stores all the components as smart pointers?
     game->addComponent(object1, physicsComponent1);
@@ -40,14 +39,19 @@ void ExampleScene::initialize() {
     game->addComponent(object3, physicsComponent3);
     game->addComponent(object4, physicsComponent4);
     game->addComponent(object5, physicsComponent5);
-}
 
+    entities.push_back(object1);
+    entities.push_back(object2);
+    entities.push_back(object3);
+    entities.push_back(object4);
+    entities.push_back(object5);
+}
 
 
 void ExampleScene::fixedUpdate(const float &deltaTime) {
-    characterComponent->fixedUpdate(deltaTime);
+    characterComponent.fixedUpdate(deltaTime);
 }
 
 void ExampleScene::update(const Input &inputSystem) {
-    characterComponent->update(inputSystem);
+    characterComponent.update(inputSystem);
 }

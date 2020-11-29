@@ -4,7 +4,6 @@
 #include "../Engine/Input/Input.hpp"
 #include "../Engine/Audio/AudioType.h"
 
-#include "Components/Component.hpp"
 #include <list>
 #include <map>
 #include "memory"
@@ -12,6 +11,8 @@
 
 #include "../API/Audio/AudioAPI.hpp"
 #include "../API/Physics/PhysicsAPI.hpp"
+
+#include "Components/Component.hpp"
 
 using namespace std;
 
@@ -36,10 +37,6 @@ public:
     void operator=(const Game &) = delete;
 
     static Game *getInstance();
-    static void SetCurrentState(int state);
-
-    // TODO: Remove this before after sprint
-    static int &GameState();
 
 public:
     static void initialize();

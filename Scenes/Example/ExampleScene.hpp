@@ -13,22 +13,32 @@ using namespace std;
 
 class ExampleScene {
 private:
-    EntityId characterEntityId;
-    unique_ptr<CharacterComponent> characterComponent;
+    CharacterComponent& characterComponent;
 
-    vector<Spritesheet> sprites{};
+    // TODO: Make RemoveComponent within Game.
+    // TODO: Create function to get all entities;
+    vector<EntityId> entities{};
 
     // TODO: Make Entity class with a list of components.
     // TODO: Every Entity has to have WorldComponent.
 
-public:
-    explicit ExampleScene(const EngineRenderingAPI *renderingApi) {
-        Game *game = Game::getInstance();
-        characterEntityId = game->createEntity();
-        characterComponent = make_unique<CharacterComponent>(characterEntityId, renderingApi, Vector2(100, 100));
 
-        game->addComponent(characterEntityId, characterComponent.get());
-        sprites.push_back(characterComponent->getSpriteSheet());
+public:
+    explicit ExampleScene(CharacterComponent& characterComponent) : characterComponent(characterComponent)
+    {
+
+    }
+
+    ~ExampleScene() {
+        Game* game = Game::getInstance();
+        for (EntityId id: entities) {
+            System<Component> components = game->getComponents(id);
+
+            for (auto component : components.components)
+            {
+                delete component.second;
+            }
+        }
     }
 
     void initialize();

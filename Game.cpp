@@ -12,6 +12,7 @@
 #include "./Scenes/Example/ExampleScene.hpp"
 #include "./Scenes/Credits/Credits.hpp"
 #include "./Scenes/Level1/Level1.hpp"
+#include "Scenes/Level10/LevelCharlie.hpp"
 
 typedef signed int int32;
 
@@ -47,13 +48,28 @@ void Game::initialize()
 /**
  * Gameloop
  **/
-void Game::gameLoop()
-{
+void Game::gameLoop() {
+
+    // TODO: Please put this into the class after making gameloop static.
+    Game *game = getInstance();
+
+    unique_ptr<CharacterComponent> characterComponent;
+    EntityId characterEntityId;
+
+    characterEntityId = game->createEntity();
+    characterComponent = make_unique<CharacterComponent>(characterEntityId,
+                                                         engineRenderingAPI,
+                                                         Vector2(100, 100));
+
+    game->addComponent(characterEntityId, characterComponent.get());
+
+
     // Open Main Menu, this could be the game state
     unique_ptr<ExampleScene> exampleScene = nullptr;
   
     unique_ptr<MainMenu> mainMenu = make_unique<MainMenu>(engineRenderingAPI, engineWindowAPI, audioApi);
 
+    unique_ptr<LevelCharlie> levelCharlie = nullptr;
     unique_ptr<Level1> level1 = nullptr;
 
     bool isDebuggingPhysics = false;
@@ -90,6 +106,14 @@ void Game::gameLoop()
             {
                 exampleScene->fixedUpdate(dt);
             }
+            if(level1)
+            {
+                level1->fixedUpdate(dt);
+            }
+            if(levelCharlie)
+            {
+                levelCharlie->fixedUpdate(dt);
+            }
 
             t += dt;
             accumulator -= dt;
@@ -112,32 +136,59 @@ void Game::gameLoop()
             Credits::render(engineRenderingAPI, engineWindowAPI, i);
         }
 
-        if (currentState == 3)
-        {
-            if (exampleScene == nullptr)
-            {
-                exampleScene = make_unique<ExampleScene>(engineRenderingAPI);
+        if (currentState == 3) {
+            if (exampleScene == nullptr) {
+                exampleScene = make_unique<ExampleScene>(*characterComponent);
                 exampleScene->initialize();
             }
             SDL_SetRenderDrawColor(engineWindowAPI->getRenderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderClear(engineWindowAPI->getRenderer());
             exampleScene->update(i);
+        }
+        else
+        {
+            if(exampleScene)
+            {
+                exampleScene = nullptr;
+            }
+        }
 
-            physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
+        if(currentState == 10)
+        {
+            if(levelCharlie == nullptr)
+            {
+                levelCharlie = make_unique<LevelCharlie>(*characterComponent, *engineRenderingAPI, *physicsAPI);
+            }
+
+            levelCharlie->render(*engineRenderingAPI);
+            levelCharlie->update(i);
+        }
+        else{
+            if(levelCharlie)
+            {
+                levelCharlie = nullptr;
+            }
         }
 
         if (currentState == 4)
         {
             if (level1 == nullptr)
             {
-                level1 = make_unique<Level1>(*engineRenderingAPI);
+                level1 = make_unique<Level1>(*characterComponent, *engineRenderingAPI, *physicsAPI);
             }
             level1->render(*engineRenderingAPI);
             level1->update(i);
-            level1->fixedUpdate(dt);
+        }
+        else
+        {
+            if(level1)
+            {
+                level1 = nullptr;
+            }
         }
 
-        physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
+        if(isDebuggingPhysics)
+            physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
 
         SDL_RenderPresent(engineWindowAPI->getRenderer());
         SDL_RenderClear(engineWindowAPI->getRenderer());
@@ -146,6 +197,15 @@ void Game::gameLoop()
         {
             engineWindowAPI->closeWindow();
             break;
+        }
+
+        if(i.keyMap.code == "]")
+        {
+            isDebuggingPhysics = true;
+        }
+        else if(i.keyMap.code == "\\")
+        {
+            isDebuggingPhysics = false;
         }
     }
 }
@@ -295,4 +355,3 @@ void Game::setCurrentState(int state)
 {
     currentState = state;
 }
-

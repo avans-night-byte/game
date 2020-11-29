@@ -4,7 +4,7 @@
 #include <string>
 #include "../../Engine/Physics/ContactHandler.hpp"
 
-// TODO: Don't use ContactHandler of Engine
+// TODO: Don't use ContactHandler of Engine but of API (which does not exist yet).
 class NextLevelComponent : public ContactHandler {
 public:
     std::string NextLevel = "Wow look at me!";

@@ -14,12 +14,15 @@ Level1::~Level1() {
     delete _level;
 }
 
-Level1::Level1(EngineRenderingAPI& engineRenderingApi) {
+Level1::Level1(CharacterComponent& characterComponent,
+               EngineRenderingAPI& engineRenderingApi,
+               PhysicsAPI& enginePhysicsApi) : characterComponent(characterComponent) {
+
     const char *levelName = "../../Resources/example.tmx";
     const char *spritesheetName = "../../Resources/Sprites/Overworld.png";
     const char *spriteId = "Overworld";
 
-    _level = new Level( levelName, spritesheetName, spriteId, engineRenderingApi);
+    _level = new Level( levelName, spritesheetName, spriteId, engineRenderingApi, *enginePhysicsApi.getPhysicsEngineAdapter());
 
 
     Game *game = Game::getInstance();
@@ -31,22 +34,15 @@ Level1::Level1(EngineRenderingAPI& engineRenderingApi) {
                                                                Vector2(10, 10));
 
     game->addComponent(object1, physicsComponent1);
-
-    EntityId characterEntityId;
-    characterEntityId = game->createEntity();
-    characterComponent = make_unique<CharacterComponent>(characterEntityId, &engineRenderingApi, Vector2(30, 30));
-
-    game->addComponent(characterEntityId, characterComponent.get());
-
 }
 
 
 void Level1::fixedUpdate(const float &deltaTime) {
-    characterComponent->fixedUpdate(deltaTime);
+    characterComponent.fixedUpdate(deltaTime);
 }
 
 void Level1::update(const Input &inputSystem) {
-    characterComponent->update(inputSystem);
+    characterComponent.update(inputSystem);
 }
 
 

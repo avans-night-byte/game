@@ -1,10 +1,4 @@
-//
-// Created by sascha on 11/27/20.
-//
-
-#ifndef NIGHTBYTE_LEVEL1_HPP
-#define NIGHTBYTE_LEVEL1_HPP
-
+#pragma once
 
 #include "../../../Engine/Rendering/Level.hpp"
 #include "../../../Engine/Input/Input.hpp"
@@ -13,9 +7,10 @@
 class Level1 {
 private:
     Level* _level;
-    unique_ptr<CharacterComponent> characterComponent;
+    CharacterComponent& characterComponent;
+
 public:
-    Level1(EngineRenderingAPI& engineRenderingApi);
+    explicit Level1(CharacterComponent& characterComponent, EngineRenderingAPI& engineRenderingApi, PhysicsAPI& enginePhysicsApi);
     ~Level1();
     void render(EngineRenderingAPI& engineRenderingAPI);
 
@@ -23,6 +18,3 @@ public:
 
     void update(const Input &inputSystem);
 };
-
-
-#endif //NIGHTBYTE_LEVEL1_HPP
