@@ -13,13 +13,15 @@ public:
     explicit PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, Vector2 size)
             : Component(id),
               enginePhysicsAPI(Game::getInstance()->getPhysicsAPI()),
-              bodyId(enginePhysicsAPI->createStaticBody(bodyType, position, size)) {
+              bodyId{this->initializeBoxBody(bodyType, position, size)} {
+
+
     }
 
     explicit PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, float radius)
             : Component(id),
               enginePhysicsAPI(Game::getInstance()->getPhysicsAPI()),
-              bodyId(enginePhysicsAPI->createStaticBody(bodyType, position, radius)) {
+              bodyId(this->initializeCircleBody(bodyType, position, radius)) {
     }
 
     ~PhysicsComponent(){
@@ -44,6 +46,25 @@ public:
     }
 
     void update() override;
+
+private:
+    inline BodyId initializeBoxBody(BodyType bodyType, Vector2 position, Vector2 size)
+    {
+        Box2DBoxData box2DBoxData;
+        box2DBoxData.bodyType = bodyType;
+        box2DBoxData.position = position;
+        box2DBoxData.size = size;
+        return enginePhysicsAPI->createStaticBody(box2DBoxData);
+    }
+
+    inline BodyId initializeCircleBody(BodyType bodyType, Vector2 position, float radius)
+    {
+        Box2DCircleData box2DBoxData;
+        box2DBoxData.bodyType = bodyType;
+        box2DBoxData.position = position;
+        box2DBoxData.radius = radius;
+        return enginePhysicsAPI->createStaticBody(box2DBoxData);
+    }
 };
 
 
