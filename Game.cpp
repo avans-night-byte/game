@@ -42,7 +42,6 @@ void Game::initialize()
 
     // We should normally init when switching state.
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
-
 }
 
 /**
