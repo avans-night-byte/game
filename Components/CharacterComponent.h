@@ -35,7 +35,7 @@ public:
         physicsComponent = make_unique<PhysicsComponent>(id,
                                                          BodyType::Dynamic,
                                                          Vector2(position.x, position.y),
-                                                         Vector2(20, 40));
+                                                         Vector2(20, 20));
         physicsComponent->setFixedRotation(true);
         physicsComponent->setVelocity(Vector2());
 
@@ -72,7 +72,7 @@ public:
 
 protected:
     void update() override {
-        spriteSheet->draw_selected_sprite(*worldPosition->x - 42.5f, *worldPosition->y - 55.0f);
+        spriteSheet->draw_selected_sprite(*worldPosition->x - 42.5f, *worldPosition->y - 75.0f);
     }
 };
 
