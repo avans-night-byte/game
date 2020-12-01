@@ -6,6 +6,7 @@
 #include "../API/Rendering/EngineRenderingAPI.hpp"
 #include "../API/Engine/EngineWindowAPI.hpp"
 #include "../API/Physics/EnginePhysicsAPI.hpp"
+#include "../API/XMLParser/MenuParserAPI.hpp"
 
 // Fixme: No hardie
 #include "./Scenes/Menu/MainMenu.cpp"
@@ -13,6 +14,7 @@
 #include "./Scenes/Credits/Credits.hpp"
 #include "./Scenes/Level1/Level1.hpp"
 #include "Scenes/Level10/LevelCharlie.hpp"
+
 
 typedef signed int int32;
 
@@ -25,6 +27,7 @@ EngineWindowAPI *engineWindowAPI;
 EngineRenderingAPI *engineRenderingAPI;
 PhysicsAPI *physicsAPI;
 AudioAPI *audioApi;
+MenuParserAPI *menuParser;
 
 int currentState = 1;
 
@@ -37,8 +40,9 @@ void Game::initialize()
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
     physicsAPI = new EnginePhysicsAPI();
+    menuParser = new MenuParserAPI(*engineRenderingAPI);
 
-
+    menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
 
     // We should normally init when switching state.
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
@@ -128,7 +132,8 @@ void Game::gameLoop() {
         // Temporary State
         if (currentState == 1)
         {
-            mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
+            //mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
+            menuParser->render();
         }
 
         if (currentState == 2)
