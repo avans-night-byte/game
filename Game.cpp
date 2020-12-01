@@ -198,7 +198,7 @@ void Game::gameLoop() {
         SDL_RenderPresent(engineWindowAPI->getRenderer());
         SDL_RenderClear(engineWindowAPI->getRenderer());
 
-        if (currentState == 0)
+        if (currentState == 0 || i.keyMap.action == "QUIT")
         {
             engineWindowAPI->closeWindow();
             break;
