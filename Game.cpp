@@ -38,7 +38,7 @@ void Game::initialize()
     audioApi = new AudioAPI();
     physicsAPI = new EnginePhysicsAPI();
 
-    
+
 
     // We should normally init when switching state.
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
@@ -66,7 +66,7 @@ void Game::gameLoop() {
 
     // Open Main Menu, this could be the game state
     unique_ptr<ExampleScene> exampleScene = nullptr;
-  
+
     unique_ptr<MainMenu> mainMenu = make_unique<MainMenu>(engineRenderingAPI, engineWindowAPI, audioApi);
 
     unique_ptr<LevelCharlie> levelCharlie = nullptr;
@@ -98,7 +98,7 @@ void Game::gameLoop() {
 
         currentTime = newTime;
         accumulator += frameTime;
-      
+
         while (accumulator >= dt)
         {
             physicsAPI->update(dt, velocityIterations, positionIterations);
@@ -211,10 +211,10 @@ void Game::gameLoop() {
 }
 
 /**
- * Logs Input struct properties that have been received by the game loop. 
- * 
+ * Logs Input struct properties that have been received by the game loop.
+ *
  * For testing purposes only, we should create a generic logger someday.
- * 
+ *
  * @param Input An Input struct
  **/
 void Game::debugLog(Input i)

@@ -75,4 +75,3 @@ protected:
         spriteSheet->draw_selected_sprite(*worldPosition->x - 42.5f, *worldPosition->y - 55.0f);
     }
 };
-
