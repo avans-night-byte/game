@@ -1,4 +1,7 @@
 #include "RenderComponent.hpp"
+#include "../../API/Rendering/EngineRenderingAPI.hpp"
+#include "WorldPositionComponent.hpp"
+
 /**
  * This is a sample component, this one renders an imahe on the screen.
 */

@@ -1,7 +1,11 @@
 #pragma once
+
+
 #include "./Component.hpp"
-#include "../../API/Rendering/EngineRenderingAPI.hpp"
-#include "WorldPositionComponent.hpp"
+#include <string>
+
+class EngineRenderingAPI;
+class WorldPositionComponent;
 
 class RenderComponent : Component {
 private:

@@ -9,12 +9,15 @@
 #include "memory"
 #include <mutex>
 
-#include "../API/Audio/AudioAPI.hpp"
-#include "../API/Physics/PhysicsAPI.hpp"
-
 #include "Components/Component.hpp"
 
-using namespace std;
+
+
+#include "Scenes/LevelBase.hpp"
+
+
+class PhysicsAPI;
+class ComponentFactory;
 
 class Game {
 private:
@@ -25,6 +28,9 @@ private:
     System<Component> components;
     std::list<EntityId> entities;
     std::map<PlayerId, EntityId> players;
+
+    std::unique_ptr<LevelBase> levelBase;
+    std::unique_ptr<ComponentFactory> componentFactory;
 
 protected:
     Game() = default;

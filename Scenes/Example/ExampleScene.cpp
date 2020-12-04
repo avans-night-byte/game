@@ -1,5 +1,9 @@
 #include "ExampleScene.hpp"
 
+#include "../../Components/PhysicsComponent.hpp"
+#include "../../Components/CharacterComponent.h"
+#include "../../Game.hpp"
+
 void ExampleScene::initialize() {
     Game *game = Game::getInstance();
 
@@ -54,4 +58,15 @@ void ExampleScene::fixedUpdate(const float &deltaTime) {
 
 void ExampleScene::update(const Input &inputSystem) {
     characterComponent.update(inputSystem);
+}
+
+ExampleScene::~ExampleScene() {
+    Game *game = Game::getInstance();
+    for (EntityId id: entities) {
+        System<Component> components = game->getComponents(id);
+
+        for (auto component : components.components) {
+            delete component.second;
+        }
+    }
 }

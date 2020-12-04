@@ -2,16 +2,21 @@
 #include <iostream>
 
 #include "./Game.hpp"
-#include "../API/Input/EngineInputAPI.hpp"
-#include "../API/Rendering/EngineRenderingAPI.hpp"
-#include "../API/Engine/EngineWindowAPI.hpp"
-#include "../API/Physics/EnginePhysicsAPI.hpp"
+
 
 // Fixme: No hardie
 #include "./Scenes/Menu/MainMenu.cpp"
 #include "./Scenes/Example/ExampleScene.hpp"
 #include "./Scenes/Credits/Credits.hpp"
 #include "./Scenes/Level1/Level1.hpp"
+#include "./Scenes/Level10/LevelCharlie.hpp"
+
+#include "../API/XMLParser/LevelParserAPI.hpp"
+#include "../API/Input/EngineInputAPI.hpp"
+#include "../API/XMLParser/MenuParserAPI.hpp"
+
+#include "./Components/ComponentFactory.hpp"
+
 #include "Scenes/Level10/LevelCharlie.hpp"
 #include "../Engine/Managers/ResourceManager.hpp"
 
@@ -26,23 +31,30 @@ EngineWindowAPI *engineWindowAPI;
 EngineRenderingAPI *engineRenderingAPI;
 PhysicsAPI *physicsAPI;
 AudioAPI *audioApi;
+MenuParserAPI *menuParser;
 
 int currentState = 1;
 
 void Game::initialize()
 {
-
     Engine::initWindow(width, height);
     engineRenderingAPI = new EngineRenderingAPI(engine);
     engineInputAPI = new EngineInputAPI();
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
     physicsAPI = new EnginePhysicsAPI();
+    menuParser = new MenuParserAPI(*engineRenderingAPI);
 
-    
+    Game *game = Game::getInstance();
+    game->componentFactory = make_unique<ComponentFactory>();
+
+    menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
 
     // We should normally init when switching state.
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
+
+    unique_ptr<LevelParserAPI> levelParserAPI = make_unique<LevelParserAPI>();
+    levelParserAPI->LoadLevel("../../Resources/XML/Definition/MainMenu.xml");
 }
 
 /**
@@ -89,7 +101,7 @@ void Game::gameLoop() {
 
     // Open Main Menu, this could be the game state
     unique_ptr<ExampleScene> exampleScene = nullptr;
-  
+
     unique_ptr<MainMenu> mainMenu = make_unique<MainMenu>(engineRenderingAPI, engineWindowAPI, audioApi);
 
     unique_ptr<LevelCharlie> levelCharlie = nullptr;
@@ -121,7 +133,7 @@ void Game::gameLoop() {
 
         currentTime = newTime;
         accumulator += frameTime;
-      
+
         while (accumulator >= dt)
         {
             physicsAPI->update(dt, velocityIterations, positionIterations);
@@ -151,7 +163,8 @@ void Game::gameLoop() {
         // Temporary State
         if (currentState == 1)
         {
-            mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
+            //mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
+            menuParser->render();
         }
 
         if (currentState == 2)
@@ -234,10 +247,10 @@ void Game::gameLoop() {
 }
 
 /**
- * Logs Input struct properties that have been received by the game loop. 
- * 
+ * Logs Input struct properties that have been received by the game loop.
+ *
  * For testing purposes only, we should create a generic logger someday.
- * 
+ *
  * @param Input An Input struct
  **/
 void Game::debugLog(Input i)
