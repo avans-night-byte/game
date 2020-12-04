@@ -23,8 +23,7 @@
 
 typedef signed int int32;
 
-const int width = 1920;
-const int height = 1080;
+const int width = 1920;const int height = 1080;
 
 Engine *engine;
 EngineInputAPI *engineInputAPI;
@@ -44,7 +43,7 @@ void Game::initialize()
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
     physicsAPI = new EnginePhysicsAPI();
-//    menuParser = new MenuParserAPI(*engineRenderingAPI);
+//    menuParser = new MenuParserAPI(*engineRenderingAPI, );
 
     Game *game = Game::getInstance();
     game->componentFactory = make_unique<ComponentFactory>();
@@ -54,8 +53,8 @@ void Game::initialize()
     // We should normally init when switching state.
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
 
-    unique_ptr<LevelParserAPI> levelParserAPI = make_unique<LevelParserAPI>();
-    levelParserAPI->LoadLevel("../../Resources/XML/Definition/MainMenu.xml");
+  //  unique_ptr<LevelParserAPI> levelParserAPI = make_unique<LevelParserAPI>();
+   // levelParserAPI->LoadLevel("../../Resources/XML/Definition/MainMenu.xml");
 }
 
 /**
@@ -162,8 +161,8 @@ void Game::gameLoop() {
         // Temporary State
         if (currentState == 1)
         {
-            //mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
-            menuParser->render();
+            mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
+          //  menuParser->render();
         }
 
         if (currentState == 2)
