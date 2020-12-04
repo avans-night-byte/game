@@ -13,6 +13,7 @@
 #include "./Scenes/Credits/Credits.hpp"
 #include "./Scenes/Level1/Level1.hpp"
 #include "Scenes/Level10/LevelCharlie.hpp"
+#include "../Engine/Managers/ResourceManager.hpp"
 
 typedef signed int int32;
 
@@ -73,6 +74,7 @@ void Game::gameLoop() {
     // ResourceManager
     // ResourceManager->initialize("/Resources/XML/Definitions/Resources.xml");
     // ResourceManager->loadRequired(["menu_background", "menu_music"]);
+    ResourceManager("../../Resources/XML/Definition/Resources.xml");
 
 
     // TODO:
