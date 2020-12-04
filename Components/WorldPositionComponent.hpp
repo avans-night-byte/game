@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.hpp"
+#include <string>
 
 class WorldPositionComponent : public Component {
 public:
@@ -13,5 +14,7 @@ public:
 
     WorldPositionComponent(EntityId id) : Component(id) {}
 
-    std::unique_ptr<Component> Clone(EntityId entityId) override;
+    [[nodiscard]] Component *Clone(EntityId entityId) const override;
+
+    [[nodiscard]] std::string name() const override;
 };

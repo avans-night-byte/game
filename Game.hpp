@@ -11,9 +11,8 @@
 
 #include "Components/Component.hpp"
 
-
-
 #include "Scenes/LevelBase.hpp"
+#include "../API/Rendering/EngineRenderingAPI.hpp"
 
 
 class PhysicsAPI;
@@ -66,5 +65,8 @@ public:
 
     const PhysicsAPI *getPhysicsAPI();
 
+    const EngineRenderingAPI *getRenderingApi();
+
     static void setCurrentState(int state);
+
 };

@@ -14,9 +14,10 @@
 #include "../API/XMLParser/LevelParserAPI.hpp"
 #include "../API/Input/EngineInputAPI.hpp"
 #include "../API/XMLParser/MenuParserAPI.hpp"
+#include "../API/Physics/EnginePhysicsAPI.hpp"
 
 #include "./Components/ComponentFactory.hpp"
-
+#include "./Components/CharacterComponent.h"
 #include "Scenes/Level10/LevelCharlie.hpp"
 #include "../Engine/Managers/ResourceManager.hpp"
 
@@ -28,7 +29,7 @@ const int height = 1080;
 Engine *engine;
 EngineInputAPI *engineInputAPI;
 EngineWindowAPI *engineWindowAPI;
-EngineRenderingAPI *engineRenderingAPI;
+EngineRenderingAPI *engineRenderingAPI; // TODO:  EngineRenderingAPI -> RenderinAPI: Change this since we are using the interface instance.
 PhysicsAPI *physicsAPI;
 AudioAPI *audioApi;
 MenuParserAPI *menuParser;
@@ -43,12 +44,12 @@ void Game::initialize()
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
     physicsAPI = new EnginePhysicsAPI();
-    menuParser = new MenuParserAPI(*engineRenderingAPI);
+//    menuParser = new MenuParserAPI(*engineRenderingAPI);
 
     Game *game = Game::getInstance();
     game->componentFactory = make_unique<ComponentFactory>();
 
-    menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
+//    menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
 
     // We should normally init when switching state.
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
@@ -69,9 +70,7 @@ void Game::gameLoop() {
     EntityId characterEntityId;
 
     characterEntityId = game->createEntity();
-    characterComponent = make_unique<CharacterComponent>(characterEntityId,
-                                                         engineRenderingAPI,
-                                                         Vector2(100, 100));
+    characterComponent = make_unique<CharacterComponent>(characterEntityId, Vector2(100, 100));
 
     game->addComponent(characterEntityId, characterComponent.get());
 
@@ -385,6 +384,11 @@ Game *Game::getInstance()
 const PhysicsAPI *Game::getPhysicsAPI()
 {
     return physicsAPI;
+}
+
+const EngineRenderingAPI *Game::getRenderingApi()
+{
+    return engineRenderingAPI;
 }
 
 void Game::setCurrentState(int state)

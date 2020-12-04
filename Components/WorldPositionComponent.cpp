@@ -1,12 +1,17 @@
 #include "WorldPositionComponent.hpp"
 
-void WorldPositionComponent::setLocation(const float& x, const float& y) {
+void WorldPositionComponent::setLocation(const float &x, const float &y) {
     this->x = &x;
     this->y = &y;
 }
 
+
 void WorldPositionComponent::update() {}
 
-std::unique_ptr<Component> WorldPositionComponent::Clone(EntityId entityId) {
-    return std::unique_ptr<Component>();
+Component *WorldPositionComponent::Clone(EntityId entityId) const {
+    return new WorldPositionComponent(entityId);
+}
+
+std::string WorldPositionComponent::name() const {
+    return "";
 }

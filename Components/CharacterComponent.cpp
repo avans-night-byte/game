@@ -2,7 +2,15 @@
 
 #include "../Game.hpp"
 
-CharacterComponent::CharacterComponent(EntityId id, const EngineRenderingAPI *renderingApi, const Vector2 &position)
+CharacterComponent::CharacterComponent(EntityId id) : Component(id), spriteSheet(nullptr) {
+
+}
+
+string CharacterComponent::name() const {
+    return "CharacterComponent";
+}
+
+CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
         : Component(id) {
     Game *game = Game::getInstance();
 
@@ -14,8 +22,8 @@ CharacterComponent::CharacterComponent(EntityId id, const EngineRenderingAPI *re
     physicsComponent->setFixedRotation(true);
     physicsComponent->setVelocity(Vector2());
 
-    spriteSheet = renderingApi->createSpriteSheet("../../Resources/Sprites/character.png",
-                                                  "spritesheet_char", 8, 11, 100, 105);
+    spriteSheet = game->getRenderingApi()->createSpriteSheet("../../Resources/Sprites/character.png",
+                                                             "spritesheet_char", 8, 11, 100, 105);
 
     worldPosition = make_unique<WorldPositionComponent>(id);
 
@@ -30,28 +38,23 @@ CharacterComponent::CharacterComponent(EntityId id, const EngineRenderingAPI *re
 }
 
 
-
 void CharacterComponent::update(const Input &inputSystem) {
     bool stopped = false;
 
-    if(inputSystem.keyMap.type == SDL_KEYUP){
+    if (inputSystem.keyMap.type == SDL_KEYUP) {
         stopped = true;
     }
 
-    if(inputSystem.keyMap.action == "UP")
-    {
+    if (inputSystem.keyMap.action == "UP") {
         currentMovementDirection[MovementDirection::Up] = !stopped;
     }
-    if(inputSystem.keyMap.action == "DOWN")
-    {
+    if (inputSystem.keyMap.action == "DOWN") {
         currentMovementDirection[MovementDirection::Down] = !stopped;
     }
-    if(inputSystem.keyMap.action == "RIGHT")
-    {
+    if (inputSystem.keyMap.action == "RIGHT") {
         currentMovementDirection[MovementDirection::Right] = !stopped;
     }
-    if(inputSystem.keyMap.action == "LEFT")
-    {
+    if (inputSystem.keyMap.action == "LEFT") {
         currentMovementDirection[MovementDirection::Left] = !stopped;
     }
 
@@ -66,53 +69,52 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
     bool movingHor = false;
     bool movingVer = false;
 
-    for ( it = currentMovementDirection.begin(); it != currentMovementDirection.end(); it++ )
-    {
+    for (it = currentMovementDirection.begin(); it != currentMovementDirection.end(); it++) {
         switch (it->first) {
             case Left:
-                if(!it->second && movingHor != true){
+                if (!it->second && movingHor != true) {
                     velocity.x = 0;
                     movingHor = false;
                     break;
                 }
 
-                if(movingHor)
+                if (movingHor)
                     break;
 
                 velocity.x = -2000;
                 movingHor = true;
                 break;
             case Right:
-                if(!it->second && !movingHor){
+                if (!it->second && !movingHor) {
                     velocity.x = 0;
                     movingHor = false;
                     break;
                 }
-                if(movingHor)
+                if (movingHor)
                     break;
 
                 velocity.x = 2000;
                 movingHor = true;
                 break;
             case Up:
-                if(!it->second && !movingVer){
+                if (!it->second && !movingVer) {
                     velocity.y = 0;
                     movingVer = false;
                     break;
                 }
-                if(movingVer)
+                if (movingVer)
                     break;
 
                 velocity.y = -2000;
                 movingVer = true;
                 break;
             case Down:
-                if(!it->second && !movingVer){
+                if (!it->second && !movingVer) {
                     velocity.y = 0;
                     movingVer = false;
                     break;
                 }
-                if(movingVer)
+                if (movingVer)
                     break;
 
                 velocity.y = 2000;
@@ -126,13 +128,12 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
 }
 
 void CharacterComponent::resetMovement() {
-    currentMovementDirection[Left]  = false;
+    currentMovementDirection[Left] = false;
     currentMovementDirection[Right] = false;
-    currentMovementDirection[Up]    = false;
-    currentMovementDirection[Down]  = false;
+    currentMovementDirection[Up] = false;
+    currentMovementDirection[Down] = false;
 }
 
-unique_ptr<Component> CharacterComponent::Clone(EntityId entityId) {
-    return std::unique_ptr<Component>();
+Component *CharacterComponent::Clone(EntityId entityId) const {
+    return new CharacterComponent(entityId);
 }
-

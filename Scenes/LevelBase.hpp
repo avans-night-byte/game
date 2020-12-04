@@ -2,13 +2,11 @@
 
 #include <string>
 
-using namespace std;
-
 class LevelBase {
 
 
 
-    LevelBase(string resourcePath) {
+    LevelBase(std::string resourcePath) {
 
     }
 

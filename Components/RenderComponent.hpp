@@ -7,13 +7,15 @@
 class EngineRenderingAPI;
 class WorldPositionComponent;
 
-class RenderComponent : Component {
+class RenderComponent : public Component {
 private:
     WorldPositionComponent *position;
     int r{}, g{}, b{};
     char const * _texturePath;
-    EngineRenderingAPI &_engineRenderingApi;
+    const EngineRenderingAPI &_engineRenderingApi;
     std::string _textureId;
+
+
 public:
     void update() override;
 
@@ -21,6 +23,12 @@ public:
 
     void render();
 
+    explicit RenderComponent(EntityId id);
+
     RenderComponent(EntityId id, WorldPositionComponent *positionComponent, char const *texturePath,
-                    std::string textureId, EngineRenderingAPI &engineRenderingApi);
+                    std::string textureId);
+
+    [[nodiscard]] std::string name() const override;
+
+    [[nodiscard]] Component * Clone(EntityId entityId) const override;
 };

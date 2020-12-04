@@ -18,7 +18,9 @@ public:
 
     virtual ~Component() {}
 
-    virtual std::unique_ptr<Component> Clone(EntityId entityId) = 0;
+    virtual std::string name() const = 0;
+
+    virtual Component *Clone(EntityId entityId) const = 0;
 };
 
 template<typename C>

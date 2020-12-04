@@ -1,8 +1,11 @@
 #pragma once
 
-#include "../../../Engine/Rendering/Level.hpp"
-#include "../../../Engine/Input/Input.hpp"
-#include "../../Components/CharacterComponent.h"
+class Level;
+class Input;
+class CharacterComponent;
+class EngineRenderingAPI;
+class PhysicsAPI;
+
 
 class Level1 {
 private:

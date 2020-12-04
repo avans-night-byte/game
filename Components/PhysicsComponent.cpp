@@ -6,10 +6,15 @@ void PhysicsComponent::update() {
 
 }
 
+PhysicsComponent::PhysicsComponent(EntityId id)
+        : Component(id), enginePhysicsAPI(Game::getInstance()->getPhysicsAPI()) {
+
+}
+
 PhysicsComponent::PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, Vector2 size)
-                : Component(id),
-                  enginePhysicsAPI(Game::getInstance()->getPhysicsAPI()),
-                  bodyId{this->initializeBoxBody(bodyType, position, size)} {
+        : Component(id),
+          enginePhysicsAPI(Game::getInstance()->getPhysicsAPI()),
+          bodyId{this->initializeBoxBody(bodyType, position, size)} {
 
 
 }
@@ -22,8 +27,10 @@ PhysicsComponent::PhysicsComponent(EntityId id, BodyType bodyType, Vector2 posit
 
 }
 
-unique_ptr<Component> PhysicsComponent::Clone(EntityId entityId) {
+Component *PhysicsComponent::Clone(EntityId entityId) const {
+    return new PhysicsComponent(entityId);
+}
 
-
-    return std::unique_ptr<Component>();
+string PhysicsComponent::name() const {
+    return "PhysicsComponent";
 }

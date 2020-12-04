@@ -1,6 +1,8 @@
 #include "Level1.hpp"
 
 #include "../../Game.hpp"
+#include "../../Components/CharacterComponent.h"
+#include "../../Engine/Rendering/Level.hpp"
 
 void Level1::render(EngineRenderingAPI &engineRenderingAPI) {
     _level->render(engineRenderingAPI);
