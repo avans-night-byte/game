@@ -1,6 +1,12 @@
 #pragma once
 
 #include "memory"
+#include <iostream>
+
+class Spritesheet;
+class EngineRenderingAPI;
+class EngineWindowAPI;
+class AudioAPI;
 
 class MainMenu
 {

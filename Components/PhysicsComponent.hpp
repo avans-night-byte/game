@@ -1,28 +1,26 @@
 #pragma once
 
-#include "Component.hpp"
 #include "../../API/Physics/EnginePhysicsAPI.hpp"
-#include "../Game.hpp"
+#include "Component.hpp"
 
 class PhysicsComponent : public Component {
+public:
+    string wow = "huseyin";
+
 private:
     const PhysicsAPI *enginePhysicsAPI;
-    const unsigned int bodyId;
+    unsigned int bodyId;
 
 public:
-    explicit PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, Vector2 size)
-            : Component(id),
-              enginePhysicsAPI(Game::getInstance()->getPhysicsAPI()),
-              bodyId{this->initializeBoxBody(bodyType, position, size)} {
-
+    explicit PhysicsComponent() : Component(), bodyId(0) {
 
     }
 
-    explicit PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, float radius)
-            : Component(id),
-              enginePhysicsAPI(Game::getInstance()->getPhysicsAPI()),
-              bodyId(this->initializeCircleBody(bodyType, position, radius)) {
-    }
+    PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, Vector2 size);
+
+    PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, float radius);
+
+    unique_ptr<Component> Clone(EntityId entityId) override;
 
     ~PhysicsComponent(){
         enginePhysicsAPI->destroyBody(bodyId);

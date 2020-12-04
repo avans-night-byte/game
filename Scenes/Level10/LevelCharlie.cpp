@@ -1,5 +1,9 @@
 #include "LevelCharlie.hpp"
 
+#include "../../Game.hpp"
+#include "../../Engine/Rendering/Level.hpp"
+#include "../../Components/CharacterComponent.h"
+
 void LevelCharlie::render(EngineRenderingAPI &engineRenderingAPI) {
     _level->render(engineRenderingAPI);
 }

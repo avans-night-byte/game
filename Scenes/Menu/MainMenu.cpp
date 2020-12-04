@@ -1,6 +1,7 @@
-#include <iostream>
-
 #include "./MainMenu.hpp"
+
+#include "../../API/Rendering/EngineRenderingAPI.hpp"
+#include "../../API/Audio/AudioAPI.hpp"
 
 MainMenu::MainMenu(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi)
 {

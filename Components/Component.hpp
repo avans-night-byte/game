@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 
 typedef unsigned long EntityId;
 typedef int PlayerId;
@@ -13,7 +14,11 @@ public:
 
     Component(EntityId id) : owner(id) {}
 
+    Component() {}
+
     virtual ~Component() {}
+
+    virtual std::unique_ptr<Component> Clone(EntityId entityId) = 0;
 };
 
 template<typename C>

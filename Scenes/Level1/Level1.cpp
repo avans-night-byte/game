@@ -1,10 +1,6 @@
-//
-// Created by sascha on 11/27/20.
-//
-
 #include "Level1.hpp"
-#include "../../Components/PhysicsComponent.h"
-#include "../../Components/CharacterComponent.h"
+
+#include "../../Game.hpp"
 
 void Level1::render(EngineRenderingAPI &engineRenderingAPI) {
     _level->render(engineRenderingAPI);

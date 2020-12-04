@@ -12,4 +12,6 @@ public:
     void setLocation(const float &x, const float &y);
 
     WorldPositionComponent(EntityId id) : Component(id) {}
+
+    std::unique_ptr<Component> Clone(EntityId entityId) override;
 };

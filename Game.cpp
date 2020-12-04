@@ -2,18 +2,25 @@
 #include <iostream>
 
 #include "./Game.hpp"
-#include "../API/Input/EngineInputAPI.hpp"
-#include "../API/Rendering/EngineRenderingAPI.hpp"
-#include "../API/Engine/EngineWindowAPI.hpp"
-#include "../API/Physics/EnginePhysicsAPI.hpp"
-#include "../API/XMLParser/MenuParserAPI.hpp"
+
 
 // Fixme: No hardie
 #include "./Scenes/Menu/MainMenu.cpp"
 #include "./Scenes/Example/ExampleScene.hpp"
 #include "./Scenes/Credits/Credits.hpp"
 #include "./Scenes/Level1/Level1.hpp"
-#include "Scenes/Level10/LevelCharlie.hpp"
+#include "./Scenes/Level10/LevelCharlie.hpp"
+
+#include "../API/Audio/AudioAPI.hpp"
+#include "../API/Physics/PhysicsAPI.hpp"
+#include "../API/XMLParser/LevelParserAPI.hpp"
+#include "../API/Input/EngineInputAPI.hpp"
+#include "../API/Rendering/EngineRenderingAPI.hpp"
+#include "../API/Engine/EngineWindowAPI.hpp"
+#include "../API/Physics/EnginePhysicsAPI.hpp"
+#include "../API/XMLParser/MenuParserAPI.hpp"
+
+#include "./Components/ComponentFactory.hpp"
 
 
 typedef signed int int32;
@@ -33,7 +40,6 @@ int currentState = 1;
 
 void Game::initialize()
 {
-
     Engine::initWindow(width, height);
     engineRenderingAPI = new EngineRenderingAPI(engine);
     engineInputAPI = new EngineInputAPI();
@@ -42,11 +48,15 @@ void Game::initialize()
     physicsAPI = new EnginePhysicsAPI();
     menuParser = new MenuParserAPI(*engineRenderingAPI);
 
+    ComponentFactory factory = ComponentFactory();
+
     menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
 
     // We should normally init when switching state.
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
 
+    unique_ptr<LevelParserAPI> levelParserAPI = make_unique<LevelParserAPI>();
+    levelParserAPI->LoadLevel("../../Resources/XML/Definition/MainMenu.xml");
 }
 
 /**

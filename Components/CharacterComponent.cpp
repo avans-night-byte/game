@@ -1,5 +1,34 @@
 #include "CharacterComponent.h"
 
+#include "../Game.hpp"
+
+CharacterComponent::CharacterComponent(EntityId id, const EngineRenderingAPI *renderingApi, const Vector2 &position)
+        : Component(id) {
+    Game *game = Game::getInstance();
+
+    this->resetMovement();
+    physicsComponent = make_unique<PhysicsComponent>(id,
+                                                     BodyType::Dynamic,
+                                                     Vector2(position.x, position.y),
+                                                     Vector2(20, 40));
+    physicsComponent->setFixedRotation(true);
+    physicsComponent->setVelocity(Vector2());
+
+    spriteSheet = renderingApi->createSpriteSheet("../../Resources/Sprites/character.png",
+                                                  "spritesheet_char", 8, 11, 100, 105);
+
+    worldPosition = make_unique<WorldPositionComponent>(id);
+
+
+    game->addComponent(id, worldPosition.get());
+    game->addComponent(id, physicsComponent.get());
+
+    const RPosition &rPosition = physicsComponent->getRPosition();
+    worldPosition->setLocation(rPosition.X, rPosition.Y);
+
+    spriteSheet->select_sprite(0, 0);
+}
+
 
 
 void CharacterComponent::update(const Input &inputSystem) {
@@ -102,3 +131,8 @@ void CharacterComponent::resetMovement() {
     currentMovementDirection[Up]    = false;
     currentMovementDirection[Down]  = false;
 }
+
+unique_ptr<Component> CharacterComponent::Clone(EntityId entityId) {
+    return std::unique_ptr<Component>();
+}
+

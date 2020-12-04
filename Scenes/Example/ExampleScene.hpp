@@ -1,15 +1,12 @@
 #pragma once
 
-#include "memory"
-#include <vector>
+#include "vector"
 #include "../../Components/Component.hpp"
-#include "../../Components/CharacterComponent.h"
-#include "../../../Engine/Rendering/Spritesheet.hpp"
-#include "../../../API/Rendering/EngineRenderingAPI.hpp"
-#include "../../Game.hpp"
+
+class CharacterComponent;
+class Input;
 
 
-using namespace std;
 
 class ExampleScene {
 private:
@@ -17,7 +14,7 @@ private:
 
     // TODO: Make RemoveComponent within Game.
     // TODO: Create function to get all entities;
-    vector<EntityId> entities{};
+    std::vector<EntityId> entities{};
 
     // TODO: Make Entity class with a list of components.
     // TODO: Every Entity has to have WorldComponent.
@@ -29,17 +26,7 @@ public:
 
     }
 
-    ~ExampleScene() {
-        Game* game = Game::getInstance();
-        for (EntityId id: entities) {
-            System<Component> components = game->getComponents(id);
-
-            for (auto component : components.components)
-            {
-                delete component.second;
-            }
-        }
-    }
+    ~ExampleScene();
 
     void initialize();
 
