@@ -10,7 +10,7 @@ CharacterComponent::CharacterComponent(EntityId id, const EngineRenderingAPI *re
     physicsComponent = make_unique<PhysicsComponent>(id,
                                                      BodyType::Dynamic,
                                                      Vector2(position.x, position.y),
-                                                     Vector2(20, 40));
+                                                     Vector2(20, 20));
     physicsComponent->setFixedRotation(true);
     physicsComponent->setVelocity(Vector2());
 

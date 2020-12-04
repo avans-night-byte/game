@@ -52,6 +52,6 @@ public:
 
 protected:
     void update() override {
-        spriteSheet->draw_selected_sprite(*worldPosition->x - 42.5f, *worldPosition->y - 55.0f);
+        spriteSheet->draw_selected_sprite(*worldPosition->x - 42.5f, *worldPosition->y - 75.0f);
     }
 };

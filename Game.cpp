@@ -73,6 +73,28 @@ void Game::gameLoop() {
 
     game->addComponent(characterEntityId, characterComponent.get());
 
+    // TODO:
+    // Load game resources
+    // ObjectManager->initialize(...);
+    // Load the object from XML and load it in a object for later usage
+    // ObjectManager->get("ExplosionCrate")
+    // Returns new instance of "ExplosionCrate"
+
+    // TODO:
+    // ResourceManager
+    // ResourceManager->initialize("/Resources/XML/Definitions/Resources.xml");
+    // ResourceManager->loadRequired(["menu_background", "menu_music"]);
+
+
+    // TODO:
+    // MainMenu load:
+    // ResourceManager->loadRequired(...);
+    // ResourceManager->getImage("mainmenu_background");
+    // ResourceManager->getSound("");
+    // ResourceManager->getMusic("");
+    // ResourceManager->getLevel("");
+    //
+
 
     // Open Main Menu, this could be the game state
     unique_ptr<ExampleScene> exampleScene = nullptr;
