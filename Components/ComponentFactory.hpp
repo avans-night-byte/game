@@ -14,8 +14,11 @@ enum Type {
 class Component;
 
 class ComponentFactory {
+private:
+    std::map<std::string, std::unique_ptr<Component>> components{};
+
+
 public:
-    std::map<std::string, std::unique_ptr<Component>> components;
 
     ComponentFactory();
 };

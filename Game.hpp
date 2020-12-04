@@ -17,7 +17,7 @@
 
 
 class PhysicsAPI;
-
+class ComponentFactory;
 
 class Game {
 private:
@@ -30,6 +30,7 @@ private:
     std::map<PlayerId, EntityId> players;
 
     std::unique_ptr<LevelBase> levelBase;
+    std::unique_ptr<ComponentFactory> componentFactory;
 
 protected:
     Game() = default;

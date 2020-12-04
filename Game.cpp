@@ -11,13 +11,8 @@
 #include "./Scenes/Level1/Level1.hpp"
 #include "./Scenes/Level10/LevelCharlie.hpp"
 
-#include "../API/Audio/AudioAPI.hpp"
-#include "../API/Physics/PhysicsAPI.hpp"
 #include "../API/XMLParser/LevelParserAPI.hpp"
 #include "../API/Input/EngineInputAPI.hpp"
-#include "../API/Rendering/EngineRenderingAPI.hpp"
-#include "../API/Engine/EngineWindowAPI.hpp"
-#include "../API/Physics/EnginePhysicsAPI.hpp"
 #include "../API/XMLParser/MenuParserAPI.hpp"
 
 #include "./Components/ComponentFactory.hpp"
@@ -48,7 +43,8 @@ void Game::initialize()
     physicsAPI = new EnginePhysicsAPI();
     menuParser = new MenuParserAPI(*engineRenderingAPI);
 
-    ComponentFactory factory = ComponentFactory();
+    Game *game = Game::getInstance();
+    game->componentFactory = make_unique<ComponentFactory>();
 
     menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
 
