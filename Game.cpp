@@ -48,7 +48,7 @@ void Game::initialize()
     Game *game = Game::getInstance();
     game->componentFactory = make_unique<ComponentFactory>();
 
-  //  menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
+    menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
 
     // We should normally init when switching state.
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
@@ -165,8 +165,8 @@ void Game::gameLoop() {
         // Temporary State
         if (currentState == 1)
         {
-            mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
-          //  menuParser->render();
+            //mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
+            menuParser->render();
         }
 
         if (currentState == 2)
