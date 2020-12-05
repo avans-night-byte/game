@@ -85,8 +85,8 @@ void Game::gameLoop() {
     // ResourceManager
     // ResourceManager->initialize("/Resources/XML/Definitions/Resources.xml");
     // ResourceManager->loadRequired(["menu_background", "menu_music"]);
-    ResourceManager("../../Resources/XML/Definition/Resources.xml");
-
+    ResourceManager resourceManager = ResourceManager("../../Resources/XML/Definition/Resources.xml");
+    resourceManager.loadRequiredResources({"a"});
 
     // TODO:
     // MainMenu load:
@@ -254,15 +254,15 @@ void Game::gameLoop() {
  **/
 void Game::debugLog(Input i)
 {
-    if (i.device != Input::NONE)
-    {
-        std::cout << std::endl;
-        std::cout << "device: " << i.device << std::endl;
-        std::cout << "code: " << i.keyMap.code << std::endl;
-        std::cout << "action: " << i.keyMap.action << std::endl;
-        std::cout << "x: " << i.x << std::endl;
-        std::cout << "y: " << i.y << std::endl;
-    }
+//    if (i.device != Input::NONE)
+//    {
+//        std::cout << std::endl;
+//        std::cout << "device: " << i.device << std::endl;
+//        std::cout << "code: " << i.keyMap.code << std::endl;
+//        std::cout << "action: " << i.keyMap.action << std::endl;
+//        std::cout << "x: " << i.x << std::endl;
+//        std::cout << "y: " << i.y << std::endl;
+//    }
 }
 
 /*
