@@ -42,7 +42,8 @@ void Game::initialize()
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
     physicsAPI = new EnginePhysicsAPI();
-  //  menuParser = new MenuParserAPI(*engineRenderingAPI, );
+    menuParser = new MenuParserAPI(*engineRenderingAPI, engineInputAPI->getInputEvent());
+
 
     Game *game = Game::getInstance();
     game->componentFactory = make_unique<ComponentFactory>();
@@ -55,6 +56,8 @@ void Game::initialize()
   //  unique_ptr<LevelParserAPI> levelParserAPI = make_unique<LevelParserAPI>();
    // levelParserAPI->LoadLevel("../../Resources/XML/Definition/MainMenu.xml");
 }
+
+void test(Input i){}
 
 /**
  * Gameloop
