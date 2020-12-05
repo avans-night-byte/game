@@ -1,7 +1,7 @@
 #include "Level1.hpp"
 
 #include "../../Game.hpp"
-#include "../../Components/CharacterComponent.h"
+#include "../../Components/CharacterComponent.hpp"
 #include "../../Engine/Rendering/Level.hpp"
 
 void Level1::render(EngineRenderingAPI &engineRenderingAPI) {

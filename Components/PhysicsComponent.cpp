@@ -1,6 +1,7 @@
 #include "PhysicsComponent.hpp"
 
 #include "../Game.hpp"
+#include "../../API/RPosition.hpp"
 
 void PhysicsComponent::update() {
 

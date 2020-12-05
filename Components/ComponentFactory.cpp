@@ -1,7 +1,7 @@
 #include "ComponentFactory.hpp"
 
 #include "WorldPositionComponent.hpp"
-#include "CharacterComponent.h"
+#include "CharacterComponent.hpp"
 #include "NextLevelComponent.hpp"
 #include "RenderComponent.hpp"
 

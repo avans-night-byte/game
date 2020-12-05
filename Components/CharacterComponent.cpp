@@ -1,4 +1,4 @@
-#include "CharacterComponent.h"
+#include "CharacterComponent.hpp"
 
 #include "../Game.hpp"
 

@@ -2,7 +2,7 @@
 
 #include "../../Game.hpp"
 #include "../../Engine/Rendering/Level.hpp"
-#include "../../Components/CharacterComponent.h"
+#include "../../Components/CharacterComponent.hpp"
 
 void LevelCharlie::render(EngineRenderingAPI &engineRenderingAPI) {
     _level->render(engineRenderingAPI);

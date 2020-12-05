@@ -1,7 +1,7 @@
 #include "ExampleScene.hpp"
 
 #include "../../Components/PhysicsComponent.hpp"
-#include "../../Components/CharacterComponent.h"
+#include "../../Components/CharacterComponent.hpp"
 #include "../../Game.hpp"
 
 void ExampleScene::initialize() {

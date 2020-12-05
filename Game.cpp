@@ -17,7 +17,7 @@
 #include "../API/Physics/EnginePhysicsAPI.hpp"
 
 #include "./Components/ComponentFactory.hpp"
-#include "./Components/CharacterComponent.h"
+#include "./Components/CharacterComponent.hpp"
 #include "Scenes/Level10/LevelCharlie.hpp"
 #include "../Engine/Managers/ResourceManager.hpp"
 
@@ -35,15 +35,14 @@ MenuParserAPI *menuParser;
 
 int currentState = 1;
 
-void Game::initialize()
-{
+void Game::initialize() {
     Engine::initWindow(width, height);
-    engineRenderingAPI = new EngineRenderingAPI(engine);
+    engineRenderingAPI = new EngineRenderingAPI();
     engineInputAPI = new EngineInputAPI();
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
     physicsAPI = new EnginePhysicsAPI();
-//    menuParser = new MenuParserAPI(*engineRenderingAPI, );
+    //    menuParser = new MenuParserAPI(*engineRenderingAPI, );
 
     Game *game = Game::getInstance();
     game->componentFactory = make_unique<ComponentFactory>();
@@ -53,8 +52,8 @@ void Game::initialize()
     // We should normally init when switching state.
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
 
-  //  unique_ptr<LevelParserAPI> levelParserAPI = make_unique<LevelParserAPI>();
-   // levelParserAPI->LoadLevel("../../Resources/XML/Definition/MainMenu.xml");
+    unique_ptr<LevelParserAPI> levelParserAPI = make_unique<LevelParserAPI>();
+    levelParserAPI->LoadLevel("../../Resources/XML/Definition/Level1Resources.xml");
 }
 
 /**

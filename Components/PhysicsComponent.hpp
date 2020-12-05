@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../API/Physics/EnginePhysicsAPI.hpp"
+#include "../../API/RPosition.hpp"
 #include "Component.hpp"
 
 class PhysicsComponent : public Component {
