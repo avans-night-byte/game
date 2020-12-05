@@ -42,12 +42,13 @@ void Game::initialize() {
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
     physicsAPI = new EnginePhysicsAPI();
-    //    menuParser = new MenuParserAPI(*engineRenderingAPI, );
+    menuParser = new MenuParserAPI(*engineRenderingAPI, engineInputAPI->getInputEvent());
+
 
     Game *game = Game::getInstance();
     game->componentFactory = make_unique<ComponentFactory>();
 
-//    menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
+    menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
 
     // We should normally init when switching state.
     Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
@@ -55,6 +56,8 @@ void Game::initialize() {
     unique_ptr<LevelParserAPI> levelParserAPI = make_unique<LevelParserAPI>();
     levelParserAPI->LoadLevel("../../Resources/XML/Definition/Level1Resources.xml");
 }
+
+void test(Input i){}
 
 /**
  * Gameloop
@@ -160,8 +163,8 @@ void Game::gameLoop() {
         // Temporary State
         if (currentState == 1)
         {
-            mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
-          //  menuParser->render();
+            //mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
+            menuParser->render();
         }
 
         if (currentState == 2)
