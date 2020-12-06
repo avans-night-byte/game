@@ -106,7 +106,7 @@ void Game::gameLoop() {
     // Open Main Menu, this could be the game state
     unique_ptr<ExampleScene> exampleScene = nullptr;
 
-    unique_ptr<MainMenu> mainMenu = make_unique<MainMenu>(engineWindowAPI, audioApi);
+   // unique_ptr<MainMenu> mainMenu = make_unique<MainMenu>(engineWindowAPI, audioApi);
 
     unique_ptr<LevelCharlie> levelCharlie = nullptr;
     unique_ptr<Level1> level1 = nullptr;
