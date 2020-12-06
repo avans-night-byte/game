@@ -36,6 +36,8 @@ MenuParserAPI *menuParser;
 int currentState = 1;
 
 void Game::initialize() {
+    ResourceManager resourceManager = ResourceManager("../../Resources/XML/Definition/Resources.xml");
+
     Engine::initWindow(width, height);
     renderingAPI = new EngineRenderingAPI();
     engineInputAPI = new EngineInputAPI();
@@ -61,8 +63,6 @@ void Game::initialize() {
     game->levelParserAPI->LoadLevel(levelData, "../../Resources/XML/Definition/Level1Resources.xml");
 }
 
-void test(Input i){}
-
 /**
  * Gameloop
  **/
@@ -70,6 +70,7 @@ void Game::gameLoop() {
 
     // TODO: Please put this into the class after making gameloop static.
     Game *game = getInstance();
+
 
     unique_ptr<CharacterComponent> characterComponent;
     EntityId characterEntityId;
@@ -90,8 +91,7 @@ void Game::gameLoop() {
     // ResourceManager
     // ResourceManager->initialize("/Resources/XML/Definitions/Resources.xml");
     // ResourceManager->loadRequired(["menu_background", "menu_music"]);
-    ResourceManager resourceManager = ResourceManager("../../Resources/XML/Definition/Resources.xml");
-    resourceManager.loadRequiredResources({"mainmenu_background", "oof"});
+
 
     // TODO:
     // MainMenu load:
