@@ -49,19 +49,21 @@ void Game::initialize() {
 
 
     Game *game = Game::getInstance();
-    game->componentFactory = make_unique<ComponentFactory>();
+  //  game->componentFactory = make_unique<ComponentFactory>();
 
-    menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
+    resourceManager.loadResource("MainMenu");
+
+    //menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
 
     // We should normally init when switching state.
-    Credits::init(renderingAPI, engineWindowAPI, audioApi);
+    //Credits::init(renderingAPI, engineWindowAPI, audioApi);
 
-    const TMXLevelData levelData = TMXLevelData("../../Resources/example.tmx",
-                                                "../../Resources/Sprites/Overworld.png",
-                                                "Overworld");
+   // const TMXLevelData levelData = TMXLevelData("../../Resources/example.tmx",
+   //                                             "../../Resources/Sprites/Overworld.png",
+    //                                            "Overworld");
 
-    game->levelParserAPI = std::make_unique<LevelParserAPI>();
-    game->levelParserAPI->LoadLevel(levelData, "../../Resources/XML/Definition/Level1Resources.xml");
+   // game->levelParserAPI = std::make_unique<LevelParserAPI>();
+   // game->levelParserAPI->LoadLevel(levelData, "../../Resources/XML/Definition/Level1Resources.xml");
 }
 
 /**
@@ -88,7 +90,7 @@ void Game::gameLoop() {
     int32 positionIterations = 2;
 
     float t = 0.0f;
-    double dt = 1 / 60.0;
+    float dt = 1 / 60.0;
 
     auto currentTime = std::chrono::high_resolution_clock::now();
     float accumulator = 0.0;
@@ -116,8 +118,14 @@ void Game::gameLoop() {
             accumulator -= dt;
         }
 
+        // if(menu) {
+        //      menu->render()
+        // } else {
+        //      scene->render();
+        //      scene->fixedUpdate();
+        //      scene->update()
+        // }
         menuParser->render();
-
 
         if (isDebuggingPhysics)
             physicsAPI->DebugDraw(*renderingAPI, *engineWindowAPI->getRenderer());
