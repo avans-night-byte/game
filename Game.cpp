@@ -37,7 +37,7 @@ MenuParserAPI *menuParser;
 
 void Game::initialize() {
     // Load in all resources
-    ResourceManager resourceManager = ResourceManager("../../Resources/XML/Definition/Resources.xml");
+    ResourceManager& resourceManager = *ResourceManager::instantiate("../../Resources/XML/Definition/Resources.xml");
 
     Engine::initWindow(width, height);
     renderingAPI = new EngineRenderingAPI();
