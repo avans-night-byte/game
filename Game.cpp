@@ -91,7 +91,7 @@ void Game::gameLoop() {
     // ResourceManager->initialize("/Resources/XML/Definitions/Resources.xml");
     // ResourceManager->loadRequired(["menu_background", "menu_music"]);
     ResourceManager resourceManager = ResourceManager("../../Resources/XML/Definition/Resources.xml");
-//    resourceManager.loadRequiredResources({"a"}); // TODO: uncomment this
+    resourceManager.loadRequiredResources({"mainmenu_background", "oof"});
 
     // TODO:
     // MainMenu load:
