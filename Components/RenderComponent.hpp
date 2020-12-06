@@ -12,7 +12,7 @@ private:
     WorldPositionComponent *position;
     int r{}, g{}, b{};
     char const * _texturePath;
-    const RenderingAPI &_engineRenderingApi;
+    RenderingAPI &_engineRenderingApi;
     std::string _textureId;
 
 
