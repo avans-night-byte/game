@@ -4,7 +4,7 @@
 #include "./Component.hpp"
 #include <string>
 
-class EngineRenderingAPI;
+class RenderingAPI;
 class WorldPositionComponent;
 
 class RenderComponent : public Component {
@@ -12,7 +12,7 @@ private:
     WorldPositionComponent *position;
     int r{}, g{}, b{};
     char const * _texturePath;
-    const EngineRenderingAPI &_engineRenderingApi;
+    const RenderingAPI &_engineRenderingApi;
     std::string _textureId;
 
 

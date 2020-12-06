@@ -4,6 +4,7 @@
 #include "CharacterComponent.hpp"
 #include "NextLevelComponent.hpp"
 #include "RenderComponent.hpp"
+#include "EntityObject.hpp"
 
 ComponentFactory::ComponentFactory() {
 
@@ -16,4 +17,5 @@ ComponentFactory::ComponentFactory() {
     components["CharacterComponent"] = make_unique<CharacterComponent>(entityId);
     components["NextLevelComponent"] = make_unique<NextLevelComponent>(entityId);
     components["RenderComponent"] = make_unique<RenderComponent>(entityId);
+    components["EntityObject"] = make_unique<EntityObject>(entityId);
 }

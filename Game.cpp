@@ -18,7 +18,7 @@
 
 #include "./Components/ComponentFactory.hpp"
 #include "./Components/CharacterComponent.hpp"
-#include "Scenes/Level10/LevelCharlie.hpp"
+#include "../Engine/Rendering/TMXLevel.hpp"
 #include "../Engine/Managers/ResourceManager.hpp"
 
 typedef signed int int32;
@@ -28,7 +28,7 @@ const int width = 1920;const int height = 1080;
 Engine *engine;
 EngineInputAPI *engineInputAPI;
 EngineWindowAPI *engineWindowAPI;
-EngineRenderingAPI *engineRenderingAPI; // TODO:  EngineRenderingAPI -> RenderinAPI: Change this since we are using the interface instance.
+RenderingAPI *renderingAPI; // TODO:  EngineRenderingAPI -> RenderinAPI: Change this since we are using the interface instance.
 PhysicsAPI *physicsAPI;
 AudioAPI *audioApi;
 MenuParserAPI *menuParser;
@@ -37,12 +37,12 @@ int currentState = 1;
 
 void Game::initialize() {
     Engine::initWindow(width, height);
-    engineRenderingAPI = new EngineRenderingAPI();
+    renderingAPI = new EngineRenderingAPI();
     engineInputAPI = new EngineInputAPI();
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
     physicsAPI = new EnginePhysicsAPI();
-    menuParser = new MenuParserAPI(*engineRenderingAPI, engineInputAPI->getInputEvent());
+    menuParser = new MenuParserAPI(*renderingAPI, engineInputAPI->getInputEvent());
 
 
     Game *game = Game::getInstance();
@@ -51,10 +51,14 @@ void Game::initialize() {
     menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
 
     // We should normally init when switching state.
-    Credits::init(engineRenderingAPI, engineWindowAPI, audioApi);
+    Credits::init(renderingAPI, engineWindowAPI, audioApi);
 
-    unique_ptr<LevelParserAPI> levelParserAPI = make_unique<LevelParserAPI>();
-    levelParserAPI->LoadLevel("../../Resources/XML/Definition/Level1Resources.xml");
+    const TMXLevelData levelData = TMXLevelData("../../Resources/example.tmx",
+                                                "../../Resources/Sprites/Overworld.png",
+                                                "Overworld");
+
+    game->levelParserAPI = std::make_unique<LevelParserAPI>();
+    game->levelParserAPI->LoadLevel(levelData, "../../Resources/XML/Definition/Level1Resources.xml");
 }
 
 void test(Input i){}
@@ -87,7 +91,7 @@ void Game::gameLoop() {
     // ResourceManager->initialize("/Resources/XML/Definitions/Resources.xml");
     // ResourceManager->loadRequired(["menu_background", "menu_music"]);
     ResourceManager resourceManager = ResourceManager("../../Resources/XML/Definition/Resources.xml");
-    resourceManager.loadRequiredResources({"a"});
+//    resourceManager.loadRequiredResources({"a"}); // TODO: uncomment this
 
     // TODO:
     // MainMenu load:
@@ -102,7 +106,7 @@ void Game::gameLoop() {
     // Open Main Menu, this could be the game state
     unique_ptr<ExampleScene> exampleScene = nullptr;
 
-    unique_ptr<MainMenu> mainMenu = make_unique<MainMenu>(engineRenderingAPI, engineWindowAPI, audioApi);
+    unique_ptr<MainMenu> mainMenu = make_unique<MainMenu>(engineWindowAPI, audioApi);
 
     unique_ptr<LevelCharlie> levelCharlie = nullptr;
     unique_ptr<Level1> level1 = nullptr;
@@ -163,13 +167,13 @@ void Game::gameLoop() {
         // Temporary State
         if (currentState == 1)
         {
-            //mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
+            //mainMenu->render(renderingAPI, engineWindowAPI, i);
             menuParser->render();
         }
 
         if (currentState == 2)
         {
-            Credits::render(engineRenderingAPI, engineWindowAPI, i);
+            Credits::render(renderingAPI, engineWindowAPI, i);
         }
 
         if (currentState == 3) {
@@ -193,10 +197,10 @@ void Game::gameLoop() {
         {
             if(levelCharlie == nullptr)
             {
-                levelCharlie = make_unique<LevelCharlie>(*characterComponent, *engineRenderingAPI, *physicsAPI);
+                levelCharlie = make_unique<LevelCharlie>(*characterComponent, *renderingAPI, *physicsAPI);
             }
 
-            levelCharlie->render(*engineRenderingAPI);
+            levelCharlie->render(*renderingAPI);
             levelCharlie->update(i);
         }
         else{
@@ -210,9 +214,9 @@ void Game::gameLoop() {
         {
             if (level1 == nullptr)
             {
-                level1 = make_unique<Level1>(*characterComponent, *engineRenderingAPI, *physicsAPI);
+                level1 = make_unique<Level1>(*characterComponent, *renderingAPI, *physicsAPI);
             }
-            level1->render(*engineRenderingAPI);
+            level1->render(*renderingAPI);
             level1->update(i);
         }
         else
@@ -224,7 +228,7 @@ void Game::gameLoop() {
         }
 
         if(isDebuggingPhysics)
-            physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
+            physicsAPI->DebugDraw(*renderingAPI, *engineWindowAPI->getRenderer());
 
         SDL_RenderPresent(engineWindowAPI->getRenderer());
         SDL_RenderClear(engineWindowAPI->getRenderer());
@@ -367,7 +371,7 @@ Game *Game::instance{};
 std::mutex Game::mutex;
 
 /**
- * The first time we call GetInstance we will lock the storage location
+ * The first time we call getInstance we will lock the storage location
  *      and then we make sure again that the variable is null and then we
  *      set the value.
  */
@@ -382,14 +386,14 @@ Game *Game::getInstance()
     return instance;
 }
 
-const PhysicsAPI *Game::getPhysicsAPI()
+PhysicsAPI *Game::getPhysicsAPI()
 {
     return physicsAPI;
 }
 
-const EngineRenderingAPI *Game::getRenderingApi()
+RenderingAPI *Game::getRenderingApi()
 {
-    return engineRenderingAPI;
+    return renderingAPI;
 }
 
 void Game::setCurrentState(int state)

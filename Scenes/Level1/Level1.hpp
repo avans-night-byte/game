@@ -1,21 +1,21 @@
 #pragma once
 
-class Level;
+class TMXLevel;
 class Input;
 class CharacterComponent;
-class EngineRenderingAPI;
+class RenderingAPI;
 class PhysicsAPI;
 
 
 class Level1 {
 private:
-    Level* _level;
+    TMXLevel* _level;
     CharacterComponent& characterComponent;
 
 public:
-    explicit Level1(CharacterComponent& characterComponent, EngineRenderingAPI& engineRenderingApi, PhysicsAPI& enginePhysicsApi);
+    explicit Level1(CharacterComponent& characterComponent, RenderingAPI& renderingApi, PhysicsAPI& enginePhysicsApi);
     ~Level1();
-    void render(EngineRenderingAPI& engineRenderingAPI);
+    void render(RenderingAPI& renderingApi);
 
     void fixedUpdate(const float &deltaTime);
 

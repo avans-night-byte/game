@@ -12,11 +12,12 @@
 #include "Components/Component.hpp"
 
 #include "Scenes/LevelBase.hpp"
-#include "../API/Rendering/EngineRenderingAPI.hpp"
 
 
 class PhysicsAPI;
 class ComponentFactory;
+class LevelParserAPI;
+class RenderingAPI;
 
 class Game {
 private:
@@ -29,6 +30,8 @@ private:
     std::map<PlayerId, EntityId> players;
 
     std::unique_ptr<LevelBase> levelBase;
+
+    std::unique_ptr<LevelParserAPI> levelParserAPI;
     std::unique_ptr<ComponentFactory> componentFactory;
 
 protected:
@@ -63,9 +66,9 @@ public:
     template<typename T>
     System<T> getComponents(EntityId id);
 
-    const PhysicsAPI *getPhysicsAPI();
+    PhysicsAPI *getPhysicsAPI();
 
-    const EngineRenderingAPI *getRenderingApi();
+    RenderingAPI *getRenderingApi();
 
     static void setCurrentState(int state);
 

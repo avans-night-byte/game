@@ -1,6 +1,7 @@
 #include "RenderComponent.hpp"
 #include "../Game.hpp"
 #include "WorldPositionComponent.hpp"
+#include "../../API/Rendering/RenderingAPI.hpp"
 
 /**
  * This is a sample component, this one renders an imahe on the screen.

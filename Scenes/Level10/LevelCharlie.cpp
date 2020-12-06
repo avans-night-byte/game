@@ -1,10 +1,10 @@
 #include "LevelCharlie.hpp"
 
 #include "../../Game.hpp"
-#include "../../Engine/Rendering/Level.hpp"
+#include "../../Engine/Rendering/TMXLevel.hpp"
 #include "../../Components/CharacterComponent.hpp"
 
-void LevelCharlie::render(EngineRenderingAPI &engineRenderingAPI) {
+void LevelCharlie::render(RenderingAPI &engineRenderingAPI) {
     _level->render(engineRenderingAPI);
 }
 
@@ -13,14 +13,14 @@ LevelCharlie::~LevelCharlie() {
 }
 
 LevelCharlie::LevelCharlie(CharacterComponent& characterComponent,
-                           EngineRenderingAPI& engineRenderingApi,
+                           RenderingAPI& engineRenderingApi,
                            PhysicsAPI& enginePhysicsApi) : characterComponent(characterComponent) {
 
     const char *levelName = "../../Resources/LevelCharlie.tmx";
     const char *spritesheetName = "../../Resources/Sprites/Overworld.png";
     const char *spriteId = "Overworld";
 
-    _level = new Level( levelName, spritesheetName, spriteId, engineRenderingApi, *enginePhysicsApi.getPhysicsEngineAdapter());
+    _level = new TMXLevel(levelName, spritesheetName, spriteId, engineRenderingApi, *enginePhysicsApi.getPhysicsEngineAdapter());
 
 
     Game *game = Game::getInstance();

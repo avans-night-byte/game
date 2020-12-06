@@ -3,11 +3,13 @@
 #include "../../API/Rendering/EngineRenderingAPI.hpp"
 #include "../../API/Audio/AudioAPI.hpp"
 
-MainMenu::MainMenu(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi)
+MainMenu::MainMenu(EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi)
 {
+  RenderingAPI *renderingApi = Game::getInstance()->getRenderingApi();
+
   // Load textures
-  engineRenderingAPI->loadTexture("../../Resources/Sprites/background.png", "background");
-  engineRenderingAPI->loadTexture("../../Resources/Sprites/menu_bar.png", "menu_bar");
+  renderingApi->loadTexture("../../Resources/Sprites/background.png", "background");
+  renderingApi->loadTexture("../../Resources/Sprites/menu_bar.png", "menu_bar");
 
   // Background music
   AudioType s = sound;
@@ -15,16 +17,16 @@ MainMenu::MainMenu(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engi
   audioApi->playFromPath(path, s);
 
   // Load sprites
-  characterSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/character.png", "spritesheet_char", 8, 11, 100, 105);
-  buttonSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/main_menu_buttons.png", "spritesheet_buttons", 2, 3, 779, 112);
-  settingsSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/settings.png", "spritesheet_settings", 0, 4, 232, 122);
+  characterSpriteSheet = renderingApi->createSpriteSheet("../../Resources/Sprites/character.png", "spritesheet_char", 8, 11, 100, 105);
+  buttonSpriteSheet = renderingApi->createSpriteSheet("../../Resources/Sprites/main_menu_buttons.png", "spritesheet_buttons", 2, 3, 779, 112);
+  settingsSpriteSheet = renderingApi->createSpriteSheet("../../Resources/Sprites/settings.png", "spritesheet_settings", 0, 4, 232, 122);
 
   // Init character state
   characterSpriteSheet->select_sprite(0, 0);
 }
 
 
-void MainMenu::render(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI, Input i)
+void MainMenu::render(RenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI, Input i)
 {
 
   // Draw background image

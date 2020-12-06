@@ -5,6 +5,6 @@
 
 class Credits {
 public:
-    static void init(EngineRenderingAPI *renderAPI, EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi);
-    static void render(EngineRenderingAPI *renderAPI, EngineWindowAPI *engineWindowAPI, Input i);
+    static void init(RenderingAPI *renderAPI, EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi);
+    static void render(RenderingAPI *renderAPI, EngineWindowAPI *engineWindowAPI, Input i);
 };

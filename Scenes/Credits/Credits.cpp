@@ -4,7 +4,7 @@ Spritesheet *avatarSpriteSheet;
 Spritesheet *namesSpriteSheet;
 
 
-void Credits::init(EngineRenderingAPI *renderAPI, EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi) {
+void Credits::init(RenderingAPI *renderAPI, EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi) {
     // Load Textures
     renderAPI->loadTexture("../../Resources/Sprites/background.png", "background");
     renderAPI->loadTexture("../../Resources/Sprites/UI/credits-bg.png", "credits_bg");
@@ -16,7 +16,7 @@ void Credits::init(EngineRenderingAPI *renderAPI, EngineWindowAPI *engineWindowA
     namesSpriteSheet = renderAPI->createSpriteSheet("../../Resources/Sprites/UI/credits-names.png", "spritesheet_names", 2, 3, 240, 100);
 }
 
-void Credits::render(EngineRenderingAPI *renderAPI, EngineWindowAPI *engineWindowAPI, Input i) {
+void Credits::render(RenderingAPI *renderAPI, EngineWindowAPI *engineWindowAPI, Input i) {
     // Draw Textures
     renderAPI->drawTexture("background", 0, 0, 1920, 1080, 1, 1);
     renderAPI->drawTexture("credits_bg", 500, 0, 1600, 1750, .6, 1);

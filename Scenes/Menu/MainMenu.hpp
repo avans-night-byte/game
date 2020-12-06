@@ -32,9 +32,9 @@ private:
     int settingsBarX = 1760;
 
 public:
-    MainMenu(EngineRenderingAPI *renderAPI, EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi);
+    MainMenu(EngineWindowAPI *engineWindowAPI, AudioAPI *audioApi);
 
-    void render(EngineRenderingAPI *renderAPI, EngineWindowAPI *engineWindowAPI, Input i);
+    void render(RenderingAPI *renderAPI, EngineWindowAPI *engineWindowAPI, Input i);
 
     bool clicked(Input i, int x, int y) const;
 };

@@ -5,6 +5,7 @@
 
 #include <map>
 #include <memory>
+#include <iostream>
 
 class Component;
 
@@ -32,7 +33,8 @@ public:
 
         if(component == nullptr)
         {
-            std::cout << "Couldn't find " + name << std::endl;
+            std::cout << "Couldn't find " + name + ", will create EntityObject component."<< std::endl;
+            return components["EntityObject"]->Clone(id);
         }
 
         return component->Clone(id);
