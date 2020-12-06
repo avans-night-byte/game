@@ -81,7 +81,7 @@ void MainMenu::render(RenderingAPI *engineRenderingAPI, EngineWindowAPI *engineW
     if (clicked(i, menuButtonX, playButtonY))
     {
       std::cout << "Clicked PLAY button" << std::endl;
-      Game::setCurrentState(4);
+   //   Game::setCurrentState(4);
     }
 
     if (clicked(i, menuButtonX, helpButtonY))
@@ -92,13 +92,13 @@ void MainMenu::render(RenderingAPI *engineRenderingAPI, EngineWindowAPI *engineW
     if (clicked(i, menuButtonX, creditsButtonY))
     {
       std::cout << "Clicked CREDITS button" << std::endl;
-      Game::setCurrentState(2);
+    //  Game::setCurrentState(2);
     }
 
     if (clicked(i, menuButtonX, exitButtonY))
     {
       std::cout << "Clicked EXIT button" << std::endl;
-      Game::setCurrentState(0);
+   //   Game::setCurrentState(0);
     }
   }
 }
