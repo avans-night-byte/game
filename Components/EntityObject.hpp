@@ -13,6 +13,9 @@ private:
 
 public:
     std::string entityName;
+    [[nodiscard]] const std::vector<std::unique_ptr<Component>>& getComponents() const {
+        return components;
+    }
 
 public:
     explicit EntityObject(EntityId id, std::string name = "") : Component(id),

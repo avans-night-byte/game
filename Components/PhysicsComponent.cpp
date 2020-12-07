@@ -39,8 +39,6 @@ string PhysicsComponent::name() const {
     return "PhysicsComponent";
 }
 
-
-
 Component *PhysicsComponent::Clone(EntityId entityId, const LevelResources::component *component) {
     auto &resourcePhysicsComponent = component->physicsComponent().get();
     auto bodyTypeString = std::string(resourcePhysicsComponent.bodyType().c_str());
@@ -67,8 +65,17 @@ Component *PhysicsComponent::Clone(EntityId entityId, const LevelResources::comp
     }
 
     // TODO: Set Friction for physicsComponent;
-    auto contactHandlerName = std::string(resourcePhysicsComponent.contactHandler().c_str());
-    
+
+    auto &contactHandler = resourcePhysicsComponent.contactHandler();
+    newPhysicsComponent->contactHandlerName = (contactHandler != nullptr) ? std::string(contactHandler->c_str()) : "";
 
     return newPhysicsComponent;
+}
+
+void PhysicsComponent::setContactHandler(Component *pComponent) {
+    auto* contactHandler = (ContactHandler*)pComponent;
+    if(contactHandler == nullptr)
+        throw std::runtime_error("Given component does not inherit ContactHandler");
+
+    enginePhysicsAPI->setContactHandler(bodyId, contactHandler);
 }

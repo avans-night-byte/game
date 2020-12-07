@@ -14,7 +14,7 @@ void WorldPositionComponent::fixedUpdate(const float &deltaTime) {
 }
 
 std::string WorldPositionComponent::name() const {
-    return "";
+    return "WorldPositionComponent";
 }
 
 Component *WorldPositionComponent::Clone(EntityId entityId, const LevelResources::component *component) {

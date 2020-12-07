@@ -9,6 +9,16 @@ private:
     const PhysicsAPI *enginePhysicsAPI;
     unsigned int bodyId = 0;
 
+    std::string contactHandlerName;
+
+public:
+    inline const std::string& getContactHandlerName() {
+        return contactHandlerName;
+    }
+
+
+    void setContactHandler(Component *pComponent);
+
 public:
     explicit PhysicsComponent(EntityId id);
 
@@ -49,6 +59,7 @@ public:
         throw std::runtime_error("BodyType Value: " + value + " could not be parsed.");
     }
 
+public:
     void fixedUpdate(const float &deltaTime) override;
 
     [[nodiscard]] std::string name() const override;
