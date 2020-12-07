@@ -20,7 +20,9 @@ public:
 
     void update() override;
 
-    [[nodiscard]] Component * Clone(EntityId entityId) const override;
+    void fixedUpdate(const float &deltaTime) override;
+
+    [[nodiscard]] Component *Clone(EntityId entityId, const LevelResources::component *component) override;
 
     std::string name() const override;
 };

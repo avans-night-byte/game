@@ -1,17 +1,29 @@
+#include <Generated/level-resources.hxx>
 #include "WorldPositionComponent.hpp"
 
-void WorldPositionComponent::setLocation(const float &x, const float &y) {
-    this->x = &x;
-    this->y = &y;
+void WorldPositionComponent::setLocation(const float &rX, const float &rY) {
+    this->x = &rX;
+    this->y = &rY;
 }
 
 
 void WorldPositionComponent::update() {}
 
-Component *WorldPositionComponent::Clone(EntityId entityId) const {
-    return new WorldPositionComponent(entityId);
+void WorldPositionComponent::fixedUpdate(const float &deltaTime) {
+
 }
 
 std::string WorldPositionComponent::name() const {
     return "";
+}
+
+Component *WorldPositionComponent::Clone(EntityId entityId, const LevelResources::component *component) {
+    auto &resourceWorldPosition = component->worldPositionComponent().get();
+    auto &position = resourceWorldPosition.positionF();
+
+    auto newWorldPositionComponent = new WorldPositionComponent(entityId);
+    newWorldPositionComponent->x = &position.x();
+    newWorldPositionComponent->y = &position.y();
+
+    return newWorldPositionComponent;
 }

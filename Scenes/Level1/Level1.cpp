@@ -4,23 +4,24 @@
 #include "../../Components/CharacterComponent.hpp"
 #include "../../Engine/Rendering/TMXLevel.hpp"
 
-void Level1::render(RenderingAPI &renderingApi) {
-    _level->render(renderingApi);
+void Level1::render() {
+    _level->render(*Game::getInstance()->getRenderingApi());
 }
 
 Level1::~Level1() {
     delete _level;
 }
 
-Level1::Level1(CharacterComponent& characterComponent,
-               RenderingAPI& renderingApi,
-               PhysicsAPI& enginePhysicsApi) : characterComponent(characterComponent) {
+Level1::Level1(CharacterComponent &characterComponent) : characterComponent(characterComponent) {
 
     const char *levelName = "../../Resources/example.tmx";
     const char *spritesheetName = "../../Resources/Sprites/Overworld.png";
     const char *spriteId = "Overworld";
 
-    _level = new TMXLevel(levelName, spritesheetName, spriteId, renderingApi, *enginePhysicsApi.getPhysicsEngineAdapter());
+    const auto *renderingAPI = Game::getInstance()->getRenderingApi();
+    auto *physicsAPI = Game::getInstance()->getPhysicsAPI();
+
+    _level = new TMXLevel(levelName, spritesheetName, spriteId, *renderingAPI, *physicsAPI->getPhysicsEngineAdapter());
 
 
     Game *game = Game::getInstance();

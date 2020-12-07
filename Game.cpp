@@ -8,8 +8,6 @@
 #include "./Scenes/Menu/MainMenu.cpp"
 #include "./Scenes/Example/ExampleScene.hpp"
 #include "./Scenes/Credits/Credits.hpp"
-#include "./Scenes/Level1/Level1.hpp"
-#include "./Scenes/Level10/LevelCharlie.hpp"
 
 #include "../API/XMLParser/LevelParserAPI.hpp"
 #include "../API/Input/EngineInputAPI.hpp"
@@ -20,6 +18,7 @@
 #include "./Components/CharacterComponent.hpp"
 #include "../Engine/Rendering/TMXLevel.hpp"
 #include "../Engine/Managers/ResourceManager.hpp"
+#include "Scenes/Level1/Level1.hpp"
 
 typedef signed int int32;
 
@@ -37,7 +36,7 @@ MenuParserAPI *menuParser;
 
 void Game::initialize() {
     // Load in all resources
-    ResourceManager& resourceManager = *ResourceManager::instantiate("../../Resources/XML/Definition/Resources.xml");
+    ResourceManager &resourceManager = *ResourceManager::instantiate("../../Resources/XML/Definition/Resources.xml");
 
     Engine::initWindow(width, height);
     renderingAPI = new EngineRenderingAPI();
@@ -49,7 +48,7 @@ void Game::initialize() {
 
 
     Game *game = Game::getInstance();
-  //  game->componentFactory = make_unique<ComponentFactory>();
+    game->componentFactory = make_unique<ComponentFactory>();
 
     resourceManager.loadResource("MainMenu");
 
@@ -57,21 +56,13 @@ void Game::initialize() {
 
     // We should normally init when switching state.
     //Credits::init(renderingAPI, engineWindowAPI, audioApi);
-
-   // const TMXLevelData levelData = TMXLevelData("../../Resources/example.tmx",
-   //                                             "../../Resources/Sprites/Overworld.png",
-    //                                            "Overworld");
-
-   // game->levelParserAPI = std::make_unique<LevelParserAPI>();
-   // game->levelParserAPI->LoadLevel(levelData, "../../Resources/XML/Definition/Level1Resources.xml");
 }
 
 /**
  * Gameloop
  **/
 void Game::gameLoop() {
-
-    // TODO: Please put this into the class after making gameloop static.
+    // TODO: Please put this away after making gameloop not static.
     Game *game = getInstance();
 
     /** CREATE CHARACTER */
@@ -82,6 +73,19 @@ void Game::gameLoop() {
     characterComponent = make_unique<CharacterComponent>(characterEntityId, Vector2(100, 100));
 
     game->addComponent(characterEntityId, characterComponent.get());
+
+    /** Create Level **/
+    const TMXLevelData levelData = TMXLevelData("../../Resources/example.tmx",
+                                                "../../Resources/Sprites/Overworld.png",
+                                                "Overworld");
+
+    auto outEntities = std::multimap<std::string, const LevelResources::component *>();
+    LevelParserAPI::loadLevel(outEntities,
+                              levelData,
+                              "../../Resources/XML/Definition/Level1Resources.xml");
+
+    game->levelBase = std::make_unique<Level1>(*characterComponent);
+    game->levelBase->LoadEntities(outEntities);
 
 
     bool isDebuggingPhysics = false;
@@ -118,13 +122,6 @@ void Game::gameLoop() {
             accumulator -= dt;
         }
 
-        // if(menu) {
-        //      menu->render()
-        // } else {
-        //      scene->render();
-        //      scene->fixedUpdate();
-        //      scene->update()
-        // }
         menuParser->render();
 
         if (isDebuggingPhysics)
@@ -256,4 +253,8 @@ PhysicsAPI *Game::getPhysicsAPI() {
 
 RenderingAPI *Game::getRenderingApi() {
     return renderingAPI;
+}
+
+ComponentFactory *Game::getComponentFactory() {
+    return componentFactory.get();
 }

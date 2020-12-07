@@ -37,8 +37,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
     spriteSheet->select_sprite(0, 0);
 }
 
-
-void CharacterComponent::update(const Input &inputSystem) {
+void CharacterComponent::update(const Input &inputSystem){
     bool stopped = false;
 
     if (inputSystem.keyMap.type == SDL_KEYUP) {
@@ -134,6 +133,6 @@ void CharacterComponent::resetMovement() {
     currentMovementDirection[Down] = false;
 }
 
-Component *CharacterComponent::Clone(EntityId entityId) const {
+Component *CharacterComponent::Clone(EntityId entityId, const LevelResources::component *component) {
     return new CharacterComponent(entityId);
 }

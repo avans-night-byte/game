@@ -3,11 +3,15 @@
 
 #include "../Game.hpp"
 
+
 #include <map>
 #include <memory>
 #include <iostream>
 
 class Component;
+namespace LevelResources {
+    class component;
+}
 
 class ComponentFactory {
 private:
@@ -18,25 +22,15 @@ public:
     ComponentFactory();
 
     template<class T>
-    T* getComponent(EntityId id) {
+    T* getComponent(EntityId& id) {
         static_assert(std::is_base_of<Component, T>::value, "T should inherit from class Component");
 
         auto t = T(id);
         std::unique_ptr<Component> &component = components[t.name()];
-        T* newComponent = dynamic_cast<T*>(component->Clone(id));
+        T* newComponent = dynamic_cast<T*>(component->Clone(id, nullptr));
 
         return newComponent;
     }
 
-    Component* getComponent(EntityId id, const std::string &name) {
-        std::unique_ptr<Component> &component = components[name];
-
-        if(component == nullptr)
-        {
-            std::cout << "Couldn't find " + name + ", will create EntityObject component."<< std::endl;
-            return components["EntityObject"]->Clone(id);
-        }
-
-        return component->Clone(id);
-    }
+    Component* getComponent(const EntityId& id, const std::string &name, const LevelResources::component *loadedComponent);
 };

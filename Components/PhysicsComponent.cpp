@@ -1,9 +1,16 @@
-#include "PhysicsComponent.hpp"
-
+#include <Generated/level-resources.hxx>
 #include "../Game.hpp"
 #include "../../API/RPosition.hpp"
 
+
+#include "PhysicsComponent.hpp"
+
+
 void PhysicsComponent::update() {
+
+}
+
+void PhysicsComponent::fixedUpdate(const float &deltaTime) {
 
 }
 
@@ -28,10 +35,40 @@ PhysicsComponent::PhysicsComponent(EntityId id, BodyType bodyType, Vector2 posit
 
 }
 
-Component *PhysicsComponent::Clone(EntityId entityId) const {
-    return new PhysicsComponent(entityId);
-}
-
 string PhysicsComponent::name() const {
     return "PhysicsComponent";
+}
+
+
+
+Component *PhysicsComponent::Clone(EntityId entityId, const LevelResources::component *component) {
+    auto &resourcePhysicsComponent = component->physicsComponent().get();
+    auto bodyTypeString = std::string(resourcePhysicsComponent.bodyType().c_str());
+
+    auto &shapeCircle = resourcePhysicsComponent.bodyShape().circle();
+    auto &shapeBox = resourcePhysicsComponent.bodyShape().box();
+
+
+    BodyType bodyType = StringToBodyType(bodyTypeString);
+
+
+    /* Shape */
+    PhysicsComponent *newPhysicsComponent = nullptr;
+    if(shapeCircle != nullptr)
+    {
+        auto position = Vector2(shapeCircle->positionF().x(), shapeCircle->positionF().y());
+        newPhysicsComponent = new PhysicsComponent(entityId, bodyType, position, shapeCircle->radius());
+    }
+    else // Box
+    {
+        auto position = Vector2(shapeBox->positionF().x(), shapeBox->positionF().y());
+        auto size = Vector2(shapeBox->width(), shapeBox->height());
+        newPhysicsComponent = new PhysicsComponent(entityId, bodyType, position, size);
+    }
+
+    // TODO: Set Friction for physicsComponent;
+    auto contactHandlerName = std::string(resourcePhysicsComponent.contactHandler().c_str());
+    
+
+    return newPhysicsComponent;
 }

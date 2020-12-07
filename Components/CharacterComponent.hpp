@@ -43,13 +43,13 @@ public:
 
     void update(const Input &inputSystem);
 
-    void fixedUpdate(const float &deltaTime);
+    void fixedUpdate(const float &deltaTime) override;
 
     inline const Spritesheet &getSpriteSheet() {
         return *spriteSheet;
     }
 
-    [[nodiscard]] Component *Clone(EntityId entityId) const override;
+    [[nodiscard]] Component *Clone(EntityId entityId, const LevelResources::component *component) override;
 
     [[nodiscard]] std::string name() const override;
 

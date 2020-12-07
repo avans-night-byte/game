@@ -19,3 +19,17 @@ ComponentFactory::ComponentFactory() {
     components["RenderComponent"] = make_unique<RenderComponent>(entityId);
     components["EntityObject"] = make_unique<EntityObject>(entityId);
 }
+
+Component *ComponentFactory::getComponent(const EntityId &id,
+                                          const string &name,
+                                          const LevelResources::component *loadedComponent) {
+
+    std::unique_ptr<Component> &component = components[name];
+
+    if (component == nullptr) {
+        std::cout << "Couldn't find " + name + ", will create EntityObject component." << std::endl;
+        return components["EntityObject"]->Clone(id, nullptr);
+    }
+
+    return component->Clone(id, loadedComponent);
+}

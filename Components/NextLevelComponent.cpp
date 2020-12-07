@@ -22,6 +22,10 @@ void NextLevelComponent::update() {
 
 }
 
-Component *NextLevelComponent::Clone(EntityId entityId) const {
+void NextLevelComponent::fixedUpdate(const float &deltaTime) {
+
+}
+
+Component *NextLevelComponent::Clone(EntityId entityId, const LevelResources::component *component) {
     return new NextLevelComponent(entityId);
 }

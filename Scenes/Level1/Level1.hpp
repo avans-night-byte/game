@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../LevelBase.hpp"
+
 class TMXLevel;
 class Input;
 class CharacterComponent;
@@ -7,17 +9,18 @@ class RenderingAPI;
 class PhysicsAPI;
 
 
-class Level1 {
+class Level1 : public LevelBase {
 private:
     TMXLevel* _level;
     CharacterComponent& characterComponent;
 
 public:
-    explicit Level1(CharacterComponent& characterComponent, RenderingAPI& renderingApi, PhysicsAPI& enginePhysicsApi);
+    explicit Level1(CharacterComponent& characterComponent);
+
     ~Level1();
-    void render(RenderingAPI& renderingApi);
+    void render();
 
-    void fixedUpdate(const float &deltaTime);
+    void update(const Input &inputSystem) override;
 
-    void update(const Input &inputSystem);
+    void fixedUpdate(const float &deltaTime) override;
 };

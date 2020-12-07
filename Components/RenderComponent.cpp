@@ -65,7 +65,10 @@ void RenderComponent::update() {
     render();
 }
 
-Component *RenderComponent::Clone(EntityId entityId) const {
-    return new RenderComponent(entityId);
+void RenderComponent::fixedUpdate(const float &deltaTime) {
+
 }
 
+Component *RenderComponent::Clone(EntityId entityId, const LevelResources::component *component) {
+    return new RenderComponent(entityId);
+}
