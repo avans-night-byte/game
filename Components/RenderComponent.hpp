@@ -1,11 +1,11 @@
 #pragma once
 #include "./Component.hpp"
 #include "../../API/Rendering/EngineRenderingAPI.hpp"
-#include "WorldPositionComponent.hpp"
+#include "TransformComponent.hpp"
 
 class RenderComponent : Component {
 private:
-    WorldPositionComponent *position;
+    TransformComponent *transform;
     int r{}, g{}, b{};
     char const * _texturePath;
     EngineRenderingAPI &_engineRenderingApi;
@@ -17,6 +17,6 @@ public:
 
     void render();
 
-    RenderComponent(EntityId id, WorldPositionComponent *positionComponent, char const *texturePath,
+    RenderComponent(EntityId id, TransformComponent *positionComponent, char const *texturePath,
                     std::string textureId, EngineRenderingAPI &engineRenderingApi);
 };

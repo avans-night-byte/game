@@ -15,7 +15,6 @@ public:
               enginePhysicsAPI(Game::getInstance()->getPhysicsAPI()),
               bodyId{this->initializeBoxBody(bodyType, position, size)} {
 
-
     }
 
     explicit PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, float radius)
@@ -36,8 +35,13 @@ public:
         enginePhysicsAPI->GetVelocity(velocity, bodyId);
     }
 
+
     inline void setVelocity(const Vector2& velocity) {
         enginePhysicsAPI->setLinearVelocity(bodyId, velocity);
+    }
+
+    inline void setAngle(float angle){
+        enginePhysicsAPI->setAngle(bodyId, angle);
     }
 
     inline void setFixedRotation(bool value)

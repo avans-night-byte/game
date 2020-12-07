@@ -12,9 +12,9 @@
  * @param textureId
  * @param engineRenderingApi
  */
-RenderComponent::RenderComponent(EntityId id, WorldPositionComponent *positionComponent, char const *texturePath,
+RenderComponent::RenderComponent(EntityId id, TransformComponent *positionComponent, char const *texturePath,
                                  std::string textureId, EngineRenderingAPI &engineRenderingApi)
-        : Component(id), position(positionComponent), _engineRenderingApi(engineRenderingApi), _textureId(std::move(textureId)) {
+        : Component(id), transform(positionComponent), _engineRenderingApi(engineRenderingApi), _textureId(std::move(textureId)) {
     _texturePath = texturePath;
     _engineRenderingApi.loadTexture(texturePath, "");
 }
@@ -35,7 +35,7 @@ void RenderComponent::setColor(int red, int blue, int green) {
  */
 void RenderComponent::render() {
     //Render the texture
-    _engineRenderingApi.drawTexture(_textureId, *position->x, *position->y, 859, 840, 2, 0);
+    _engineRenderingApi.drawTexture(_textureId, *transform->x, *transform->y, 859, 840, 2, transform->rotation);
 }
 
 

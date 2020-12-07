@@ -26,6 +26,22 @@ void CharacterComponent::update(const Input &inputSystem) {
         currentMovementDirection[MovementDirection::Left] = !stopped;
     }
 
+
+
+
+
+    auto inputApi = Game::getInstance()->getInputAPI();
+
+    int mx, my;
+    inputApi->getMousePosition(mx,my);
+
+    auto mouseVector = Vector2(mx, my);
+    auto worldPos = Vector2(*worldPosition->x, *worldPosition->y);
+    auto mouseAngle = atan2(mouseVector.y - worldPos.y, mouseVector.x - worldPos.x);
+
+    physicsComponent->setAngle(mouseAngle);
+    _renderingApi->drawLine(mouseVector, worldPos);
+
     update();
 }
 

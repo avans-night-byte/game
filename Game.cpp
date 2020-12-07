@@ -355,3 +355,7 @@ void Game::setCurrentState(int state)
 {
     currentState = state;
 }
+
+const EngineInputAPI *Game::getInputAPI() {
+    return engineInputAPI;
+}

@@ -4,7 +4,7 @@
 #include "../../API/Rendering/EngineRenderingAPI.hpp"
 #include "Component.hpp"
 #include "../Game.hpp"
-#include "WorldPositionComponent.hpp"
+#include "TransformComponent.hpp"
 #include "PhysicsComponent.h"
 
 class CharacterComponent : public Component {
@@ -21,14 +21,16 @@ class CharacterComponent : public Component {
 private:
     std::map<MovementDirection, bool> currentMovementDirection;
     Spritesheet *spriteSheet;
-    unique_ptr<WorldPositionComponent> worldPosition;
+    unique_ptr<TransformComponent> worldPosition;
     unique_ptr<PhysicsComponent> physicsComponent;
+    const EngineRenderingAPI* _renderingApi;
+
     void resetMovement();
 
 public:
     explicit CharacterComponent(EntityId id,
                                 const EngineRenderingAPI *renderingApi,
-                                const Vector2 &position) : Component(id) {
+                                const Vector2 &position) : Component(id), _renderingApi(renderingApi) {
         Game *game = Game::getInstance();
 
         this->resetMovement();
@@ -42,14 +44,16 @@ public:
         spriteSheet = renderingApi->createSpriteSheet("../../Resources/Sprites/character.png",
                                                       "spritesheet_char", 8, 11, 100, 105);
 
-        worldPosition = make_unique<WorldPositionComponent>(id);
+        worldPosition = make_unique<TransformComponent>(id);
 
 
         game->addComponent(id, worldPosition.get());
         game->addComponent(id, physicsComponent.get());
 
         const RPosition &rPosition = physicsComponent->getRPosition();
+
         worldPosition->setLocation(rPosition.X, rPosition.Y);
+        worldPosition->setRotation(rPosition.rotation);
 
         spriteSheet->select_sprite(0, 0);
     }
@@ -72,6 +76,12 @@ public:
 
 protected:
     void update() override {
-        spriteSheet->draw_selected_sprite(*worldPosition->x - 42.5f, *worldPosition->y - 55.0f);
+
+        const RPosition &rPosition = physicsComponent->getRPosition();
+        worldPosition->setRotation(rPosition.rotation);
+        //TODO: get angle to mouse and rotate to it.
+
+
+        spriteSheet->draw_selected_sprite(*worldPosition->x - 42.5f, *worldPosition->y - 55.0f, 1, worldPosition->rotation);
     }
 };

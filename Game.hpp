@@ -13,6 +13,7 @@
 #include "../API/Physics/PhysicsAPI.hpp"
 
 #include "Components/Component.hpp"
+#include "../API/Input/EngineInputAPI.hpp"
 
 using namespace std;
 
@@ -59,6 +60,7 @@ public:
     System<T> getComponents(EntityId id);
 
     const PhysicsAPI *getPhysicsAPI();
+    const EngineInputAPI *getInputAPI();
 
     static void setCurrentState(int state);
 };
