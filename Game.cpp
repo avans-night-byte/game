@@ -82,6 +82,10 @@ void Game::gameLoop() {
 
     auto currentTime = std::chrono::high_resolution_clock::now();
     float accumulator = 0.0;
+    int frameCounter = 0;
+    float totalTime = 0;
+
+    int avgFps = 0;
 
     // Gameloop
     while (true)
@@ -96,8 +100,13 @@ void Game::gameLoop() {
         // Gets the time in microseconds and converts them into seconds.
         float frameTime = std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 100000.0f;
 
+        float frameTimeSeconds = std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 1000000.0f;
+
         currentTime = newTime;
         accumulator += frameTime;
+        totalTime += frameTimeSeconds;
+
+
 
         while (accumulator >= dt)
         {
@@ -186,6 +195,18 @@ void Game::gameLoop() {
                 level1 = nullptr;
             }
         }
+
+
+        frameCounter++;
+
+
+        // The total frames in the last second are fps.
+        if(totalTime >= 1.0f){
+            avgFps = frameCounter;
+            frameCounter = 0;
+            totalTime = 0;
+        }
+
 
         if(isDebuggingPhysics)
             physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
