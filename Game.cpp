@@ -314,6 +314,9 @@ void Game::setCurrentState(int state) {
     currentState = state;
 }
 
+/**
+ * Initialises the game character
+ */
 void Game::startGame() {
     characterEntityId = game->createEntity();
     game->characterComponent = make_unique<CharacterComponent>(characterEntityId,
@@ -323,6 +326,9 @@ void Game::startGame() {
     game->addComponent(characterEntityId, game->characterComponent.get());
 }
 
+/**
+ * Resets the game after game over
+ */
 void Game::resetGame() {
     // TODO: Go to game over screen first
     this->setCurrentState(1);
