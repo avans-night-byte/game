@@ -219,7 +219,7 @@ void Game::gameLoop() {
             engineWindowAPI->closeWindow();
             break;
         }
-
+        std::cout << "Popie" << std::endl;
         if(i.keyMap.code == "]")
         {
             isDebuggingPhysics = true;
