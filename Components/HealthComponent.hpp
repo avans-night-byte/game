@@ -3,10 +3,6 @@
 //
 #pragma once
 
-#ifndef NIGHTBYTE_HEALTHCOMPONENT_HPP
-#define NIGHTBYTE_HEALTHCOMPONENT_HPP
-
-
 class HealthComponent {
 private:
     float _healthPoints = 100;
@@ -18,6 +14,3 @@ public:
     void doDamage(float amountOfHealthPoints);
     void die();
 };
-
-
-#endif //NIGHTBYTE_HEALTHCOMPONENT_HPP
