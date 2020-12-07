@@ -7,7 +7,7 @@
 
 void NextLevelComponent::startContact() {
     // TODO: Hardcoded
-    Game::setCurrentState(10);
+  //  Game::setCurrentState(10);
 }
 
 std::string NextLevelComponent::name() const {
