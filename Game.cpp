@@ -4,11 +4,6 @@
 #include "./Game.hpp"
 
 
-// Fixme: No hardie
-#include "./Scenes/Menu/MainMenu.cpp"
-#include "./Scenes/Example/ExampleScene.hpp"
-#include "./Scenes/Credits/Credits.hpp"
-
 #include "../API/XMLParser/LevelParserAPI.hpp"
 #include "../API/Input/EngineInputAPI.hpp"
 #include "../API/XMLParser/MenuParserAPI.hpp"
@@ -19,6 +14,8 @@
 #include "../Engine/Rendering/TMXLevel.hpp"
 #include "../Engine/Managers/ResourceManager.hpp"
 #include "Scenes/Level1/Level1.hpp"
+#include "../API/Engine/EngineWindowAPI.hpp"
+#include "../API/Audio/AudioAPI.hpp"
 
 typedef signed int int32;
 
