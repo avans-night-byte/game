@@ -33,6 +33,7 @@ RenderComponent::RenderComponent(EntityId id, WorldPositionComponent *positionCo
           position(positionComponent),
           _engineRenderingApi(*Game::getInstance()->getRenderingApi()),
           _textureId(std::move(textureId)) {
+
     _texturePath = texturePath;
     _engineRenderingApi.loadTexture(texturePath, "");
 }
@@ -64,7 +65,10 @@ void RenderComponent::update() {
     render();
 }
 
-Component *RenderComponent::Clone(EntityId entityId) const {
-    return new RenderComponent(entityId);
+void RenderComponent::fixedUpdate(const float &deltaTime) {
+
 }
 
+Component *RenderComponent::clone(EntityId entityId, const LevelResources::component *component) {
+    return new RenderComponent(entityId);
+}

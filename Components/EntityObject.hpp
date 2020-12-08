@@ -3,6 +3,7 @@
 #include "Component.hpp"
 
 #include <memory>
+#include <utility>
 #include <vector>
 #include <string>
 
@@ -11,14 +12,28 @@ private:
     std::vector<std::unique_ptr<Component>> components{};
 
 public:
-    explicit EntityObject(EntityId id) : Component(id)
-    {
+    std::string entityName;
+    [[nodiscard]] const std::vector<std::unique_ptr<Component>>& getComponents() const {
+        return components;
+    }
+
+public:
+    explicit EntityObject(EntityId id, std::string name = "") : Component(id),
+                                                                entityName(std::move(name)) {
+
+    }
+
+    ~EntityObject() {
 
     }
 
     void update() override;
 
+    void fixedUpdate(const float &deltaTime) override;
+
+    void addComponent(Component *component);
+
     [[nodiscard]] std::string name() const override;
 
-    [[nodiscard]] Component *Clone(EntityId entityId) const override;
+    Component *clone(EntityId entityId, const LevelResources::component *component) override;
 };

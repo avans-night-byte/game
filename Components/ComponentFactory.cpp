@@ -5,6 +5,7 @@
 #include "NextLevelComponent.hpp"
 #include "RenderComponent.hpp"
 #include "EntityObject.hpp"
+#include "../ContactHandlers/ExplosionCrate.hpp"
 
 ComponentFactory::ComponentFactory() {
 
@@ -18,4 +19,19 @@ ComponentFactory::ComponentFactory() {
     components["NextLevelComponent"] = make_unique<NextLevelComponent>(entityId);
     components["RenderComponent"] = make_unique<RenderComponent>(entityId);
     components["EntityObject"] = make_unique<EntityObject>(entityId);
+//    components["ExplosionCrate"] = make_unique<ExplosionCrate>(entityId);
+}
+
+Component *ComponentFactory::getComponent(const EntityId &id,
+                                          const string &name,
+                                          const LevelResources::component *loadedComponent) {
+
+    std::unique_ptr<Component> &component = components[name];
+
+    if (component == nullptr) {
+        std::cout << "Couldn't find " + name + ", will create EntityObject component." << std::endl;
+        return components["EntityObject"]->clone(id, nullptr);
+    }
+
+    return component->clone(id, loadedComponent);
 }

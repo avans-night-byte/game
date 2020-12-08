@@ -19,6 +19,8 @@ private:
 public:
     void update() override;
 
+    void fixedUpdate(const float &deltaTime) override;
+
     void setColor(int red, int blue, int green);
 
     void render();
@@ -30,5 +32,5 @@ public:
 
     [[nodiscard]] std::string name() const override;
 
-    [[nodiscard]] Component * Clone(EntityId entityId) const override;
+    [[nodiscard]] Component *clone(EntityId entityId, const LevelResources::component *component) override;
 };

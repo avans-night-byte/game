@@ -31,7 +31,6 @@ private:
 
     std::unique_ptr<LevelBase> levelBase;
 
-    std::unique_ptr<LevelParserAPI> levelParserAPI;
     std::unique_ptr<ComponentFactory> componentFactory;
 
 protected:
@@ -70,6 +69,5 @@ public:
 
     RenderingAPI *getRenderingApi();
 
-    static void setCurrentState(int state);
-
+    ComponentFactory *getComponentFactory();
 };

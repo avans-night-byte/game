@@ -1,9 +1,4 @@
-//
-// Created by husey on 29/11/2020.
-//
-
 #include "NextLevelComponent.hpp"
-#include "../Game.hpp"
 
 void NextLevelComponent::startContact() {
     // TODO: Hardcoded
@@ -22,6 +17,10 @@ void NextLevelComponent::update() {
 
 }
 
-Component *NextLevelComponent::Clone(EntityId entityId) const {
+void NextLevelComponent::fixedUpdate(const float &deltaTime) {
+
+}
+
+Component *NextLevelComponent::clone(EntityId entityId, const LevelResources::component *component) {
     return new NextLevelComponent(entityId);
 }

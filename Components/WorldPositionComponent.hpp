@@ -10,11 +10,13 @@ public:
 public:
     void update() override;
 
-    void setLocation(const float &x, const float &y);
+    void setLocation(const float &rX, const float &rY);
 
-    WorldPositionComponent(EntityId id) : Component(id) {}
+    explicit WorldPositionComponent(EntityId id) : Component(id) {}
 
-    [[nodiscard]] Component *Clone(EntityId entityId) const override;
+    void fixedUpdate(const float &deltaTime) override;
+
+    Component *clone(EntityId entityId, const LevelResources::component *component) override;
 
     [[nodiscard]] std::string name() const override;
 };

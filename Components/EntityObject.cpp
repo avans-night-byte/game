@@ -8,6 +8,14 @@ std::string EntityObject::name() const {
     return "EntityObject";
 }
 
-Component *EntityObject::Clone(EntityId entityId) const {
+void EntityObject::fixedUpdate(const float &deltaTime) {
+
+}
+
+void EntityObject::addComponent(Component *component) {
+    components.push_back(std::unique_ptr<Component>(component));
+}
+
+Component *EntityObject::clone(EntityId entityId, const LevelResources::component *component) {
     return new EntityObject(entityId);
 }

@@ -9,6 +9,16 @@ private:
     const PhysicsAPI *enginePhysicsAPI;
     unsigned int bodyId = 0;
 
+    std::string contactHandlerName;
+
+public:
+    inline const std::string& getContactHandlerName() {
+        return contactHandlerName;
+    }
+
+
+    void setContactHandler(ContactHandler *contactHandler);
+
 public:
     explicit PhysicsComponent(EntityId id);
 
@@ -16,11 +26,9 @@ public:
 
     PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, float radius);
 
-    [[nodiscard]] Component *Clone(EntityId entityId) const override;
-
     ~PhysicsComponent() override {
         // BodyId 0 is used for physicsComponent that are not instantiated within the b2World.
-        if(bodyId != 0)
+        if(bodyId == 0)
             return;
 
         enginePhysicsAPI->destroyBody(bodyId);
@@ -42,9 +50,23 @@ public:
         enginePhysicsAPI->setFixedRotation(bodyId, value);
     }
 
+    static inline BodyType StringToBodyType(const std::string& value)
+    {
+        if(value == "Dynamic") return BodyType::Dynamic;
+        if(value == "Static") return BodyType::Static;
+        if(value == "Kinematic") return BodyType::Kinematic;
+
+        throw std::runtime_error("BodyType Value: " + value + " could not be parsed.");
+    }
+
+public:
+    void fixedUpdate(const float &deltaTime) override;
+
     [[nodiscard]] std::string name() const override;
 
     void update() override;
+
+    [[nodiscard]] Component *clone(EntityId entityId, const LevelResources::component *component) override;
 
 private:
     inline BodyId initializeBoxBody(BodyType bodyType, Vector2 position, Vector2 size) {
