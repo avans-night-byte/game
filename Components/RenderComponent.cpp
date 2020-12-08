@@ -1,8 +1,23 @@
 #include "RenderComponent.hpp"
+#include "../Game.hpp"
+#include "WorldPositionComponent.hpp"
+#include "../../API/Rendering/RenderingAPI.hpp"
+
 /**
  * This is a sample component, this one renders an imahe on the screen.
 */
 
+RenderComponent::RenderComponent(EntityId id) : Component(id),
+                                                _engineRenderingApi(*Game::getInstance()->getRenderingApi()),
+                                                _textureId(),
+                                                _texturePath(),
+                                                position(nullptr) {
+
+}
+
+std::string RenderComponent::name() const {
+    return "RenderComponent";
+}
 
 /**
  * Instantiates the rendering and passes any needed variables like the engineRenderingApi
@@ -13,8 +28,12 @@
  * @param engineRenderingApi
  */
 RenderComponent::RenderComponent(EntityId id, WorldPositionComponent *positionComponent, char const *texturePath,
-                                 std::string textureId, EngineRenderingAPI &engineRenderingApi)
-        : Component(id), position(positionComponent), _engineRenderingApi(engineRenderingApi), _textureId(std::move(textureId)) {
+                                 std::string textureId)
+        : Component(id),
+          position(positionComponent),
+          _engineRenderingApi(*Game::getInstance()->getRenderingApi()),
+          _textureId(std::move(textureId)) {
+
     _texturePath = texturePath;
     _engineRenderingApi.loadTexture(texturePath, "");
 }
@@ -44,4 +63,12 @@ void RenderComponent::render() {
  */
 void RenderComponent::update() {
     render();
+}
+
+void RenderComponent::fixedUpdate(const float &deltaTime) {
+
+}
+
+Component *RenderComponent::clone(EntityId entityId, const LevelResources::component *component) {
+    return new RenderComponent(entityId);
 }

@@ -1,20 +1,26 @@
 #pragma once
 
-#include "../../../Engine/Rendering/Level.hpp"
-#include "../../../Engine/Input/Input.hpp"
-#include "../../Components/CharacterComponent.h"
+#include "../LevelBase.hpp"
 
-class Level1 {
+class TMXLevel;
+class Input;
+class CharacterComponent;
+class RenderingAPI;
+class PhysicsAPI;
+
+
+class Level1 : public LevelBase {
 private:
-    Level* _level;
-    CharacterComponent& characterComponent;
+    TMXLevel* _level;
+    CharacterComponent* characterComponent;
 
 public:
-    explicit Level1(CharacterComponent& characterComponent, EngineRenderingAPI& engineRenderingApi, PhysicsAPI& enginePhysicsApi);
+    explicit Level1(TMXLevel* tmxLevel, CharacterComponent* characterComponent);
+
     ~Level1();
-    void render(EngineRenderingAPI& engineRenderingAPI);
+    void render() override;
 
-    void fixedUpdate(const float &deltaTime);
+    void update(const Input &inputSystem) override;
 
-    void update(const Input &inputSystem);
+    void fixedUpdate(const float &deltaTime) override;
 };

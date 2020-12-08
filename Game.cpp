@@ -2,17 +2,20 @@
 #include <iostream>
 
 #include "./Game.hpp"
+
+
+#include "../API/XMLParser/LevelParserAPI.hpp"
 #include "../API/Input/EngineInputAPI.hpp"
-#include "../API/Rendering/EngineRenderingAPI.hpp"
-#include "../API/Engine/EngineWindowAPI.hpp"
+#include "../API/XMLParser/MenuParserAPI.hpp"
 #include "../API/Physics/EnginePhysicsAPI.hpp"
 
-// Fixme: No hardie
-#include "./Scenes/Menu/MainMenu.cpp"
-#include "./Scenes/Example/ExampleScene.hpp"
-#include "./Scenes/Credits/Credits.hpp"
-#include "./Scenes/Level1/Level1.hpp"
-#include "Scenes/Level10/LevelCharlie.hpp"
+#include "./Components/ComponentFactory.hpp"
+#include "./Components/CharacterComponent.hpp"
+#include "../Engine/Rendering/TMXLevel.hpp"
+#include "../Engine/Managers/ResourceManager.hpp"
+#include "Scenes/Level1/Level1.hpp"
+#include "../API/Engine/EngineWindowAPI.hpp"
+#include "../API/Audio/AudioAPI.hpp"
 
 typedef signed int int32;
 
@@ -20,41 +23,69 @@ const int width = 1920;
 const int height = 1080;
 
 Engine *engine;
-Game *game;
 EngineInputAPI *engineInputAPI;
 EngineWindowAPI *engineWindowAPI;
-EngineRenderingAPI *engineRenderingAPI;
+RenderingAPI *renderingAPI; // TODO:  EngineRenderingAPI -> RenderinAPI: Change this since we are using the interface instance.
 PhysicsAPI *physicsAPI;
 AudioAPI *audioApi;
+MenuParserAPI *menuParser;
 
-// TODO: Use getEntityId when merged
-EntityId characterEntityId;
-
-int currentState = 1;
 
 void Game::initialize() {
-    game = getInstance();
+    // Load in all resources
+    ResourceManager &resourceManager = *ResourceManager::instantiate("../../Resources/XML/Definition/Resources.xml");
 
     Engine::initWindow(width, height);
-
-    engineRenderingAPI = new EngineRenderingAPI(engine);
+    renderingAPI = new EngineRenderingAPI();
     engineInputAPI = new EngineInputAPI();
     engineWindowAPI = new EngineWindowAPI(engine);
     audioApi = new AudioAPI();
     physicsAPI = new EnginePhysicsAPI();
+    menuParser = new MenuParserAPI(*renderingAPI, engineInputAPI->getInputEvent());
+
+
+    Game *game = Game::getInstance();
+    game->componentFactory = make_unique<ComponentFactory>();
+
+    resourceManager.loadResource("MainMenu");
+
+    //menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
+
+    // We should normally init when switching state.
+    //Credits::init(renderingAPI, engineWindowAPI, audioApi);
 }
 
 /**
  * Gameloop
  **/
 void Game::gameLoop() {
+    physicsAPI->update(1, 5, 5);
 
-    // Scenes
-    unique_ptr<MainMenu> mainMenu = make_unique<MainMenu>(engineRenderingAPI, engineWindowAPI, audioApi);
-    unique_ptr<LevelCharlie> levelCharlie = nullptr;
-    unique_ptr<Level1> level1 = nullptr;
-    unique_ptr<ExampleScene> exampleScene = nullptr;
-    unique_ptr<Credits> credits = nullptr;
+    // TODO: Please put this away after making gameloop not static.
+    Game *game = getInstance();
+
+    /** CREATE CHARACTER */
+    unique_ptr<CharacterComponent> characterComponent;
+    EntityId characterEntityId;
+
+    characterEntityId = game->createEntity();
+    characterComponent = make_unique<CharacterComponent>(characterEntityId, Vector2(100, 100));
+
+    game->addComponent(characterEntityId, characterComponent.get());
+
+//    /** Create Level **/
+//    const TMXLevelData levelData = TMXLevelData("../../Resources/example.tmx",
+//                                                "../../Resources/Sprites/Overworld.png",
+//                                                "Overworld");
+//
+//    auto outEntities = std::multimap<std::string, const LevelResources::component *>();
+//    TMXLevel *tmxLevel = LevelParserAPI::loadLevel(outEntities,
+//                                                   levelData,
+//                                                   "../../Resources/XML/Definition/Level1Resources.xml");
+//
+//    game->levelBase = std::make_unique<Level1>(tmxLevel, characterComponent.get());
+//    game->levelBase->LoadEntities(outEntities);
+
 
     bool isDebuggingPhysics = false;
 
@@ -62,7 +93,7 @@ void Game::gameLoop() {
     int32 positionIterations = 2;
 
     float t = 0.0f;
-    double dt = 1 / 60.0;
+    float dt = 1 / 60.0;
 
     auto currentTime = std::chrono::high_resolution_clock::now();
     float accumulator = 0.0;
@@ -71,9 +102,9 @@ void Game::gameLoop() {
     while (true) {
         // Poll input and keep track of lastInput
         Input i = engineInputAPI->getInput();
-        debugLog(i);
 
-        /**   PHYSICS      */
+
+        /**  PHYSICS      */
         auto newTime = std::chrono::high_resolution_clock::now();
 
         // Gets the time in microseconds and converts them into seconds.
@@ -85,83 +116,23 @@ void Game::gameLoop() {
 
         while (accumulator >= dt) {
             physicsAPI->update(dt, velocityIterations, positionIterations);
-            if (exampleScene) {
-                exampleScene->fixedUpdate(dt);
-            }
-            if (level1) {
-                level1->fixedUpdate(dt);
-            }
-            if (levelCharlie) {
-                levelCharlie->fixedUpdate(dt);
-            }
-
+//            game->levelBase->fixedUpdate(dt);
             t += dt;
             accumulator -= dt;
         }
 
-        if (i.keyMap.action == "1" || i.keyMap.action == "2" || i.keyMap.action == "3" || i.keyMap.action == "4") {
-            setCurrentState(std::stoi(i.keyMap.action));
-        }
-
-        // Temporary State
-        if (currentState == 1) {
-            mainMenu->render(engineRenderingAPI, engineWindowAPI, i);
-        }
-
-        if (currentState == 2) {
-            if (credits == nullptr) {
-                credits = make_unique<Credits>();
-                credits->init(engineRenderingAPI, engineWindowAPI, audioApi);
-            }
-            credits->render(engineRenderingAPI, engineWindowAPI, i);
-        }
-
-        if (currentState == 3) {
-            if (exampleScene == nullptr) {
-                exampleScene = make_unique<ExampleScene>(*game->characterComponent);
-                exampleScene->initialize();
-            }
-            SDL_SetRenderDrawColor(engineWindowAPI->getRenderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
-            SDL_RenderClear(engineWindowAPI->getRenderer());
-            exampleScene->update(i);
-        } else {
-            if (exampleScene) {
-                exampleScene = nullptr;
-            }
-        }
-
-        if (currentState == 10) {
-            if (levelCharlie == nullptr) {
-                levelCharlie = make_unique<LevelCharlie>(*game->characterComponent, *engineRenderingAPI, *physicsAPI);
-            }
-
-            levelCharlie->render(*engineRenderingAPI);
-            levelCharlie->update(i);
-        } else {
-            if (levelCharlie) {
-                levelCharlie = nullptr;
-            }
-        }
-
-        if (currentState == 4) {
-            if (level1 == nullptr) {
-                level1 = make_unique<Level1>(*game->characterComponent, *engineRenderingAPI, *physicsAPI);
-            }
-            level1->render(*engineRenderingAPI);
-            level1->update(i);
-        } else {
-            if (level1) {
-                level1 = nullptr;
-            }
-        }
+        menuParser->render();
+//        game->levelBase->render();
+//        game->levelBase->update(i);
 
         if (isDebuggingPhysics)
-            physicsAPI->DebugDraw(*engineRenderingAPI, *engineWindowAPI->getRenderer());
+            physicsAPI->DebugDraw(*renderingAPI, *engineWindowAPI->getRenderer());
 
         SDL_RenderPresent(engineWindowAPI->getRenderer());
         SDL_RenderClear(engineWindowAPI->getRenderer());
 
-        if (currentState == 0) {
+
+        if (i.keyMap.action == "QUIT") {
             engineWindowAPI->closeWindow();
             break;
         }
@@ -171,32 +142,6 @@ void Game::gameLoop() {
         } else if (i.keyMap.code == "\\") {
             isDebuggingPhysics = false;
         }
-
-        // Test Health
-        if (i.keyMap.code == "K" && game->characterComponent != nullptr) {
-            game->characterComponent->die();
-        }
-        if (i.keyMap.code == "H" && game->characterComponent != nullptr) {
-            game->characterComponent->doDamage(10);
-        }
-    }
-}
-
-/**
- * Logs Input struct properties that have been received by the game loop.
- *
- * For testing purposes only, we should create a generic logger someday.
- *
- * @param Input An Input struct
- **/
-void Game::debugLog(Input i) {
-    if (i.device != Input::NONE) {
-        std::cout << std::endl;
-        std::cout << "device: " << i.device << std::endl;
-        std::cout << "code: " << i.keyMap.code << std::endl;
-        std::cout << "action: " << i.keyMap.action << std::endl;
-        std::cout << "x: " << i.x << std::endl;
-        std::cout << "y: " << i.y << std::endl;
     }
 }
 
@@ -217,16 +162,6 @@ EntityId Game::createEntity() {
     entities.push_back(next);
 
     return next;
-}
-
-/**
- * Removes Entity from entity collection
- *
- * @param id
- */
-void Game::removeEntity(EntityId &id) {
-    this->removeComponents(id);
-    entities.remove(id);
 }
 
 /**
@@ -274,19 +209,6 @@ System<Component> Game::getComponents(EntityId id) {
 }
 
 /**
- * Removes all components by entity id of all types.
- * @param id
- */
-void Game::removeComponents(EntityId &id) {
-    for (auto &component : components.components) {
-        if (component.first == id) {
-            components.components.erase(id);
-            break;
-        }
-    }
-}
-
-/**
  * Gets components by entity id of a specified type.
  * @tparam T
  * @param id
@@ -306,41 +228,6 @@ System<T> Game::getComponents(EntityId id) {
     return returnComps;
 }
 
-const PhysicsAPI *Game::getPhysicsAPI() {
-    return physicsAPI;
-}
-
-void Game::setCurrentState(int state) {
-    currentState = state;
-}
-
-/**
- * Initialises the game character
- */
-void Game::startGame() {
-    characterEntityId = game->createEntity();
-    game->characterComponent = make_unique<CharacterComponent>(characterEntityId,
-                                                               engineRenderingAPI,
-                                                               Vector2(100, 100));
-
-    game->addComponent(characterEntityId, game->characterComponent.get());
-}
-
-/**
- * Resets the game after game over
- */
-void Game::resetGame() {
-    // TODO: Go to game over screen first
-    this->setCurrentState(1);
-
-    // Release and delete the character
-    auto charPointer = characterComponent.release();
-    delete charPointer;
-
-    // Remove the character entity and it's children
-    this->removeEntity(characterEntityId);
-}
-
 /**
  * Static methods should be defined outside the class.
  */
@@ -348,7 +235,7 @@ Game *Game::instance{};
 std::mutex Game::mutex;
 
 /**
- * The first time we call GetInstance we will lock the storage location
+ * The first time we call getInstance we will lock the storage location
  *      and then we make sure again that the variable is null and then we
  *      set the value.
  */
@@ -359,4 +246,16 @@ Game *Game::getInstance() {
     }
 
     return instance;
+}
+
+PhysicsAPI *Game::getPhysicsAPI() {
+    return physicsAPI;
+}
+
+RenderingAPI *Game::getRenderingApi() {
+    return renderingAPI;
+}
+
+ComponentFactory *Game::getComponentFactory() {
+    return componentFactory.get();
 }

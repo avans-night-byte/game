@@ -1,18 +1,22 @@
 #pragma once
 
 
-#include "../../../Engine/Rendering/Level.hpp"
-#include "../../Components/CharacterComponent.h"
+
+class CharacterComponent;
+class Input;
+class TMXLevel;
+class RenderingAPI;
+class PhysicsAPI;
 
 class LevelCharlie {
 private:
-    Level* _level;
+    TMXLevel* _level;
     CharacterComponent& characterComponent;
 
 public:
-    LevelCharlie(CharacterComponent& characterComponent, EngineRenderingAPI& engineRenderingApi, PhysicsAPI& enginePhysicsApi);
+    LevelCharlie(CharacterComponent& characterComponent, RenderingAPI& engineRenderingApi, PhysicsAPI& enginePhysicsApi);
     ~LevelCharlie();
-    void render(EngineRenderingAPI& engineRenderingAPI);
+    void render(RenderingAPI& engineRenderingAPI);
 
     void fixedUpdate(const float &deltaTime);
 
