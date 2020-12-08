@@ -142,8 +142,11 @@ void Game::gameLoop() {
             avgFps = frameCounter;
             frameCounter = 0;
             totalTime = 0;
+
         }
 
+        renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", std::to_string(avgFps).c_str(), 25, SDL_Color{255,255,255}, "fpsText");
+        renderingAPI->drawTexture("fpsText", 0, 0, 0,0, 1, 0);
 
         if (isDebuggingPhysics)
             physicsAPI->DebugDraw(*renderingAPI, *engineWindowAPI->getRenderer());
