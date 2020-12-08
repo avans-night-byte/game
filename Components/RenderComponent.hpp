@@ -1,22 +1,36 @@
 #pragma once
-#include "./Component.hpp"
-#include "../../API/Rendering/EngineRenderingAPI.hpp"
-#include "WorldPositionComponent.hpp"
 
-class RenderComponent : Component {
+
+#include "./Component.hpp"
+#include <string>
+
+class RenderingAPI;
+class WorldPositionComponent;
+
+class RenderComponent : public Component {
 private:
     WorldPositionComponent *position;
     int r{}, g{}, b{};
     char const * _texturePath;
-    EngineRenderingAPI &_engineRenderingApi;
+    RenderingAPI &_engineRenderingApi;
     std::string _textureId;
+
+
 public:
     void update() override;
+
+    void fixedUpdate(const float &deltaTime) override;
 
     void setColor(int red, int blue, int green);
 
     void render();
 
+    explicit RenderComponent(EntityId id);
+
     RenderComponent(EntityId id, WorldPositionComponent *positionComponent, char const *texturePath,
-                    std::string textureId, EngineRenderingAPI &engineRenderingApi);
+                    std::string textureId);
+
+    [[nodiscard]] std::string name() const override;
+
+    [[nodiscard]] Component *clone(EntityId entityId, const LevelResources::component *component) override;
 };

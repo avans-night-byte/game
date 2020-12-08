@@ -6,6 +6,7 @@
 #include "../Game.hpp"
 #include "WorldPositionComponent.hpp"
 #include "PhysicsComponent.h"
+#include "HealthComponent.hpp"
 
 class CharacterComponent : public Component {
     // TODO: Could make a enum with bitmask flags
@@ -23,6 +24,7 @@ private:
     Spritesheet *spriteSheet;
     unique_ptr<WorldPositionComponent> worldPosition;
     unique_ptr<PhysicsComponent> physicsComponent;
+    unique_ptr<HealthComponent> healthComponent;
     void resetMovement();
 
 public:
@@ -39,11 +41,12 @@ public:
         physicsComponent->setFixedRotation(true);
         physicsComponent->setVelocity(Vector2());
 
+        healthComponent = make_unique<HealthComponent>();
+
         spriteSheet = renderingApi->createSpriteSheet("../../Resources/Sprites/character.png",
                                                       "spritesheet_char", 8, 11, 100, 105);
 
         worldPosition = make_unique<WorldPositionComponent>(id);
-
 
         game->addComponent(id, worldPosition.get());
         game->addComponent(id, physicsComponent.get());
@@ -54,6 +57,7 @@ public:
         spriteSheet->select_sprite(0, 0);
     }
 
+    // Velocity
     void getVelocity(Vector2 &velocity) {
         physicsComponent->getVelocity(velocity);
     }
@@ -62,12 +66,35 @@ public:
         physicsComponent->setVelocity(velocity);
     }
 
+    // Rendering
     void update(const Input &inputSystem);
 
     void fixedUpdate(const float& deltaTime);
 
     inline const Spritesheet &getSpriteSheet() {
         return *spriteSheet;
+    }
+
+    // Health
+    float getHealth() {
+        return healthComponent->getHealth();
+    }
+
+    void setHealth(float hp) {
+        healthComponent->setHealth(hp);
+    }
+
+    void die() {
+        healthComponent->die();
+        Game::getInstance()->resetGame();
+    }
+
+    void doDamage(float hp) {
+        healthComponent->doDamage(hp);
+
+        if (this->getHealth() <= 0) {
+            this->die();
+        }
     }
 
 protected:
