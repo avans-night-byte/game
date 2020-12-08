@@ -97,6 +97,10 @@ void Game::gameLoop() {
 
     auto currentTime = std::chrono::high_resolution_clock::now();
     float accumulator = 0.0;
+    int frameCounter = 0;
+    float totalTime = 0;
+
+    int avgFps = 0;
 
     // Gameloop
     while (true) {
@@ -111,8 +115,13 @@ void Game::gameLoop() {
         float frameTime =
                 std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 100000.0f;
 
+        float frameTimeSeconds = std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 1000000.0f;
+
         currentTime = newTime;
         accumulator += frameTime;
+        totalTime += frameTimeSeconds;
+
+
 
         while (accumulator >= dt) {
             physicsAPI->update(dt, velocityIterations, positionIterations);
@@ -124,6 +133,20 @@ void Game::gameLoop() {
         menuParser->render();
 //        game->levelBase->render();
 //        game->levelBase->update(i);
+
+
+
+        frameCounter++;
+        // The total frames in the last second are fps.
+        if(totalTime >= 1.0f){
+            avgFps = frameCounter;
+            frameCounter = 0;
+            totalTime = 0;
+
+        }
+
+        renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", std::to_string(avgFps).c_str(), 25, SDL_Color{255,255,255}, "fpsText");
+        renderingAPI->drawTexture("fpsText", 0, 0, 0,0, 1, 0);
 
         if (isDebuggingPhysics)
             physicsAPI->DebugDraw(*renderingAPI, *engineWindowAPI->getRenderer());
