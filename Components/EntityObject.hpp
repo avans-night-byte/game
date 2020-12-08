@@ -31,9 +31,9 @@ public:
 
     void fixedUpdate(const float &deltaTime) override;
 
-    void AddComponent(Component *component);
+    void addComponent(Component *component);
 
     [[nodiscard]] std::string name() const override;
 
-    Component *Clone(EntityId entityId, const LevelResources::component *component) override;
+    Component *clone(EntityId entityId, const LevelResources::component *component) override;
 };

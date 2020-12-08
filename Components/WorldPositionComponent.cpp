@@ -17,7 +17,7 @@ std::string WorldPositionComponent::name() const {
     return "WorldPositionComponent";
 }
 
-Component *WorldPositionComponent::Clone(EntityId entityId, const LevelResources::component *component) {
+Component *WorldPositionComponent::clone(EntityId entityId, const LevelResources::component *component) {
     auto &resourceWorldPosition = component->worldPositionComponent().get();
     auto &position = resourceWorldPosition.positionF();
 

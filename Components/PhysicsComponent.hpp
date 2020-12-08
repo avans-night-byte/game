@@ -17,7 +17,7 @@ public:
     }
 
 
-    void setContactHandler(Component *pComponent);
+    void setContactHandler(ContactHandler *contactHandler);
 
 public:
     explicit PhysicsComponent(EntityId id);
@@ -66,7 +66,7 @@ public:
 
     void update() override;
 
-    [[nodiscard]] Component *Clone(EntityId entityId, const LevelResources::component *component) override;
+    [[nodiscard]] Component *clone(EntityId entityId, const LevelResources::component *component) override;
 
 private:
     inline BodyId initializeBoxBody(BodyType bodyType, Vector2 position, Vector2 size) {

@@ -39,7 +39,7 @@ string PhysicsComponent::name() const {
     return "PhysicsComponent";
 }
 
-Component *PhysicsComponent::Clone(EntityId entityId, const LevelResources::component *component) {
+Component *PhysicsComponent::clone(EntityId entityId, const LevelResources::component *component) {
     auto &resourcePhysicsComponent = component->physicsComponent().get();
     auto bodyTypeString = std::string(resourcePhysicsComponent.bodyType().c_str());
 
@@ -72,10 +72,10 @@ Component *PhysicsComponent::Clone(EntityId entityId, const LevelResources::comp
     return newPhysicsComponent;
 }
 
-void PhysicsComponent::setContactHandler(Component *pComponent) {
-    auto* contactHandler = (ContactHandler*)pComponent;
-    if(contactHandler == nullptr)
-        throw std::runtime_error("Given component does not inherit ContactHandler");
+void PhysicsComponent::setContactHandler(ContactHandler *contactHandler) {
+//    auto* contactHandler = (ContactHandler*)pComponent;
+//    if(contactHandler == nullptr)
+//        throw std::runtime_error("Given component does not inherit ContactHandler");
 
     enginePhysicsAPI->setContactHandler(bodyId, contactHandler);
 }

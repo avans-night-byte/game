@@ -32,7 +32,7 @@ public:
 
     virtual std::string name() const = 0;
 
-    [[nodiscard]] virtual Component *Clone(EntityId entityId, const LevelResources::component *component) = 0;
+    [[nodiscard]] virtual Component *clone(EntityId entityId, const LevelResources::component *component) = 0;
 };
 
 template<typename C>

@@ -62,6 +62,8 @@ void Game::initialize() {
  * Gameloop
  **/
 void Game::gameLoop() {
+    physicsAPI->update(1, 5, 5);
+
     // TODO: Please put this away after making gameloop not static.
     Game *game = getInstance();
 
@@ -74,18 +76,18 @@ void Game::gameLoop() {
 
     game->addComponent(characterEntityId, characterComponent.get());
 
-    /** Create Level **/
-    const TMXLevelData levelData = TMXLevelData("../../Resources/example.tmx",
-                                                "../../Resources/Sprites/Overworld.png",
-                                                "Overworld");
-
-    auto outEntities = std::multimap<std::string, const LevelResources::component *>();
-    LevelParserAPI::loadLevel(outEntities,
-                              levelData,
-                              "../../Resources/XML/Definition/Level1Resources.xml");
-
-    game->levelBase = std::make_unique<Level1>(*characterComponent);
-    game->levelBase->LoadEntities(outEntities);
+//    /** Create Level **/
+//    const TMXLevelData levelData = TMXLevelData("../../Resources/example.tmx",
+//                                                "../../Resources/Sprites/Overworld.png",
+//                                                "Overworld");
+//
+//    auto outEntities = std::multimap<std::string, const LevelResources::component *>();
+//    TMXLevel *tmxLevel = LevelParserAPI::loadLevel(outEntities,
+//                                                   levelData,
+//                                                   "../../Resources/XML/Definition/Level1Resources.xml");
+//
+//    game->levelBase = std::make_unique<Level1>(tmxLevel, characterComponent.get());
+//    game->levelBase->LoadEntities(outEntities);
 
 
     bool isDebuggingPhysics = false;
@@ -117,12 +119,14 @@ void Game::gameLoop() {
 
         while (accumulator >= dt) {
             physicsAPI->update(dt, velocityIterations, positionIterations);
-
+//            game->levelBase->fixedUpdate(dt);
             t += dt;
             accumulator -= dt;
         }
 
         menuParser->render();
+//        game->levelBase->render();
+//        game->levelBase->update(i);
 
         if (isDebuggingPhysics)
             physicsAPI->DebugDraw(*renderingAPI, *engineWindowAPI->getRenderer());

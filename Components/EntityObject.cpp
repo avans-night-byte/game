@@ -12,10 +12,10 @@ void EntityObject::fixedUpdate(const float &deltaTime) {
 
 }
 
-void EntityObject::AddComponent(Component *component) {
+void EntityObject::addComponent(Component *component) {
     components.push_back(std::unique_ptr<Component>(component));
 }
 
-Component *EntityObject::Clone(EntityId entityId, const LevelResources::component *component) {
+Component *EntityObject::clone(EntityId entityId, const LevelResources::component *component) {
     return new EntityObject(entityId);
 }

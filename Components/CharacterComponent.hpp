@@ -10,7 +10,7 @@ class Game;
 
 class Input;
 
-class CharacterComponent : public Component {
+class CharacterComponent : public Component, public ContactHandler {
     // TODO: Could make a enum with bitmask flags
     enum MovementDirection {
         Left,
@@ -49,9 +49,14 @@ public:
         return *spriteSheet;
     }
 
-    [[nodiscard]] Component *Clone(EntityId entityId, const LevelResources::component *component) override;
+    [[nodiscard]] Component *clone(EntityId entityId, const LevelResources::component *component) override;
 
     [[nodiscard]] std::string name() const override;
+
+public:
+    void startContact() override;
+
+    void endContact() override;
 
 protected:
     void update() override {

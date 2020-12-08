@@ -4,6 +4,7 @@
 #include "../Components/ComponentFactory.hpp"
 #include "Generated/level-resources.hxx"
 #include "../Components/PhysicsComponent.hpp"
+#include "../ContactHandlers/ExplosionCrate.hpp"
 
 void LevelBase::LoadEntities(const std::multimap<std::string, const LevelResources::component *> &loadedEntities) {
     auto componentFactory = Game::getInstance()->getComponentFactory();
@@ -32,7 +33,7 @@ void LevelBase::LoadEntities(const std::multimap<std::string, const LevelResourc
             entitiesPhysicsComponent[newEntity] = physicsComponent;
         }
 
-        newEntity->AddComponent(newComponent);
+        newEntity->addComponent(newComponent);
     }
 
 
@@ -42,20 +43,21 @@ void LevelBase::LoadEntities(const std::multimap<std::string, const LevelResourc
         if (foundHandlerName.empty())
             continue;
 
-        bool contactHandlerInitialized = false;
-        for (auto &component : entityPhysicsComponent.first->getComponents()) {
-            if (component->name() == foundHandlerName) {
-
-                auto *contactHandler = (ContactHandler *) component.get();
-                if (contactHandler == nullptr)
-                    throw std::runtime_error(component->name() + " does not inherit ContactHandler");
-
-                entityPhysicsComponent.second->setContactHandler(component.get());
-
-                contactHandlerInitialized = true;
-                break;
-            }
-        }
+        bool contactHandlerInitialized = true;
+//        for (auto &component : entityPhysicsComponent.first->getComponents()) {
+//            if (component->name() == foundHandlerName) {
+//
+//                auto *contactHandler = (ContactHandler *) component.get();
+//                if (contactHandler == nullptr)
+//                    throw std::runtime_error(component->name() + " does not inherit ContactHandler");
+//
+//                entityPhysicsComponent.second->setContactHandler(new ExplosionCrate());
+//
+//                contactHandlerInitialized = true;
+//                break;
+//            }
+//        }
+        entityPhysicsComponent.second->setContactHandler(new ExplosionCrate());
 
         if (!contactHandlerInitialized) {
             throw std::runtime_error("ContactHandler: " + foundHandlerName + " couldn't be found!");

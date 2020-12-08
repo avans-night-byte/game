@@ -22,6 +22,7 @@ protected:
     std::vector<std::unique_ptr<EntityObject>> entities;
 
 public:
+    virtual void render() = 0;
 
     virtual void update(const Input &inputSystem) = 0;
 

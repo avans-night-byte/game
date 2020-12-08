@@ -27,7 +27,7 @@ public:
 
         auto t = T(id);
         std::unique_ptr<Component> &component = components[t.name()];
-        T* newComponent = dynamic_cast<T*>(component->Clone(id, nullptr));
+        T* newComponent = dynamic_cast<T*>(component->clone(id, nullptr));
 
         return newComponent;
     }

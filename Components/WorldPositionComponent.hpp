@@ -16,7 +16,7 @@ public:
 
     void fixedUpdate(const float &deltaTime) override;
 
-    Component *Clone(EntityId entityId, const LevelResources::component *component) override;
+    Component *clone(EntityId entityId, const LevelResources::component *component) override;
 
     [[nodiscard]] std::string name() const override;
 };

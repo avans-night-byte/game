@@ -19,6 +19,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
                                                      BodyType::Dynamic,
                                                      Vector2(position.x, position.y),
                                                      Vector2(20, 20));
+    physicsComponent->setContactHandler(this);
     physicsComponent->setFixedRotation(true);
     physicsComponent->setVelocity(Vector2());
 
@@ -37,7 +38,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
     spriteSheet->select_sprite(0, 0);
 }
 
-void CharacterComponent::update(const Input &inputSystem){
+void CharacterComponent::update(const Input &inputSystem) {
     bool stopped = false;
 
     if (inputSystem.keyMap.type == SDL_KEYUP) {
@@ -133,6 +134,14 @@ void CharacterComponent::resetMovement() {
     currentMovementDirection[Down] = false;
 }
 
-Component *CharacterComponent::Clone(EntityId entityId, const LevelResources::component *component) {
+Component *CharacterComponent::clone(EntityId entityId, const LevelResources::component *component) {
     return new CharacterComponent(entityId);
+}
+
+void CharacterComponent::startContact() {
+
+}
+
+void CharacterComponent::endContact() {
+
 }

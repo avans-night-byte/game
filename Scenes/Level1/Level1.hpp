@@ -12,13 +12,13 @@ class PhysicsAPI;
 class Level1 : public LevelBase {
 private:
     TMXLevel* _level;
-    CharacterComponent& characterComponent;
+    CharacterComponent* characterComponent;
 
 public:
-    explicit Level1(CharacterComponent& characterComponent);
+    explicit Level1(TMXLevel* tmxLevel, CharacterComponent* characterComponent);
 
     ~Level1();
-    void render();
+    void render() override;
 
     void update(const Input &inputSystem) override;
 
