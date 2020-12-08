@@ -73,18 +73,18 @@ void Game::gameLoop() {
 
     game->addComponent(characterEntityId, characterComponent.get());
 
-//    /** Create Level **/
-//    const TMXLevelData levelData = TMXLevelData("../../Resources/example.tmx",
-//                                                "../../Resources/Sprites/Overworld.png",
-//                                                "Overworld");
-//
-//    auto outEntities = std::multimap<std::string, const LevelResources::component *>();
-//    TMXLevel *tmxLevel = LevelParserAPI::loadLevel(outEntities,
-//                                                   levelData,
-//                                                   "../../Resources/XML/Definition/Level1Resources.xml");
-//
-//    game->levelBase = std::make_unique<Level1>(tmxLevel, characterComponent.get());
-//    game->levelBase->LoadEntities(outEntities);
+    /** Create Level **/
+    const TMXLevelData levelData = TMXLevelData("../../Resources/example.tmx",
+                                                "../../Resources/Sprites/Overworld.png",
+                                                "Overworld");
+
+    auto outEntities = std::multimap<std::string, const LevelResources::component *>();
+    TMXLevel *tmxLevel = LevelParserAPI::loadLevel(outEntities,
+                                                   levelData,
+                                                   "../../Resources/XML/Definition/Level1Resources.xml");
+
+    game->levelBase = std::make_unique<Level1>(tmxLevel, characterComponent.get());
+    game->levelBase->LoadEntities(outEntities);
 
 
     bool isDebuggingPhysics = false;
@@ -125,14 +125,14 @@ void Game::gameLoop() {
 
         while (accumulator >= dt) {
             physicsAPI->update(dt, velocityIterations, positionIterations);
-//            game->levelBase->fixedUpdate(dt);
+            game->levelBase->fixedUpdate(dt);
             t += dt;
             accumulator -= dt;
         }
 
         menuParser->render();
-//        game->levelBase->render();
-//        game->levelBase->update(i);
+        game->levelBase->render();
+        game->levelBase->update(i);
 
 
 

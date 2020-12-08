@@ -19,7 +19,7 @@ ComponentFactory::ComponentFactory() {
     components["NextLevelComponent"] = make_unique<NextLevelComponent>(entityId);
     components["RenderComponent"] = make_unique<RenderComponent>(entityId);
     components["EntityObject"] = make_unique<EntityObject>(entityId);
-//    components["ExplosionCrate"] = make_unique<ExplosionCrate>(entityId);
+    components["ExplosionCrate"] = make_unique<ExplosionCrate>(entityId);
 }
 
 Component *ComponentFactory::getComponent(const EntityId &id,

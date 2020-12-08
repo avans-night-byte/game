@@ -43,21 +43,21 @@ void LevelBase::LoadEntities(const std::multimap<std::string, const LevelResourc
         if (foundHandlerName.empty())
             continue;
 
-        bool contactHandlerInitialized = true;
-//        for (auto &component : entityPhysicsComponent.first->getComponents()) {
-//            if (component->name() == foundHandlerName) {
-//
-//                auto *contactHandler = (ContactHandler *) component.get();
-//                if (contactHandler == nullptr)
-//                    throw std::runtime_error(component->name() + " does not inherit ContactHandler");
-//
-//                entityPhysicsComponent.second->setContactHandler(new ExplosionCrate());
-//
-//                contactHandlerInitialized = true;
-//                break;
-//            }
-//        }
-        entityPhysicsComponent.second->setContactHandler(new ExplosionCrate());
+        bool contactHandlerInitialized = false;
+        for (auto &component : entityPhysicsComponent.first->getComponents()) {
+            if (component->name() == foundHandlerName) {
+
+                auto *contactHandler = (ContactHandler *) component.get();
+                if (contactHandler == nullptr)
+                    throw std::runtime_error(component->name() + " does not inherit ContactHandler");
+
+
+                entityPhysicsComponent.second->setContactHandler(contactHandler);
+
+                contactHandlerInitialized = true;
+                break;
+            }
+        }
 
         if (!contactHandlerInitialized) {
             throw std::runtime_error("ContactHandler: " + foundHandlerName + " couldn't be found!");
