@@ -14,40 +14,15 @@ MainMenu::MainMenu(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engi
   audioApi->playFromPath(path, s);
 
   // Load sprites
-  characterSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/character.png", "spritesheet_char", 8, 11, 100, 105);
   buttonSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/main_menu_buttons.png", "spritesheet_buttons", 2, 3, 779, 112);
   settingsSpriteSheet = engineRenderingAPI->createSpriteSheet("../../Resources/Sprites/settings.png", "spritesheet_settings", 0, 4, 232, 122);
-
-  // Init character state
-  characterSpriteSheet->select_sprite(0, 0);
 }
 
 
 void MainMenu::render(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *engineWindowAPI, Input i)
 {
-
   // Draw background image
   engineRenderingAPI->drawTexture("background", 0, 0, 1920, 1080, 1, 1);
-
-  // Character Movement Demo
-  if (i.keyMap.action == "UP")
-  {
-    characterSpriteSheet->select_sprite(0, 2);
-  }
-  if (i.keyMap.action == "DOWN")
-  {
-    characterSpriteSheet->select_sprite(0, 4);
-  }
-  if (i.keyMap.action == "LEFT")
-  {
-    characterSpriteSheet->select_sprite(0, 5);
-  }
-  if (i.keyMap.action == "RIGHT")
-  {
-    characterSpriteSheet->select_sprite(0, 7);
-  }
-
-  characterSpriteSheet->draw_selected_sprite(0, 0);
 
   // Draw buttons
   engineRenderingAPI->drawTexture("menu_bar", 60, -45, 990, 1170, 1, 1);
@@ -78,6 +53,7 @@ void MainMenu::render(EngineRenderingAPI *engineRenderingAPI, EngineWindowAPI *e
     if (clicked(i, menuButtonX, playButtonY))
     {
       std::cout << "Clicked PLAY button" << std::endl;
+      Game::getInstance()->startGame();
       Game::setCurrentState(4);
     }
 

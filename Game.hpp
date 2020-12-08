@@ -13,13 +13,14 @@
 #include "../API/Physics/PhysicsAPI.hpp"
 
 #include "Components/Component.hpp"
-
+class CharacterComponent;
 using namespace std;
 
 class Game {
 private:
     static Game *instance;
     static std::mutex mutex;
+    unique_ptr<CharacterComponent> characterComponent;
 
 private:
     System<Component> components;
@@ -61,4 +62,12 @@ public:
     const PhysicsAPI *getPhysicsAPI();
 
     static void setCurrentState(int state);
+
+    void resetGame();
+
+    void startGame();
+
+    void removeEntity(EntityId &id);
+
+    void removeComponents(EntityId &id);
 };
