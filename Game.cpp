@@ -84,7 +84,7 @@ void Game::gameLoop() {
                                                    "../../Resources/XML/Definition/Level1Resources.xml");
 
     game->levelBase = std::make_unique<Level1>(tmxLevel, characterComponent.get());
-    game->levelBase->LoadEntities(outEntities);
+    game->levelBase->loadEntities(outEntities);
 
 
     bool isDebuggingPhysics = false;
@@ -102,6 +102,11 @@ void Game::gameLoop() {
 
     int avgFps = 0;
 
+    auto *resourceManager = ResourceManager::getInstance();
+
+    // Create texture once
+    renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", "0", 25,
+                             SDL_Color{255, 255, 255}, "fpsText");
     // Gameloop
     while (true) {
         // Poll input and keep track of lastInput
@@ -115,38 +120,47 @@ void Game::gameLoop() {
         float frameTime =
                 std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 100000.0f;
 
-        float frameTimeSeconds = std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 1000000.0f;
+        float frameTimeSeconds =
+                std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 1000000.0f;
 
         currentTime = newTime;
         accumulator += frameTime;
         totalTime += frameTimeSeconds;
 
 
-
         while (accumulator >= dt) {
-            physicsAPI->update(dt, velocityIterations, positionIterations);
-            game->levelBase->fixedUpdate(dt);
+            if (!resourceManager->inMenu) {
+                physicsAPI->update(dt, velocityIterations, positionIterations);
+                game->levelBase->fixedUpdate(dt);
+            }
+
             t += dt;
             accumulator -= dt;
         }
 
-        menuParser->render();
-        game->levelBase->render();
-        game->levelBase->update(i);
-
+        if (resourceManager->inMenu) {
+            menuParser->render();
+        } else {
+            game->levelBase->render();
+            game->levelBase->update(i);
+        }
 
 
         frameCounter++;
         // The total frames in the last second are fps.
-        if(totalTime >= 1.0f){
+        if (totalTime >= 1.0f) {
             avgFps = frameCounter;
             frameCounter = 0;
             totalTime = 0;
 
+            renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", std::to_string(avgFps).c_str(), 25,
+                                     SDL_Color{255, 255, 255}, "fpsText");
         }
 
-        renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", std::to_string(avgFps).c_str(), 25, SDL_Color{255,255,255}, "fpsText");
-        renderingAPI->drawTexture("fpsText", 0, 0, 0,0, 1, 0);
+        renderingAPI->drawTexture("fpsText", 0, 0, 0, 0, 1, 0);
+
+
+
 
         if (isDebuggingPhysics)
             physicsAPI->DebugDraw(*renderingAPI, *engineWindowAPI->getRenderer());

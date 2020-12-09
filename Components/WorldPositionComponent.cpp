@@ -19,7 +19,7 @@ std::string WorldPositionComponent::name() const {
 
 Component *WorldPositionComponent::clone(EntityId entityId, const Components::component *component) {
     auto &resourceWorldPosition = component->worldPositionComponent().get();
-    auto &position = resourceWorldPosition.positionF();
+    auto &position = resourceWorldPosition.position();
 
     auto newWorldPositionComponent = new WorldPositionComponent(entityId);
     newWorldPositionComponent->x = &position.x();

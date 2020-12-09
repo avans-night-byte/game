@@ -4,9 +4,8 @@
 #include "../Components/ComponentFactory.hpp"
 #include "Generated/level-resources.hxx"
 #include "../Components/PhysicsComponent.hpp"
-#include "../ContactHandlers/ExplosionCrate.hpp"
 
-void LevelBase::LoadEntities(const std::multimap<std::string, const Components::component *> &loadedEntities) {
+void LevelBase::loadEntities(const std::multimap<std::string, const Components::component *> &loadedEntities) {
     auto componentFactory = Game::getInstance()->getComponentFactory();
 
     auto instantiatedEntities = std::map<std::string, EntityObject *>();

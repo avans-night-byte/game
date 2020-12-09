@@ -18,7 +18,7 @@ class ContactHandler;
 
 class LevelBase {
 public:
-    void LoadEntities(const std::multimap<std::string, const Components::component *> &loadedEntities);
+    void loadEntities(const std::multimap<std::string, const Components::component *> &loadedEntities);
 
 protected:
     std::vector<std::unique_ptr<EntityObject>> entities{};
