@@ -28,7 +28,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
     spriteSheet = game->getRenderingApi()->createSpriteSheet("../../Resources/Sprites/character.png",
                                                              "spritesheet_char", 8, 11, 100, 105);
 
-    worldPosition = std::make_unique<WorldPositionComponent>(id);
+    worldPosition = std::make_unique<TransformComponent>(id);
     healthComponent = make_unique<HealthComponent>();
 
     game->addComponent(id, worldPosition.get());
@@ -59,6 +59,22 @@ void CharacterComponent::update(const Input &inputSystem) {
     if (inputSystem.keyMap.action == "LEFT") {
         currentMovementDirection[MovementDirection::Left] = !stopped;
     }
+
+
+
+
+
+    auto inputApi = Game::getInstance()->getInputAPI();
+
+    int mx, my;
+    inputApi->getMousePosition(mx,my);
+
+    auto mouseVector = Vector2(mx, my);
+    auto worldPos = Vector2(*worldPosition->physicsX, *worldPosition->physicsX);
+    auto mouseAngle = atan2(mouseVector.y - worldPos.y, mouseVector.x - worldPos.x);
+
+    physicsComponent->setAngle(mouseAngle);
+
 }
 
 void CharacterComponent::fixedUpdate(const float &deltaTime) {

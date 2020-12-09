@@ -93,3 +93,7 @@ void PhysicsComponent::render() {
 void PhysicsComponent::update(const Input &inputSystem) {
 
 }
+
+void PhysicsComponent::setAngle(float angle) {
+    physicsAPI->setAngle(bodyId, angle );
+}

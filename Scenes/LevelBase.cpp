@@ -106,10 +106,10 @@ void LevelBase::getContactHandlerNames(std::vector<std::string> &names,
 }
 
 
-WorldPositionComponent *
+TransformComponent *
 LevelBase::setPositionForComponent(const EntityObject *pObject, Components::component *component) {
     for (auto &c : pObject->components) {
-        auto *worldPositionComponent = dynamic_cast<WorldPositionComponent *>(c.get());
+        auto *worldPositionComponent = dynamic_cast<TransformComponent *>(c.get());
         if (worldPositionComponent != nullptr) {
             auto &pPhysicsComponent = component->physicsComponent().get();
             pPhysicsComponent.position().x() = float(*worldPositionComponent->physicsX);

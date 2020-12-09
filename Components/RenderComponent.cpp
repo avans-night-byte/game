@@ -1,6 +1,6 @@
 #include "RenderComponent.hpp"
 #include "../Game.hpp"
-#include "WorldPositionComponent.hpp"
+#include "TransformComponent.hpp"
 #include "../../API/Rendering/RenderingAPI.hpp"
 
 /**
@@ -11,7 +11,7 @@ RenderComponent::RenderComponent(EntityId id) : Component(id),
                                                 _engineRenderingApi(*Game::getInstance()->getRenderingApi()),
                                                 _textureId(),
                                                 _texturePath(),
-                                                position(nullptr) {
+                                                transform(nullptr) {
 
 }
 
@@ -27,10 +27,10 @@ std::string RenderComponent::name() const {
  * @param textureId
  * @param engineRenderingApi
  */
-RenderComponent::RenderComponent(EntityId id, WorldPositionComponent *positionComponent, char const *texturePath,
+RenderComponent::RenderComponent(EntityId id, TransformComponent *positionComponent, char const *texturePath,
                                  std::string textureId)
         : Component(id),
-          position(positionComponent),
+          transform(positionComponent),
           _engineRenderingApi(*Game::getInstance()->getRenderingApi()),
           _textureId(std::move(textureId)) {
 
@@ -54,7 +54,7 @@ void RenderComponent::setColor(int red, int blue, int green) {
  */
 void RenderComponent::render() {
     //Render the texture
-    _engineRenderingApi.drawTexture(_textureId, *position->physicsX, *position->physicsY, 859, 840, 2, 0);
+    _engineRenderingApi.drawTexture(_textureId, *transform->physicsX, *transform->physicsY, 859, 840, 2, transform->rotation);
 }
 
 

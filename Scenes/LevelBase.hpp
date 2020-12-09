@@ -49,5 +49,5 @@ private:
     void getContactHandlerNames(std::vector<std::string> &names,
                                 const Components::component &component);
 
-    WorldPositionComponent* setPositionForComponent(const EntityObject *pObject, Components::component *component);
+    TransformComponent* setPositionForComponent(const EntityObject *pObject, Components::component *component);
 };

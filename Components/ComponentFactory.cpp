@@ -1,6 +1,6 @@
 #include "ComponentFactory.hpp"
 
-#include "WorldPositionComponent.hpp"
+#include "TransformComponent.hpp"
 #include "CharacterComponent.hpp"
 #include "NextLevelComponent.hpp"
 #include "RenderComponent.hpp"
@@ -14,7 +14,7 @@ ComponentFactory::ComponentFactory() {
 
 
     components["PhysicsComponent"] = make_unique<PhysicsComponent>(entityId);
-    components["WorldPositionComponent"] = make_unique<WorldPositionComponent>(entityId);
+    components["WorldPositionComponent"] = make_unique<TransformComponent>(entityId);
     components["CharacterComponent"] = make_unique<CharacterComponent>(entityId);
     components["NextLevelComponent"] = make_unique<NextLevelComponent>(entityId);
     components["RenderComponent"] = make_unique<RenderComponent>(entityId);

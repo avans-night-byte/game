@@ -286,3 +286,7 @@ void Game::initializeLeveL(const string &levelName, const LevelData &data) {
     levelBase->initialize(levelName, data);
     levelBase->characterComponent = this->characterComponent.get(); // TODO: Character data should be stored in a static class
 }
+
+const EngineInputAPI *Game::getInputAPI() {
+    return engineInputAPI;
+}

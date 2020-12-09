@@ -77,6 +77,8 @@ public:
 
     void endContact() override;
 
+    void setAngle(float angle);
+
 private:
     inline BodyId initializeBoxBody(BodyType bodyType, Vector2 position, Vector2 size) {
         Box2DBoxData box2DBoxData;

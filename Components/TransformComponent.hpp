@@ -10,8 +10,9 @@ namespace Components {
     class component;
 }
 
-class WorldPositionComponent : public Component {
+class TransformComponent : public Component {
 public:
+    float rotation = 0;
     const float *physicsX = nullptr;
     const float *physicsY = nullptr;
 
@@ -21,8 +22,11 @@ public:
     void update(const Input &inputSystem) override;
 
     void refLocation(const float &rX, const float &rY);
+    void setLocation(const float &x, const float &y);
 
-    explicit WorldPositionComponent(EntityId id) : Component(id) {}
+    void setRotation(float rotation);
+
+    explicit TransformComponent(EntityId id) : Component(id) {}
 
     void fixedUpdate(const float &deltaTime) override;
 

@@ -2,6 +2,7 @@
 
 
 #include "./Component.hpp"
+#include "TransformComponent.hpp"
 #include <string>
 
 class RenderingAPI;
@@ -9,7 +10,7 @@ class WorldPositionComponent;
 
 class RenderComponent : public Component {
 private:
-    WorldPositionComponent *position;
+    TransformComponent *transform;
     int r{}, g{}, b{};
     char const * _texturePath;
     RenderingAPI &_engineRenderingApi;
@@ -27,7 +28,7 @@ public:
 
     explicit RenderComponent(EntityId id);
 
-    RenderComponent(EntityId id, WorldPositionComponent *positionComponent, char const *texturePath,
+    RenderComponent(EntityId id, TransformComponent *positionComponent, char const *texturePath,
                     std::string textureId);
 
     [[nodiscard]] std::string name() const override;

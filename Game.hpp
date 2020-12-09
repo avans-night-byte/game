@@ -24,6 +24,7 @@ class RenderingAPI;
 class CharacterComponent;
 
 class LevelBase;
+#include "../API/Input/EngineInputAPI.hpp"
 
 struct LevelData;
 
@@ -80,6 +81,7 @@ public:
     template<typename T>
     System<T> getComponents(EntityId id);
 
+    const EngineInputAPI *getInputAPI();
     PhysicsAPI *getPhysicsAPI();
 
     RenderingAPI *getRenderingApi();
