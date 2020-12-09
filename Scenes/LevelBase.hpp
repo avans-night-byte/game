@@ -19,7 +19,7 @@ public:
     void LoadEntities(const std::multimap<std::string, const LevelResources::component *>& loadedEntities);
 
 protected:
-    std::vector<std::unique_ptr<EntityObject>> entities;
+    std::vector<std::unique_ptr<EntityObject>> entities{};
 
 public:
     virtual void render() = 0;

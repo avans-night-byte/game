@@ -18,5 +18,5 @@ public:
 
     Component *clone(EntityId entityId, const LevelResources::component *component) override;
 
-    [[nodiscard]] std::string name() const override;
+    [[nodiscard]]std::string name() const override;
 };

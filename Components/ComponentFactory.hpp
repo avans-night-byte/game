@@ -22,7 +22,7 @@ public:
     ComponentFactory();
 
     template<class T>
-    T* getComponent(EntityId& id) {
+    T* getComponent(const EntityId& id) {
         static_assert(std::is_base_of<Component, T>::value, "T should inherit from class Component");
 
         auto t = T(id);
@@ -33,4 +33,9 @@ public:
     }
 
     Component* getComponent(const EntityId& id, const std::string &name, const LevelResources::component *loadedComponent);
+
+    inline bool IsPhysicsComponent(const std::string& componentName)
+    {
+        return componentName == "PhysicsComponent";
+    }
 };

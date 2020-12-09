@@ -8,14 +8,12 @@
 #include <string>
 
 class EntityObject : public Component {
-private:
-    std::vector<std::unique_ptr<Component>> components{};
+public:
+    std::vector<Component *> components{};
 
 public:
     std::string entityName;
-    [[nodiscard]] const std::vector<std::unique_ptr<Component>>& getComponents() const {
-        return components;
-    }
+
 
 public:
     explicit EntityObject(EntityId id, std::string name = "") : Component(id),
@@ -33,7 +31,7 @@ public:
 
     void addComponent(Component *component);
 
-    [[nodiscard]] std::string name() const override;
+    [[nodiscard]]std::string name() const override;
 
     Component *clone(EntityId entityId, const LevelResources::component *component) override;
 };

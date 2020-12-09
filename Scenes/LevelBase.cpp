@@ -8,10 +8,9 @@
 
 void LevelBase::LoadEntities(const std::multimap<std::string, const LevelResources::component *> &loadedEntities) {
     auto componentFactory = Game::getInstance()->getComponentFactory();
-    entities = std::vector<std::unique_ptr<EntityObject>>();
 
     auto instantiatedEntities = std::map<std::string, EntityObject *>();
-    auto entitiesPhysicsComponent = std::map<EntityObject *, PhysicsComponent *>();
+    auto entitiesPhysicsComponent = std::map<EntityObject *, const LevelResources::component *>();
 
     for (auto &loadedEntity : loadedEntities) {
         auto &newEntity = instantiatedEntities[loadedEntity.first];
@@ -22,45 +21,51 @@ void LevelBase::LoadEntities(const std::multimap<std::string, const LevelResourc
             instantiatedEntities[loadedEntity.first] = newEntity;
         }
 
-        const auto loadedComponent = loadedEntity.second;
-        auto *newComponent = componentFactory->getComponent(newEntity->GetEntityId(),
-                                                            loadedEntity.second->componentName(),
-                                                            loadedComponent);
+        const auto &component = loadedEntity.second;
+        const auto &componentName = component->componentName();
 
-        /** ContactHandler **/
-        auto *physicsComponent = (PhysicsComponent *) newComponent;
-        if (physicsComponent != nullptr) {
-            entitiesPhysicsComponent[newEntity] = physicsComponent;
+        if (componentFactory->IsPhysicsComponent(componentName)) {
+            /** ContactHandler **/
+            entitiesPhysicsComponent[newEntity] = component;
+        } else {
+            auto *newComponent = componentFactory->getComponent(newEntity->GetEntityId(),
+                                                                componentName,
+                                                                component);
+            newEntity->addComponent(newComponent);
         }
-
-        newEntity->addComponent(newComponent);
     }
 
 
     /** Contact Handlers **/
     for (auto &entityPhysicsComponent : entitiesPhysicsComponent) {
-        const std::string &foundHandlerName = entityPhysicsComponent.second->getContactHandlerName();
+
+        const std::string &foundHandlerName = entityPhysicsComponent.second->physicsComponent()->contactHandler().get();
         if (foundHandlerName.empty())
             continue;
 
-        bool contactHandlerInitialized = false;
-        for (auto &component : entityPhysicsComponent.first->getComponents()) {
-            if (component->name() == foundHandlerName) {
-
-                auto *contactHandler = (ContactHandler *) component.get();
-                if (contactHandler == nullptr)
-                    throw std::runtime_error(component->name() + " does not inherit ContactHandler");
-
-
-                entityPhysicsComponent.second->setContactHandler(contactHandler);
-
-                contactHandlerInitialized = true;
+        auto *component = entityPhysicsComponent.second;
+        auto *entityObject = entityPhysicsComponent.first;
+        Component *foundHandler = nullptr;
+        for (auto *entityComponent : entityObject->components) {
+            if (entityComponent->name() == foundHandlerName) {
+                foundHandler = entityComponent;
                 break;
             }
         }
 
-        if (!contactHandlerInitialized) {
+        if (foundHandler == nullptr) {
             throw std::runtime_error("ContactHandler: " + foundHandlerName + " couldn't be found!");
         }
+        auto contactHandler = dynamic_cast<ContactHandler *>( foundHandler);
+        if (contactHandler == nullptr) {
+            throw std::runtime_error(foundHandlerName + " does not derive from ContactHandler");
+        }
+
+        auto *physicsComponent = (PhysicsComponent *) componentFactory->getComponent(entityObject->GetEntityId(),
+                                                                                     "PhysicsComponent",
+                                                                                     component);
+
+        physicsComponent->contactHandlers.push_back(std::unique_ptr<ContactHandler>(contactHandler));
+        entityObject->components.push_back(physicsComponent);
     }
 }
