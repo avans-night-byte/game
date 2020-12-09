@@ -6,7 +6,6 @@
 #include <memory>
 
 CharacterComponent::CharacterComponent(EntityId id) : Component(id), spriteSheet(nullptr) {
-
 }
 
 string CharacterComponent::name() const {
@@ -36,6 +35,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
 
     const RPosition &rPosition = physicsComponent->getRPosition();
     worldPosition->refLocation(rPosition.X, rPosition.Y);
+    worldPosition->setRotation(rPosition.rotation);
 
     spriteSheet->select_sprite(0, 0);
 }
@@ -70,11 +70,13 @@ void CharacterComponent::update(const Input &inputSystem) {
     inputApi->getMousePosition(mx,my);
 
     auto mouseVector = Vector2(mx, my);
-    auto worldPos = Vector2(*worldPosition->physicsX, *worldPosition->physicsX);
+    auto worldPos = Vector2(*worldPosition->physicsX, *worldPosition->physicsY);
     auto mouseAngle = atan2(mouseVector.y - worldPos.y, mouseVector.x - worldPos.x);
 
-    physicsComponent->setAngle(mouseAngle);
+    const RPosition &rPosition = physicsComponent->getRPosition();
+    worldPosition->setRotation(rPosition.rotation);
 
+    physicsComponent->setAngle(mouseAngle);
 }
 
 void CharacterComponent::fixedUpdate(const float &deltaTime) {
@@ -156,7 +158,7 @@ Component *CharacterComponent::clone(EntityId entityId, const Components::compon
 
 
 void CharacterComponent::render() {
-    spriteSheet->draw_selected_sprite(*worldPosition->physicsX - 42.5f, *worldPosition->physicsY - 75.0f);
+    spriteSheet->draw_selected_sprite(*worldPosition->physicsX - 42.5f, *worldPosition->physicsY - 75.0f, 1, worldPosition->rotation);
 }
 
 void CharacterComponent::startContact() {

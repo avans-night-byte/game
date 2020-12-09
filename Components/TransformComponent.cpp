@@ -34,5 +34,9 @@ void TransformComponent::update(const Input &inputSystem) {
 }
 
 void TransformComponent::setRotation(float rotation) {
-    rotation = rotation;
+    this->rotation = rotation;
+}
+
+void TransformComponent::setLocation(const float &x, const float &y) {
+
 }
