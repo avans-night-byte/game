@@ -78,7 +78,7 @@ void Game::gameLoop() {
                                                 "../../Resources/Sprites/Overworld.png",
                                                 "Overworld");
 
-    auto outEntities = std::multimap<std::string, const LevelResources::component *>();
+    auto outEntities = std::multimap<std::string, const Components::component *>();
     TMXLevel *tmxLevel = LevelParserAPI::loadLevel(outEntities,
                                                    levelData,
                                                    "../../Resources/XML/Definition/Level1Resources.xml");

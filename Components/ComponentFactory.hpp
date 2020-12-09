@@ -9,7 +9,7 @@
 #include <iostream>
 
 class Component;
-namespace LevelResources {
+namespace Components {
     class component;
 }
 
@@ -32,7 +32,7 @@ public:
         return newComponent;
     }
 
-    Component* getComponent(const EntityId& id, const std::string &name, const LevelResources::component *loadedComponent);
+    Component* getComponent(const EntityId& id, const std::string &name, const Components::component *loadedComponent);
 
     inline bool IsPhysicsComponent(const std::string& componentName)
     {

@@ -6,11 +6,11 @@
 #include "../Components/PhysicsComponent.hpp"
 #include "../ContactHandlers/ExplosionCrate.hpp"
 
-void LevelBase::LoadEntities(const std::multimap<std::string, const LevelResources::component *> &loadedEntities) {
+void LevelBase::LoadEntities(const std::multimap<std::string, const Components::component *> &loadedEntities) {
     auto componentFactory = Game::getInstance()->getComponentFactory();
 
     auto instantiatedEntities = std::map<std::string, EntityObject *>();
-    auto entitiesPhysicsComponent = std::map<EntityObject *, const LevelResources::component *>();
+    auto entitiesPhysicsComponent = std::map<EntityObject *, const Components::component *>();
 
     for (auto &loadedEntity : loadedEntities) {
         auto &newEntity = instantiatedEntities[loadedEntity.first];
@@ -38,34 +38,62 @@ void LevelBase::LoadEntities(const std::multimap<std::string, const LevelResourc
 
     /** Contact Handlers **/
     for (auto &entityPhysicsComponent : entitiesPhysicsComponent) {
+        auto *resourceComponent = entityPhysicsComponent.second;
+        std::vector<std::string> foundHandlerName{};
 
-        const std::string &foundHandlerName = entityPhysicsComponent.second->physicsComponent()->contactHandler().get();
+        this->getContactHandlerNames(foundHandlerName, *resourceComponent);
         if (foundHandlerName.empty())
             continue;
 
-        auto *component = entityPhysicsComponent.second;
         auto *entityObject = entityPhysicsComponent.first;
-        Component *foundHandler = nullptr;
-        for (auto *entityComponent : entityObject->components) {
-            if (entityComponent->name() == foundHandlerName) {
-                foundHandler = entityComponent;
-                break;
-            }
-        }
 
-        if (foundHandler == nullptr) {
-            throw std::runtime_error("ContactHandler: " + foundHandlerName + " couldn't be found!");
-        }
-        auto contactHandler = dynamic_cast<ContactHandler *>( foundHandler);
-        if (contactHandler == nullptr) {
-            throw std::runtime_error(foundHandlerName + " does not derive from ContactHandler");
-        }
+        std::vector<ContactHandler *> contactHandlers{};
+        getContactHandlers(contactHandlers, entityObject, foundHandlerName);
 
         auto *physicsComponent = (PhysicsComponent *) componentFactory->getComponent(entityObject->GetEntityId(),
                                                                                      "PhysicsComponent",
-                                                                                     component);
+                                                                                     resourceComponent);
 
-        physicsComponent->contactHandlers.push_back(std::unique_ptr<ContactHandler>(contactHandler));
-        entityObject->components.push_back(physicsComponent);
+        for (ContactHandler *handler : contactHandlers) {
+            physicsComponent->contactHandlers.push_back(handler);
+        }
+
+        entityObject->addComponent(physicsComponent);
+    }
+}
+
+void LevelBase::getContactHandlers(std::vector<ContactHandler *> &contactHandlers,
+                                   const EntityObject *entityObject,
+                                   const std::vector<std::string> &handlerNames) {
+    for (const std::string &handlerName : handlerNames) {
+        for (auto &entityComponent : entityObject->components) {
+            Component *foundHandler = nullptr;
+
+            if (entityComponent->name() != handlerName) {
+                continue;
+            }
+
+            foundHandler = entityComponent.get();
+
+            if (foundHandler == nullptr) {
+                throw std::runtime_error("ContactHandler: " + handlerName + " couldn't be found!");
+            }
+            auto contactHandler = dynamic_cast<ContactHandler *>( foundHandler);
+            if (contactHandler == nullptr) {
+                throw std::runtime_error(handlerName + " does not derive from ContactHandler");
+            }
+
+            contactHandlers.push_back(contactHandler);
+            break;
+        }
+    }
+}
+
+void LevelBase::getContactHandlerNames(std::vector<std::string> &names,
+                                       const Components::component &component) {
+    auto &physicsComponent = component.physicsComponent().get();
+
+    for (auto &n : physicsComponent.contactHandler()) {
+        names.push_back((string) n.c_str());
     }
 }

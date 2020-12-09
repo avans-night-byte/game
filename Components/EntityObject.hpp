@@ -9,7 +9,7 @@
 
 class EntityObject : public Component {
 public:
-    std::vector<Component *> components{};
+    std::vector<std::unique_ptr<Component>> components{};
 
 public:
     std::string entityName;
@@ -21,9 +21,7 @@ public:
 
     }
 
-    ~EntityObject() {
-
-    }
+    ~EntityObject() override = default;
 
     void update() override;
 
@@ -33,5 +31,5 @@ public:
 
     [[nodiscard]]std::string name() const override;
 
-    Component *clone(EntityId entityId, const LevelResources::component *component) override;
+    Component *clone(EntityId entityId, const Components::component *component) override;
 };

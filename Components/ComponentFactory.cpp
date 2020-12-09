@@ -24,7 +24,7 @@ ComponentFactory::ComponentFactory() {
 
 Component *ComponentFactory::getComponent(const EntityId &id,
                                           const string &name,
-                                          const LevelResources::component *loadedComponent) {
+                                          const Components::component *loadedComponent) {
 
     std::unique_ptr<Component> &component = components[name];
 

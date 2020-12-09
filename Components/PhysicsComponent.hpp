@@ -21,7 +21,7 @@ public:
     }
 
 public:
-    std::vector<std::unique_ptr<ContactHandler>> contactHandlers{};
+    std::vector<ContactHandler*> contactHandlers{};
 
     explicit PhysicsComponent(EntityId id);
 
@@ -65,7 +65,7 @@ public:
 public:
     [[nodiscard]] std::string name() const override;
 
-    Component *clone(EntityId entityId, const LevelResources::component *component) override;
+    Component *clone(EntityId entityId, const Components::component *component) override;
 
     void fixedUpdate(const float &deltaTime) override;
 

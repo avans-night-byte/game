@@ -1,4 +1,4 @@
-#include <Generated/level-resources.hxx>
+#include <Generated/components.hxx>
 #include "WorldPositionComponent.hpp"
 
 void WorldPositionComponent::setLocation(const float &rX, const float &rY) {
@@ -17,7 +17,7 @@ std::string WorldPositionComponent::name() const {
     return "WorldPositionComponent";
 }
 
-Component *WorldPositionComponent::clone(EntityId entityId, const LevelResources::component *component) {
+Component *WorldPositionComponent::clone(EntityId entityId, const Components::component *component) {
     auto &resourceWorldPosition = component->worldPositionComponent().get();
     auto &position = resourceWorldPosition.positionF();
 

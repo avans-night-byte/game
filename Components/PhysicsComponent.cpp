@@ -40,7 +40,7 @@ string PhysicsComponent::name() const {
 }
 
 Component *PhysicsComponent::clone(EntityId entityId,
-                                   const LevelResources::component *component) {
+                                   const Components::component *component) {
 
     auto newPhysicsComponent = new PhysicsComponent(entityId);
     auto &physicsComponent = component->physicsComponent().get();
@@ -78,15 +78,13 @@ Component *PhysicsComponent::clone(EntityId entityId,
 }
 
 void PhysicsComponent::startContact() {
-    for (auto &contactHandler : contactHandlers)
-    {
+    for (auto &contactHandler : contactHandlers) {
         contactHandler->startContact();
     }
 }
 
 void PhysicsComponent::endContact() {
-    for (auto &contactHandler : contactHandlers)
-    {
+    for (auto &contactHandler : contactHandlers) {
         contactHandler->endContact();
     }
 }

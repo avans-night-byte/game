@@ -3,6 +3,10 @@
 #include "Component.hpp"
 #include <string>
 
+namespace Components {
+    class component;
+}
+
 class WorldPositionComponent : public Component {
 public:
     const float *x = 0;
@@ -16,7 +20,7 @@ public:
 
     void fixedUpdate(const float &deltaTime) override;
 
-    Component *clone(EntityId entityId, const LevelResources::component *component) override;
+    Component *clone(EntityId entityId, const Components::component *component) override;
 
     [[nodiscard]]std::string name() const override;
 };

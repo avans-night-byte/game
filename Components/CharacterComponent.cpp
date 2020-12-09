@@ -133,7 +133,7 @@ void CharacterComponent::resetMovement() {
     currentMovementDirection[Down] = false;
 }
 
-Component *CharacterComponent::clone(EntityId entityId, const LevelResources::component *component) {
+Component *CharacterComponent::clone(EntityId entityId, const Components::component *component) {
     return new CharacterComponent(entityId);
 }
 

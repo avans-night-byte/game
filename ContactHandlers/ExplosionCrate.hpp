@@ -27,7 +27,7 @@ public:
         return "ExplosionCrate";
     }
 
-    Component *clone(EntityId entityId, const LevelResources::component *component) override {
+    Component *clone(EntityId entityId, const Components::component *component) override {
         return new ExplosionCrate(entityId);
     }
 
