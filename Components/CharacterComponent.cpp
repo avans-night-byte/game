@@ -1,6 +1,9 @@
 #include "CharacterComponent.hpp"
 
 #include "../Game.hpp"
+#include "HealthComponent.hpp"
+
+#include <memory>
 #include "../../Engine/Managers/ResourceManager.hpp"
 
 CharacterComponent::CharacterComponent(EntityId id) : Component(id), spriteSheet(nullptr) {
@@ -16,24 +19,24 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
     Game *game = Game::getInstance();
 
     this->resetMovement();
-    physicsComponent = make_unique<PhysicsComponent>(id,
-                                                     BodyType::Dynamic,
-                                                     Vector2(position.x, position.y),
-                                                     Vector2(20, 20));
+    physicsComponent = std::make_unique<PhysicsComponent>(id,
+                                                          BodyType::Dynamic,
+                                                          Vector2(position.x, position.y),
+                                                          Vector2(20, 20));
     physicsComponent->setFixedRotation(true);
     physicsComponent->setVelocity(Vector2());
 
     spriteSheet = game->getRenderingApi()->createSpriteSheet("../../Resources/Sprites/character.png",
                                                              "spritesheet_char", 8, 11, 100, 105);
 
-    worldPosition = make_unique<WorldPositionComponent>(id);
-
+    worldPosition = std::make_unique<WorldPositionComponent>(id);
+    healthComponent = make_unique<HealthComponent>();
 
     game->addComponent(id, worldPosition.get());
     game->addComponent(id, physicsComponent.get());
 
     const RPosition &rPosition = physicsComponent->getRPosition();
-    worldPosition->setLocation(rPosition.X, rPosition.Y);
+    worldPosition->refLocation(rPosition.X, rPosition.Y);
 
     spriteSheet->select_sprite(0, 0);
 }
@@ -64,8 +67,6 @@ void CharacterComponent::update(const Input &inputSystem) {
         p.loadResource("options");
 
     }
-
-    update();
 }
 
 void CharacterComponent::fixedUpdate(const float &deltaTime) {
@@ -145,6 +146,11 @@ Component *CharacterComponent::clone(EntityId entityId, const Components::compon
     return new CharacterComponent(entityId);
 }
 
+
+void CharacterComponent::render() {
+    spriteSheet->draw_selected_sprite(*worldPosition->physicsX - 42.5f, *worldPosition->physicsY - 75.0f);
+}
+
 void CharacterComponent::startContact() {
 
 }
@@ -152,3 +158,4 @@ void CharacterComponent::startContact() {
 void CharacterComponent::endContact() {
 
 }
+

@@ -6,10 +6,6 @@
 #include "PhysicsComponent.hpp"
 
 
-void PhysicsComponent::update() {
-
-}
-
 void PhysicsComponent::fixedUpdate(const float &deltaTime) {
 
 }
@@ -51,12 +47,13 @@ Component *PhysicsComponent::clone(EntityId entityId,
 
 
     BodyType bodyType = StringToBodyType(bodyTypeString);
+    Vector2 position = Vector2(physicsComponent.position().x(), physicsComponent.position().y());
 
     /* Shape */
     if (shapeCircle != nullptr) {
         Box2DCircleData circleData{};
         circleData.radius = shapeCircle->radius();
-        circleData.position = Vector2(shapeCircle->position().x(), shapeCircle->position().y());
+        circleData.position = position;
         circleData.bodyType = bodyType;
         circleData.isSensor = physicsComponent.isSensor();
         circleData.userData = newPhysicsComponent;
@@ -66,7 +63,7 @@ Component *PhysicsComponent::clone(EntityId entityId,
         // BOX
         Box2DBoxData boxData{};
         boxData.size = Vector2(shapeBox->width(), shapeBox->height());
-        boxData.position = Vector2(shapeBox->position().x(), shapeBox->position().y());
+        boxData.position = position;
         boxData.bodyType = bodyType;
         boxData.isSensor = physicsComponent.isSensor();
         boxData.userData = newPhysicsComponent;
@@ -87,4 +84,12 @@ void PhysicsComponent::endContact() {
     for (auto &contactHandler : contactHandlers) {
         contactHandler->endContact();
     }
+}
+
+void PhysicsComponent::render() {
+
+}
+
+void PhysicsComponent::update(const Input &inputSystem) {
+
 }

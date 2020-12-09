@@ -9,18 +9,21 @@ typedef int PlayerId;
 namespace Components {
     class component;
 }
+class Input;
 
 class Component {
 protected:
     EntityId owner;
 
 public:
-    inline const EntityId &GetEntityId() {
+    inline const EntityId &getEntityId() {
         return owner;
     }
 
 public:
-    virtual void update() = 0;
+    virtual void render() = 0;
+
+    virtual void update(const Input &inputSystem) = 0;
 
     virtual void fixedUpdate(const float &deltaTime) = 0;
 

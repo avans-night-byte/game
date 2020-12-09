@@ -9,7 +9,7 @@ class RenderingAPI;
 class PhysicsAPI;
 
 
-class Level1 : public LevelBase {
+class Level1 {
 private:
     TMXLevel* _level;
     CharacterComponent* characterComponent;
@@ -18,9 +18,9 @@ public:
     explicit Level1(TMXLevel* tmxLevel, CharacterComponent* characterComponent);
 
     ~Level1();
-    void render() override;
+    void render();
 
-    void update(const Input &inputSystem) override;
+    void update(const Input &inputSystem);
 
-    void fixedUpdate(const float &deltaTime) override;
+    void fixedUpdate(const float &deltaTime);
 };

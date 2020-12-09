@@ -17,7 +17,7 @@ private:
 
 
 public:
-    void update() override;
+    void update(const Input &inputSystem) override;
 
     void fixedUpdate(const float &deltaTime) override;
 

@@ -13,14 +13,18 @@ void NextLevelComponent::endContact() {
 
 }
 
-void NextLevelComponent::update() {
-
-}
-
 void NextLevelComponent::fixedUpdate(const float &deltaTime) {
 
 }
 
 Component *NextLevelComponent::clone(EntityId entityId, const Components::component *component) {
     return new NextLevelComponent(entityId);
+}
+
+void NextLevelComponent::render() {
+
+}
+
+void NextLevelComponent::update(const Input &inputSystem) {
+
 }

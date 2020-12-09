@@ -23,7 +23,9 @@ public:
 
     ~EntityObject() override = default;
 
-    void update() override;
+    void render() override;
+
+    void update(const Input &inputSystem) override;
 
     void fixedUpdate(const float &deltaTime) override;
 
