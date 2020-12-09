@@ -62,9 +62,9 @@ void CharacterComponent::update(const Input &inputSystem) {
         currentMovementDirection[MovementDirection::Left] = !stopped;
     }
 
-    if(inputSystem.keyMap.action == "ESC"){
+    if(inputSystem.keyMap.action == "ESCAPE"){
         auto& p = *ResourceManager::getInstance();
-        p.loadResource("options");
+        p.loadResource("Options");
 
     }
 }
