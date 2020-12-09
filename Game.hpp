@@ -45,6 +45,8 @@ private:
 
     std::unique_ptr<ComponentFactory> componentFactory;
 
+    bool unLoadingLevel = false;
+
 protected:
     Game() = default;
 
@@ -89,4 +91,6 @@ public:
     ComponentFactory *getComponentFactory();
 
     void initializeLeveL(const std::string &levelName, const LevelData &data);
+
+    void unloadLevel();
 };

@@ -115,7 +115,8 @@ void Game::gameLoop() {
         while (accumulator >= dt) {
             if (!resourceManager->inMenu) {
                 physicsAPI->update(dt, velocityIterations, positionIterations);
-                game->levelBase->fixedUpdate(dt);
+                if (game->levelBase)
+                    game->levelBase->fixedUpdate(dt);
             }
 
             t += dt;
@@ -137,13 +138,12 @@ void Game::gameLoop() {
             frameCounter = 0;
             totalTime = 0;
 
-            renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", std::to_string(avgFps).c_str(), 25,
+            renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", std::to_string(avgFps).c_str(),
+                                     25,
                                      SDL_Color{255, 255, 255}, "fpsText");
         }
 
         renderingAPI->drawTexture("fpsText", 0, 0, 0, 0, 1, 0);
-
-
 
 
         if (isDebuggingPhysics)
@@ -162,6 +162,13 @@ void Game::gameLoop() {
             isDebuggingPhysics = true;
         } else if (i.keyMap.code == "\\") {
             isDebuggingPhysics = false;
+        }
+
+        physicsAPI->sweepBodies();
+        if (game->unLoadingLevel && physicsAPI->bodiesAreDestroyed()) {
+            game->levelBase->clearEntities();
+            game->levelBase = nullptr;
+            game->unLoadingLevel = false;
         }
     }
 }
@@ -285,6 +292,11 @@ void Game::initializeLeveL(const string &levelName, const LevelData &data) {
     levelBase = std::make_unique<LevelBase>();
     levelBase->initialize(levelName, data);
     levelBase->characterComponent = this->characterComponent.get(); // TODO: Character data should be stored in a static class
+}
+
+void Game::unloadLevel() {
+    levelBase->destroyAllBodies();
+    unLoadingLevel = true;
 }
 
 const EngineInputAPI *Game::getInputAPI() {

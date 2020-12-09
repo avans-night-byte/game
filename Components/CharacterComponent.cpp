@@ -161,11 +161,11 @@ void CharacterComponent::render() {
     spriteSheet->draw_selected_sprite(*worldPosition->physicsX - 42.5f, *worldPosition->physicsY - 75.0f, 1, worldPosition->rotation);
 }
 
-void CharacterComponent::startContact() {
+void CharacterComponent::startContact(b2Contact *contact) {
 
 }
 
-void CharacterComponent::endContact() {
+void CharacterComponent::endContact(b2Contact *contact) {
 
 }
 

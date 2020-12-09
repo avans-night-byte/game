@@ -14,9 +14,9 @@ public:
 
     }
 
-    void startContact() override;
+    void startContact(b2Contact *contact) override;
 
-    void endContact() override;
+    void endContact(b2Contact *contact) override;
 
     void render() override;
 

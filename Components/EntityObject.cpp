@@ -5,8 +5,7 @@ std::string EntityObject::name() const {
 }
 
 void EntityObject::fixedUpdate(const float &deltaTime) {
-    for(auto &component : components)
-    {
+    for (auto &component : components) {
         component->fixedUpdate(deltaTime);
     }
 }
@@ -20,15 +19,13 @@ Component *EntityObject::clone(EntityId entityId, const Components::component *c
 }
 
 void EntityObject::render() {
-    for(auto &component : components)
-    {
+    for (auto &component : components) {
         component->render();
     }
 }
 
 void EntityObject::update(const Input &inputSystem) {
-    for(auto &component : components)
-    {
+    for (auto &component : components) {
         component->update(inputSystem);
     }
 }

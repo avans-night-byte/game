@@ -1,12 +1,9 @@
 #include "LevelBase.hpp"
 
 #include "../Components/ComponentFactory.hpp"
-#include "../Components/PhysicsComponent.hpp"
-#include "../../Engine/Rendering/TMXLevel.hpp"
 #include "../../API/XMLParser/LevelParserAPI.hpp"
 
 #include "Generated/level-resources.hxx"
-#include "Generated/common.hxx"
 
 void LevelBase::loadEntities(const std::multimap<std::string, Components::component *> &loadedEntities) {
     auto componentFactory = Game::getInstance()->getComponentFactory();
@@ -70,10 +67,10 @@ void LevelBase::loadEntities(const std::multimap<std::string, Components::compon
 }
 
 void LevelBase::getContactHandlers(std::vector<ContactHandler *> &contactHandlers,
-                                   const EntityObject *entityObject,
+                                   EntityObject *entityObject,
                                    const std::vector<std::string> &handlerNames) {
     for (const std::string &handlerName : handlerNames) {
-        for (auto &entityComponent : entityObject->components) {
+        for (auto &entityComponent : entityObject->getComponents()) {
             Component *foundHandler = nullptr;
 
             if (entityComponent->name() != handlerName) {
@@ -106,21 +103,6 @@ void LevelBase::getContactHandlerNames(std::vector<std::string> &names,
 }
 
 
-TransformComponent *
-LevelBase::setPositionForComponent(const EntityObject *pObject, Components::component *component) {
-    for (auto &c : pObject->components) {
-        auto *worldPositionComponent = dynamic_cast<TransformComponent *>(c.get());
-        if (worldPositionComponent != nullptr) {
-            auto &pPhysicsComponent = component->physicsComponent().get();
-            pPhysicsComponent.position().x() = float(*worldPositionComponent->physicsX);
-            pPhysicsComponent.position().y() = float(*worldPositionComponent->physicsY);
-            return worldPositionComponent;
-        }
-    }
-
-    return nullptr;
-}
-
 void LevelBase::render() {
     tmxLevel->render(*Game::getInstance()->getRenderingApi());
     characterComponent->render();
@@ -151,4 +133,35 @@ void LevelBase::initialize(const std::string &name, const LevelData &data) {
     this->loadEntities(outEntities);
     this->levelName = name;
 }
+
+TransformComponent *LevelBase::setPositionForComponent(EntityObject *pObject, Components::component *component) {
+    for (auto &c : pObject->getComponents()) {
+        auto *worldPositionComponent = dynamic_cast<TransformComponent *>(c.get());
+        if (worldPositionComponent != nullptr) {
+            auto &pPhysicsComponent = component->physicsComponent().get();
+            pPhysicsComponent.position().x() = float(*worldPositionComponent->physicsX);
+            pPhysicsComponent.position().y() = float(*worldPositionComponent->physicsY);
+            return worldPositionComponent;
+        }
+    }
+
+    return nullptr;
+}
+
+void LevelBase::destroyAllBodies() {
+    for (auto &entity : entities) {
+        for (auto &comp : entity->getComponents()) {
+            if (auto *physicsComponent = dynamic_cast<PhysicsComponent *>(comp.get())) {
+                physicsComponent->destroyBody();
+            }
+        }
+    }
+
+    tmxLevel->cleanup();
+}
+
+void LevelBase::clearEntities() {
+    entities.clear();
+}
+
 

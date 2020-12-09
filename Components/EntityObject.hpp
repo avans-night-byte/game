@@ -8,8 +8,8 @@
 #include <string>
 
 class EntityObject : public Component {
-public:
-    std::vector<std::unique_ptr<Component>> components{};
+private:
+    std::vector<std::unique_ptr<Component>> components;
 
 public:
     std::string entityName;
@@ -19,6 +19,10 @@ public:
     explicit EntityObject(EntityId id, std::string name = "") : Component(id),
                                                                 entityName(std::move(name)) {
 
+    }
+
+    std::vector<std::unique_ptr<Component>> &getComponents() {
+        return components;
     }
 
     ~EntityObject() override = default;

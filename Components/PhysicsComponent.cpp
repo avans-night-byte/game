@@ -74,15 +74,15 @@ Component *PhysicsComponent::clone(EntityId entityId,
     return newPhysicsComponent;
 }
 
-void PhysicsComponent::startContact() {
+void PhysicsComponent::startContact(b2Contact *contact) {
     for (auto &contactHandler : contactHandlers) {
-        contactHandler->startContact();
+        contactHandler->startContact(contact);
     }
 }
 
-void PhysicsComponent::endContact() {
+void PhysicsComponent::endContact(b2Contact *contact) {
     for (auto &contactHandler : contactHandlers) {
-        contactHandler->endContact();
+        contactHandler->endContact(contact);
     }
 }
 
@@ -96,4 +96,8 @@ void PhysicsComponent::update(const Input &inputSystem) {
 
 void PhysicsComponent::setAngle(float angle) {
     physicsAPI->setAngle(bodyId, angle );
+}
+
+void PhysicsComponent::destroyBody() {
+    physicsAPI->destroyBody(bodyId);
 }

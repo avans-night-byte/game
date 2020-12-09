@@ -20,6 +20,8 @@ public:
         return contactHandlerName;
     }
 
+    void destroyBody();
+
 public:
     std::vector<ContactHandler*> contactHandlers{};
 
@@ -29,13 +31,7 @@ public:
 
     PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, float radius);
 
-    ~PhysicsComponent() override {
-        // BodyId 0 is used for physicsComponent that are not instantiated within the b2World.
-        if(bodyId == 0)
-            return;
-
-        physicsAPI->destroyBody(bodyId);
-    }
+    ~PhysicsComponent() override = default;
 
     inline RPosition getRPosition() {
         return physicsAPI->getRPosition(bodyId);
@@ -73,9 +69,9 @@ public:
 
     void update(const Input &inputSystem) override;
 
-    void startContact() override;
+    void startContact(b2Contact *contact) override;
 
-    void endContact() override;
+    void endContact(b2Contact *contact) override;
 
     void setAngle(float angle);
 

@@ -42,12 +42,16 @@ public:
 
     void fixedUpdate(const float &deltaTime);
 
+    void destroyAllBodies();
+
+    void clearEntities();
+
 private:
-    void getContactHandlers(std::vector<ContactHandler *> &contactHandlers, const EntityObject *entityObject,
+    void getContactHandlers(std::vector<ContactHandler *> &contactHandlers, EntityObject *entityObject,
                             const std::vector<std::string> &handlerNames);
 
     void getContactHandlerNames(std::vector<std::string> &names,
                                 const Components::component &component);
 
-    TransformComponent* setPositionForComponent(const EntityObject *pObject, Components::component *component);
+    TransformComponent* setPositionForComponent(EntityObject *pObject, Components::component *component);
 };
