@@ -1,13 +1,11 @@
 #include <Generated/components.hxx>
 #include "WorldPositionComponent.hpp"
 
-void WorldPositionComponent::setLocation(const float &rX, const float &rY) {
-    this->x = &rX;
-    this->y = &rY;
+void WorldPositionComponent::refLocation(const float &rX, const float &rY) {
+    this->physicsX = &rX;
+    this->physicsY = &rY;
 }
 
-
-void WorldPositionComponent::update() {}
 
 void WorldPositionComponent::fixedUpdate(const float &deltaTime) {
 
@@ -19,11 +17,18 @@ std::string WorldPositionComponent::name() const {
 
 Component *WorldPositionComponent::clone(EntityId entityId, const Components::component *component) {
     auto &resourceWorldPosition = component->worldPositionComponent().get();
-    auto &position = resourceWorldPosition.position();
+    auto *position = resourceWorldPosition.position()._clone();
 
     auto newWorldPositionComponent = new WorldPositionComponent(entityId);
-    newWorldPositionComponent->x = &position.x();
-    newWorldPositionComponent->y = &position.y();
+    newWorldPositionComponent->refLocation(position->x(), position->y());
 
     return newWorldPositionComponent;
+}
+
+void WorldPositionComponent::render() {
+
+}
+
+void WorldPositionComponent::update(const Input &inputSystem) {
+
 }

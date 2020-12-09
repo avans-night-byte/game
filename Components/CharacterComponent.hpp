@@ -5,9 +5,11 @@
 #include "Component.hpp"
 #include "WorldPositionComponent.hpp"
 #include "PhysicsComponent.hpp"
+#include "HealthComponent.hpp"
+#include "../Game.hpp"
 
 class Game;
-
+class HealthComponent;
 class Input;
 
 class CharacterComponent : public Component, public ContactHandler {
@@ -24,6 +26,7 @@ private:
     std::map<MovementDirection, bool> currentMovementDirection;
     Spritesheet *spriteSheet{};
     unique_ptr<WorldPositionComponent> worldPosition;
+    unique_ptr<HealthComponent> healthComponent;
     unique_ptr<PhysicsComponent> physicsComponent;
 
     void resetMovement();
@@ -41,7 +44,26 @@ public:
         physicsComponent->setVelocity(velocity);
     }
 
-    void update(const Input &inputSystem);
+    // Health
+    float getHealth() {
+        return healthComponent->getHealth();
+    }
+
+    void setHealth(float hp) {
+        healthComponent->setHealth(hp);
+    }
+
+    void die() {
+        healthComponent->die();
+    }
+
+    void doDamage(float hp) {
+        healthComponent->doDamage(hp);
+
+        if (this->getHealth() <= 0) {
+            this->die();
+        }
+    }
 
     void fixedUpdate(const float &deltaTime) override;
 
@@ -58,8 +80,7 @@ public:
 
     void endContact() override;
 
-protected:
-    void update() override {
-        spriteSheet->draw_selected_sprite(*worldPosition->x - 42.5f, *worldPosition->y - 75.0f);
-    }
+    void render() override;
+
+    void update(const Input &inputSystem) override;
 };

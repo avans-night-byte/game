@@ -10,17 +10,28 @@
 #include <mutex>
 
 #include "Components/Component.hpp"
-
-#include "Scenes/LevelBase.hpp"
+#include "Game.hpp"
 
 
 class PhysicsAPI;
+
 class ComponentFactory;
+
 class LevelParserAPI;
+
 class RenderingAPI;
+
+class CharacterComponent;
+
+class LevelBase;
+
+struct LevelData;
+
 
 class Game {
 private:
+    std::unique_ptr<CharacterComponent> characterComponent;
+
     static Game *instance;
     static std::mutex mutex;
 
@@ -52,6 +63,10 @@ public:
 
     static void debugLog(Input i);
 
+    inline LevelBase *getLevelBase() {
+        return levelBase.get();
+    }
+
 public:
     EntityId createEntity();
 
@@ -70,4 +85,6 @@ public:
     RenderingAPI *getRenderingApi();
 
     ComponentFactory *getComponentFactory();
+
+    void initializeLeveL(const std::string &levelName, const LevelData &data);
 };

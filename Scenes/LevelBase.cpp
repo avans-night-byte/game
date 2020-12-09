@@ -1,15 +1,18 @@
 #include "LevelBase.hpp"
 
-#include "../Components/EntityObject.hpp"
 #include "../Components/ComponentFactory.hpp"
-#include "Generated/level-resources.hxx"
 #include "../Components/PhysicsComponent.hpp"
+#include "../../Engine/Rendering/TMXLevel.hpp"
+#include "../../API/XMLParser/LevelParserAPI.hpp"
 
-void LevelBase::loadEntities(const std::multimap<std::string, const Components::component *> &loadedEntities) {
+#include "Generated/level-resources.hxx"
+#include "Generated/common.hxx"
+
+void LevelBase::loadEntities(const std::multimap<std::string, Components::component *> &loadedEntities) {
     auto componentFactory = Game::getInstance()->getComponentFactory();
 
     auto instantiatedEntities = std::map<std::string, EntityObject *>();
-    auto entitiesPhysicsComponent = std::map<EntityObject *, const Components::component *>();
+    auto entitiesPhysicsComponent = std::map<EntityObject *, Components::component *>();
 
     for (auto &loadedEntity : loadedEntities) {
         auto &newEntity = instantiatedEntities[loadedEntity.first];
@@ -27,7 +30,7 @@ void LevelBase::loadEntities(const std::multimap<std::string, const Components::
             /** ContactHandler **/
             entitiesPhysicsComponent[newEntity] = component;
         } else {
-            auto *newComponent = componentFactory->getComponent(newEntity->GetEntityId(),
+            auto *newComponent = componentFactory->getComponent(newEntity->getEntityId(),
                                                                 componentName,
                                                                 component);
             newEntity->addComponent(newComponent);
@@ -48,13 +51,18 @@ void LevelBase::loadEntities(const std::multimap<std::string, const Components::
 
         std::vector<ContactHandler *> contactHandlers{};
         getContactHandlers(contactHandlers, entityObject, foundHandlerName);
-
-        auto *physicsComponent = (PhysicsComponent *) componentFactory->getComponent(entityObject->GetEntityId(),
+        auto *worldPositionComponent = setPositionForComponent(entityObject, resourceComponent);
+        auto *physicsComponent = (PhysicsComponent *) componentFactory->getComponent(entityObject->getEntityId(),
                                                                                      "PhysicsComponent",
                                                                                      resourceComponent);
 
         for (ContactHandler *handler : contactHandlers) {
             physicsComponent->contactHandlers.push_back(handler);
+        }
+
+        if (worldPositionComponent) {
+            const RPosition &rPosition = physicsComponent->getRPosition();
+            worldPositionComponent->refLocation(rPosition.X, rPosition.Y);
         }
 
         entityObject->addComponent(physicsComponent);
@@ -96,3 +104,51 @@ void LevelBase::getContactHandlerNames(std::vector<std::string> &names,
         names.push_back((string) n.c_str());
     }
 }
+
+
+WorldPositionComponent *
+LevelBase::setPositionForComponent(const EntityObject *pObject, Components::component *component) {
+    for (auto &c : pObject->components) {
+        auto *worldPositionComponent = dynamic_cast<WorldPositionComponent *>(c.get());
+        if (worldPositionComponent != nullptr) {
+            auto &pPhysicsComponent = component->physicsComponent().get();
+            pPhysicsComponent.position().x() = float(*worldPositionComponent->physicsX);
+            pPhysicsComponent.position().y() = float(*worldPositionComponent->physicsY);
+            return worldPositionComponent;
+        }
+    }
+
+    return nullptr;
+}
+
+void LevelBase::render() {
+    tmxLevel->render(*Game::getInstance()->getRenderingApi());
+    characterComponent->render();
+    for (auto &entity : entities) {
+        entity->render();
+    }
+}
+
+void LevelBase::update(const Input &inputSystem) {
+    characterComponent->update(inputSystem);
+    for (auto &entity : entities) {
+        entity->update(inputSystem);
+    }
+}
+
+void LevelBase::fixedUpdate(const float &deltaTime) {
+    characterComponent->fixedUpdate(deltaTime);
+    for (auto &entity : entities) {
+        entity->fixedUpdate(deltaTime);
+    }
+}
+
+void LevelBase::initialize(const std::string &name, const LevelData &data) {
+    auto outEntities = std::multimap<std::string, Components::component *>();
+    auto *tmx = LevelParserAPI::loadLevel(outEntities, data);
+
+    this->tmxLevel = std::unique_ptr<TMXLevel>(tmx);
+    this->loadEntities(outEntities);
+    this->levelName = name;
+}
+

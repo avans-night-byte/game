@@ -54,16 +54,9 @@ void RenderComponent::setColor(int red, int blue, int green) {
  */
 void RenderComponent::render() {
     //Render the texture
-    _engineRenderingApi.drawTexture(_textureId, *position->x, *position->y, 859, 840, 2, 0);
+    _engineRenderingApi.drawTexture(_textureId, *position->physicsX, *position->physicsY, 859, 840, 2, 0);
 }
 
-
-/**
- * Update calls the "render function", this is needed to call update no mather what type it is.
- */
-void RenderComponent::update() {
-    render();
-}
 
 void RenderComponent::fixedUpdate(const float &deltaTime) {
 
@@ -71,4 +64,8 @@ void RenderComponent::fixedUpdate(const float &deltaTime) {
 
 Component *RenderComponent::clone(EntityId entityId, const Components::component *component) {
     return new RenderComponent(entityId);
+}
+
+void RenderComponent::update(const Input &inputSystem) {
+
 }

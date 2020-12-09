@@ -13,6 +13,7 @@
 #include "./Components/CharacterComponent.hpp"
 #include "../Engine/Rendering/TMXLevel.hpp"
 #include "../Engine/Managers/ResourceManager.hpp"
+#include "Scenes/LevelBase.hpp"
 #include "Scenes/Level1/Level1.hpp"
 #include "../API/Engine/EngineWindowAPI.hpp"
 #include "../API/Audio/AudioAPI.hpp"
@@ -48,11 +49,6 @@ void Game::initialize() {
     game->componentFactory = make_unique<ComponentFactory>();
 
     resourceManager.loadResource("MainMenu");
-
-    //menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
-
-    // We should normally init when switching state.
-    //Credits::init(renderingAPI, engineWindowAPI, audioApi);
 }
 
 /**
@@ -65,27 +61,15 @@ void Game::gameLoop() {
     Game *game = getInstance();
 
     /** CREATE CHARACTER */
-    unique_ptr<CharacterComponent> characterComponent;
+    // TODO: Character data should be stored in a static class.
     EntityId characterEntityId;
 
     characterEntityId = game->createEntity();
-    characterComponent = make_unique<CharacterComponent>(characterEntityId, Vector2(100, 100));
+    game->characterComponent = make_unique<CharacterComponent>(characterEntityId, Vector2(100, 100));
 
-    game->addComponent(characterEntityId, characterComponent.get());
+    game->addComponent(characterEntityId, game->characterComponent.get());
 
-    /** Create Level **/
-    const TMXLevelData levelData = TMXLevelData("../../Resources/example.tmx",
-                                                "../../Resources/Sprites/Overworld.png",
-                                                "Overworld");
-
-    auto outEntities = std::multimap<std::string, const Components::component *>();
-    TMXLevel *tmxLevel = LevelParserAPI::loadLevel(outEntities,
-                                                   levelData,
-                                                   "../../Resources/XML/Definition/Level1Resources.xml");
-
-    game->levelBase = std::make_unique<Level1>(tmxLevel, characterComponent.get());
-    game->levelBase->loadEntities(outEntities);
-
+    /* */
 
     bool isDebuggingPhysics = false;
 
@@ -295,4 +279,10 @@ RenderingAPI *Game::getRenderingApi() {
 
 ComponentFactory *Game::getComponentFactory() {
     return componentFactory.get();
+}
+
+void Game::initializeLeveL(const string &levelName, const LevelData &data) {
+    levelBase = std::make_unique<LevelBase>();
+    levelBase->initialize(levelName, data);
+    levelBase->characterComponent = this->characterComponent.get(); // TODO: Character data should be stored in a static class
 }

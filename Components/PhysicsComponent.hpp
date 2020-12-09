@@ -69,7 +69,9 @@ public:
 
     void fixedUpdate(const float &deltaTime) override;
 
-    void update() override;
+    void render() override;
+
+    void update(const Input &inputSystem) override;
 
     void startContact() override;
 

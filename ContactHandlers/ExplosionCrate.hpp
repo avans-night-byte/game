@@ -15,7 +15,11 @@ public:
     }
 
 public:
-    void update() override {
+    void render() override {
+
+    }
+
+    void update(const Input &inputSystem) override {
 
     }
 
