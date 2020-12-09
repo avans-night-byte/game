@@ -19,7 +19,6 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
                                                      BodyType::Dynamic,
                                                      Vector2(position.x, position.y),
                                                      Vector2(20, 20));
-    physicsComponent->setContactHandler(this);
     physicsComponent->setFixedRotation(true);
     physicsComponent->setVelocity(Vector2());
 
@@ -134,7 +133,7 @@ void CharacterComponent::resetMovement() {
     currentMovementDirection[Down] = false;
 }
 
-Component *CharacterComponent::clone(EntityId entityId, const LevelResources::component *component) {
+Component *CharacterComponent::clone(EntityId entityId, const Components::component *component) {
     return new CharacterComponent(entityId);
 }
 

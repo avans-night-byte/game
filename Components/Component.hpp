@@ -6,7 +6,7 @@
 typedef unsigned long EntityId;
 typedef int PlayerId;
 
-namespace LevelResources {
+namespace Components {
     class component;
 }
 
@@ -32,7 +32,7 @@ public:
 
     virtual std::string name() const = 0;
 
-    [[nodiscard]] virtual Component *clone(EntityId entityId, const LevelResources::component *component) = 0;
+    virtual Component *clone(EntityId entityId, const Components::component *component) = 0;
 };
 
 template<typename C>

@@ -49,7 +49,7 @@ public:
         return *spriteSheet;
     }
 
-    [[nodiscard]] Component *clone(EntityId entityId, const LevelResources::component *component) override;
+    [[nodiscard]] Component *clone(EntityId entityId, const Components::component *component) override;
 
     [[nodiscard]] std::string name() const override;
 

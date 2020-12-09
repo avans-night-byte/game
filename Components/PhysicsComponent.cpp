@@ -15,13 +15,13 @@ void PhysicsComponent::fixedUpdate(const float &deltaTime) {
 }
 
 PhysicsComponent::PhysicsComponent(EntityId id)
-        : Component(id), enginePhysicsAPI(Game::getInstance()->getPhysicsAPI()) {
+        : Component(id), physicsAPI(Game::getInstance()->getPhysicsAPI()) {
 
 }
 
 PhysicsComponent::PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, Vector2 size)
         : Component(id),
-          enginePhysicsAPI(Game::getInstance()->getPhysicsAPI()),
+          physicsAPI(Game::getInstance()->getPhysicsAPI()),
           bodyId{this->initializeBoxBody(bodyType, position, size)} {
 
 
@@ -29,7 +29,7 @@ PhysicsComponent::PhysicsComponent(EntityId id, BodyType bodyType, Vector2 posit
 
 PhysicsComponent::PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, float radius)
         : Component(id),
-          enginePhysicsAPI(Game::getInstance()->getPhysicsAPI()),
+          physicsAPI(Game::getInstance()->getPhysicsAPI()),
           bodyId(this->initializeCircleBody(bodyType, position, radius)) {
 
 
@@ -39,43 +39,52 @@ string PhysicsComponent::name() const {
     return "PhysicsComponent";
 }
 
-Component *PhysicsComponent::clone(EntityId entityId, const LevelResources::component *component) {
-    auto &resourcePhysicsComponent = component->physicsComponent().get();
-    auto bodyTypeString = std::string(resourcePhysicsComponent.bodyType().c_str());
+Component *PhysicsComponent::clone(EntityId entityId,
+                                   const Components::component *component) {
 
-    auto &shapeCircle = resourcePhysicsComponent.bodyShape().circle();
-    auto &shapeBox = resourcePhysicsComponent.bodyShape().box();
+    auto newPhysicsComponent = new PhysicsComponent(entityId);
+    auto &physicsComponent = component->physicsComponent().get();
+    auto bodyTypeString = std::string(physicsComponent.bodyType().c_str());
+
+    auto &shapeCircle = physicsComponent.bodyShape().circle();
+    auto &shapeBox = physicsComponent.bodyShape().box();
 
 
     BodyType bodyType = StringToBodyType(bodyTypeString);
 
-
     /* Shape */
-    PhysicsComponent *newPhysicsComponent = nullptr;
-    if(shapeCircle != nullptr)
-    {
-        auto position = Vector2(shapeCircle->positionF().x(), shapeCircle->positionF().y());
-        newPhysicsComponent = new PhysicsComponent(entityId, bodyType, position, shapeCircle->radius());
-    }
-    else // Box
-    {
-        auto position = Vector2(shapeBox->positionF().x(), shapeBox->positionF().y());
-        auto size = Vector2(shapeBox->width(), shapeBox->height());
-        newPhysicsComponent = new PhysicsComponent(entityId, bodyType, position, size);
-    }
+    if (shapeCircle != nullptr) {
+        Box2DCircleData circleData{};
+        circleData.radius = shapeCircle->radius();
+        circleData.position = Vector2(shapeCircle->positionF().x(), shapeCircle->positionF().y());
+        circleData.bodyType = bodyType;
+        circleData.isSensor = physicsComponent.isSensor();
+        circleData.userData = newPhysicsComponent;
 
-    // TODO: Set Friction for physicsComponent;
+        newPhysicsComponent->bodyId = physicsAPI->createBody(circleData);
+    } else {
+        // BOX
+        Box2DBoxData boxData{};
+        boxData.size = Vector2(shapeBox->width(), shapeBox->height());
+        boxData.position = Vector2(shapeBox->positionF().x(), shapeBox->positionF().y());
+        boxData.bodyType = bodyType;
+        boxData.isSensor = physicsComponent.isSensor();
+        boxData.userData = newPhysicsComponent;
 
-    auto &contactHandler = resourcePhysicsComponent.contactHandler();
-    newPhysicsComponent->contactHandlerName = (contactHandler != nullptr) ? std::string(contactHandler->c_str()) : "";
+        newPhysicsComponent->bodyId = physicsAPI->createBody(boxData);
+    }
 
     return newPhysicsComponent;
 }
 
-void PhysicsComponent::setContactHandler(ContactHandler *contactHandler) {
-//    auto* contactHandler = (ContactHandler*)pComponent;
-//    if(contactHandler == nullptr)
-//        throw std::runtime_error("Given component does not inherit ContactHandler");
+void PhysicsComponent::startContact() {
+    for (auto &contactHandler : contactHandlers) {
+        contactHandler->startContact();
+    }
+}
 
-    enginePhysicsAPI->setContactHandler(bodyId, contactHandler);
+void PhysicsComponent::endContact() {
+    for (auto &contactHandler : contactHandlers) {
+        contactHandler->endContact();
+    }
 }

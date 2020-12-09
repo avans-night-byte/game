@@ -16,6 +16,6 @@ void EntityObject::addComponent(Component *component) {
     components.push_back(std::unique_ptr<Component>(component));
 }
 
-Component *EntityObject::clone(EntityId entityId, const LevelResources::component *component) {
+Component *EntityObject::clone(EntityId entityId, const Components::component *component) {
     return new EntityObject(entityId);
 }

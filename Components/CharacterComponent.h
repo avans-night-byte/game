@@ -23,7 +23,7 @@ private:
     std::map<MovementDirection, bool> currentMovementDirection;
     Spritesheet *spriteSheet;
     unique_ptr<WorldPositionComponent> worldPosition;
-    unique_ptr<PhysicsComponent> physicsComponent;
+    unique_ptr<PhysicsComponent> physicsComponent{};
     unique_ptr<HealthComponent> healthComponent;
     void resetMovement();
 
