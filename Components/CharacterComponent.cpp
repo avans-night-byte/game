@@ -25,7 +25,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
     physicsComponent->setVelocity(Vector2());
 
     spriteSheet = game->getRenderingApi()->createSpriteSheet("../../Resources/Sprites/character.png",
-                                                             "spritesheet_char", 8, 11, 100, 105);
+                                                             "spritesheet_char", 100, 105);
 
     worldPosition = std::make_unique<TransformComponent>(id);
     healthComponent = make_unique<HealthComponent>();
@@ -61,13 +61,10 @@ void CharacterComponent::update(const Input &inputSystem) {
     }
 
 
-
-
-
     auto inputApi = Game::getInstance()->getInputAPI();
 
     int mx, my;
-    inputApi->getMousePosition(mx,my);
+    inputApi->getMousePosition(mx, my);
 
     auto mouseVector = Vector2(mx, my);
     auto worldPos = Vector2(*worldPosition->physicsX, *worldPosition->physicsY);
@@ -158,7 +155,8 @@ Component *CharacterComponent::clone(EntityId entityId, const Components::compon
 
 
 void CharacterComponent::render() {
-    spriteSheet->draw_selected_sprite(*worldPosition->physicsX - 42.5f, *worldPosition->physicsY - 75.0f, 1, worldPosition->rotation);
+    spriteSheet->draw_selected_sprite(*worldPosition->physicsX - 42.5f, *worldPosition->physicsY - 75.0f, 1,
+                                      worldPosition->rotation);
 }
 
 void CharacterComponent::startContact(b2Contact *contact) {

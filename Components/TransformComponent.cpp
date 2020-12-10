@@ -12,11 +12,11 @@ void TransformComponent::fixedUpdate(const float &deltaTime) {
 }
 
 std::string TransformComponent::name() const {
-    return "WorldPositionComponent";
+    return "TransformComponent";
 }
 
 Component *TransformComponent::clone(EntityId entityId, const Components::component *component) {
-    auto &resourceWorldPosition = component->worldPositionComponent().get();
+    auto &resourceWorldPosition = component->transformComponent().get();
     auto *position = resourceWorldPosition.position()._clone();
 
     auto newWorldPositionComponent = new TransformComponent(entityId);
@@ -33,10 +33,6 @@ void TransformComponent::update(const Input &inputSystem) {
 
 }
 
-void TransformComponent::setRotation(float rotation) {
-    this->rotation = rotation;
-}
-
-void TransformComponent::setLocation(const float &x, const float &y) {
-
+void TransformComponent::setRotation(float r) {
+    this->rotation = r;
 }

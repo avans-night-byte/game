@@ -2,10 +2,12 @@
 
 #include "Component.hpp"
 
+
 #include <memory>
 #include <utility>
 #include <vector>
 #include <string>
+
 
 class EntityObject : public Component {
 private:
@@ -26,6 +28,8 @@ public:
     }
 
     ~EntityObject() override = default;
+
+    void initializeComponents();
 
     void render() override;
 

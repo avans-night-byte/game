@@ -1,7 +1,10 @@
 #include "RenderComponent.hpp"
 #include "../Game.hpp"
 #include "TransformComponent.hpp"
+#include "PhysicsComponent.hpp"
 #include "../../API/Rendering/RenderingAPI.hpp"
+#include "Generated/components.hxx"
+#include "../../Engine/Rendering/TextureManager.hpp"
 
 /**
  * This is a sample component, this one renders an imahe on the screen.
@@ -27,7 +30,7 @@ std::string RenderComponent::name() const {
  * @param textureId
  * @param engineRenderingApi
  */
-RenderComponent::RenderComponent(EntityId id, TransformComponent *positionComponent, char const *texturePath,
+RenderComponent::RenderComponent(EntityId id, TransformComponent *positionComponent, const std::string& texturePath,
                                  std::string textureId)
         : Component(id),
           transform(positionComponent),
@@ -35,7 +38,7 @@ RenderComponent::RenderComponent(EntityId id, TransformComponent *positionCompon
           _textureId(std::move(textureId)) {
 
     _texturePath = texturePath;
-    _engineRenderingApi.loadTexture(texturePath, "");
+    _engineRenderingApi.loadTexture(texturePath.c_str(), textureId);
 }
 
 /**
@@ -54,18 +57,36 @@ void RenderComponent::setColor(int red, int blue, int green) {
  */
 void RenderComponent::render() {
     //Render the texture
-    _engineRenderingApi.drawTexture(_textureId, *transform->physicsX, *transform->physicsY, 859, 840, 2, transform->rotation);
+    _engineRenderingApi.drawTexture(_textureId, *transform->physicsX - 50, *transform->physicsY - 50, 100, 100, 2, transform->rotation);
 }
 
 
 void RenderComponent::fixedUpdate(const float &deltaTime) {
-
+    const RPosition &rPosition = physics->getRPosition();
+    transform->setRotation(rPosition.rotation);
 }
 
 Component *RenderComponent::clone(EntityId entityId, const Components::component *component) {
-    return new RenderComponent(entityId);
+    const auto &resourceComponent = component->renderComponent();
+
+    auto* newComponent = new RenderComponent(entityId);
+    newComponent->_texturePath = resourceComponent->spritePath();
+    newComponent->_textureId = resourceComponent->spriteId();
+
+
+    TextureManager::GetInstance()->load(newComponent->_texturePath.c_str(),
+                                        newComponent->_textureId);
+    return newComponent;
 }
 
 void RenderComponent::update(const Input &inputSystem) {
 
+}
+
+void RenderComponent::setTransform(TransformComponent *pTransform) {
+    this->transform = pTransform;
+}
+
+void RenderComponent::setPhysicsComponent(PhysicsComponent *pComponent) {
+    this->physics = pComponent;
 }

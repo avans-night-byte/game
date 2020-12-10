@@ -14,7 +14,8 @@ ComponentFactory::ComponentFactory() {
 
 
     components["PhysicsComponent"] = make_unique<PhysicsComponent>(entityId);
-    components["WorldPositionComponent"] = make_unique<TransformComponent>(entityId);
+    components["RenderComponent"] = make_unique<RenderComponent>(entityId);
+    components["TransformComponent"] = make_unique<TransformComponent>(entityId);
     components["CharacterComponent"] = make_unique<CharacterComponent>(entityId);
     components["NextLevelComponent"] = make_unique<NextLevelComponent>(entityId);
     components["RenderComponent"] = make_unique<RenderComponent>(entityId);

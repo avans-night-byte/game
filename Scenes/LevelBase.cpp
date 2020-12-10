@@ -64,6 +64,11 @@ void LevelBase::loadEntities(const std::multimap<std::string, Components::compon
 
         entityObject->addComponent(physicsComponent);
     }
+
+
+    for(auto &entity : entities) {
+        entity->initializeComponents();
+    }
 }
 
 void LevelBase::getContactHandlers(std::vector<ContactHandler *> &contactHandlers,

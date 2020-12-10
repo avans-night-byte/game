@@ -23,9 +23,7 @@ public:
 
     void refLocation(const float &rX, const float &rY);
 
-    void setLocation(const float &x, const float &y);
-
-    void setRotation(float rotation);
+    void setRotation(float r);
 
     explicit TransformComponent(EntityId id) : Component(id) {}
 
