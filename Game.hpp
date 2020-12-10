@@ -36,6 +36,8 @@ private:
     static Game *instance;
     static std::mutex mutex;
 
+    std::string _levelToLoad;
+
 private:
     System<Component> components;
     std::list<EntityId> entities;
@@ -92,5 +94,5 @@ public:
 
     void initializeLeveL(const std::string &levelName, const LevelData &data);
 
-    void unloadLevel();
+    void unloadLevel(const std::string& levelToLoad);
 };

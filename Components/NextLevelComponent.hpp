@@ -27,7 +27,7 @@ public:
 
     [[nodiscard]] Component *clone(EntityId entityId, const Components::component *component) override;
 
-    std::string name() const override;
+    [[nodiscard]] std::string name() const override;
 };
 
 

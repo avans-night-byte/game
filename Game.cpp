@@ -169,6 +169,12 @@ void Game::gameLoop() {
             game->levelBase->clearEntities();
             game->levelBase = nullptr;
             game->unLoadingLevel = false;
+
+            if(!game->_levelToLoad.empty())
+            {
+                ResourceManager::getInstance()->loadResource(std::string(game->_levelToLoad));
+                game->_levelToLoad = "";
+            }
         }
     }
 }
@@ -294,8 +300,9 @@ void Game::initializeLeveL(const string &levelName, const LevelData &data) {
     levelBase->characterComponent = this->characterComponent.get(); // TODO: Character data should be stored in a static class
 }
 
-void Game::unloadLevel() {
+void Game::unloadLevel(const std::string& levelToLoad) {
     ResourceManager::getInstance()->_currentLevel = "";
+    _levelToLoad = levelToLoad;
     levelBase->destroyAllBodies();
     unLoadingLevel = true;
 }

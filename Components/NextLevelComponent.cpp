@@ -41,7 +41,6 @@ void NextLevelComponent::render() {
 void NextLevelComponent::update(const Input &inputSystem) {
     if(inputSystem.keyMap.code == "E" && hasContactWithPlayer)
     {
-        ResourceManager::getInstance()->loadResource("MainMenu");
-        Game::getInstance()->unloadLevel();
+        Game::getInstance()->unloadLevel(std::string(NextLevel));
     }
 }
