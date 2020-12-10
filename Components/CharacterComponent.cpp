@@ -4,6 +4,7 @@
 #include "HealthComponent.hpp"
 
 #include <memory>
+#include "../../Engine/Managers/ResourceManager.hpp"
 
 CharacterComponent::CharacterComponent(EntityId id) : Component(id), spriteSheet(nullptr) {
 }
@@ -43,6 +44,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
 void CharacterComponent::update(const Input &inputSystem) {
     bool stopped = false;
 
+    //TODO: Move naar engine
     if (inputSystem.keyMap.type == SDL_KEYUP) {
         stopped = true;
     }
@@ -58,6 +60,12 @@ void CharacterComponent::update(const Input &inputSystem) {
     }
     if (inputSystem.keyMap.action == "LEFT") {
         currentMovementDirection[MovementDirection::Left] = !stopped;
+    }
+
+    if(inputSystem.keyMap.action == "ESCAPE"){
+        auto& p = *ResourceManager::getInstance();
+        p.loadResource("Options");
+
     }
 
 
