@@ -295,6 +295,7 @@ void Game::initializeLeveL(const string &levelName, const LevelData &data) {
 }
 
 void Game::unloadLevel() {
+    ResourceManager::getInstance()->_currentLevel = "";
     levelBase->destroyAllBodies();
     unLoadingLevel = true;
 }

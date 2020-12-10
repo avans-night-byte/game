@@ -19,6 +19,8 @@ private:
     PhysicsComponent *physics;
 
     int r{}, g{}, b{};
+    float width;
+    float height;
     std::string _texturePath;
     RenderingAPI &_engineRenderingApi;
     std::string _textureId;

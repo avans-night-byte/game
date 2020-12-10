@@ -57,7 +57,7 @@ void RenderComponent::setColor(int red, int blue, int green) {
  */
 void RenderComponent::render() {
     //Render the texture
-    _engineRenderingApi.drawTexture(_textureId, *transform->physicsX - 50, *transform->physicsY - 50, 100, 100, 2, transform->rotation);
+    _engineRenderingApi.drawTexture(_textureId, *transform->physicsX - (width * 0.5f), *transform->physicsY - (height * 0.5f), width, height, 2, transform->rotation);
 }
 
 
@@ -72,6 +72,8 @@ Component *RenderComponent::clone(EntityId entityId, const Components::component
     auto* newComponent = new RenderComponent(entityId);
     newComponent->_texturePath = resourceComponent->spritePath();
     newComponent->_textureId = resourceComponent->spriteId();
+    newComponent->width = resourceComponent->width();
+    newComponent->height = resourceComponent->height();
 
 
     TextureManager::GetInstance()->load(newComponent->_texturePath.c_str(),
