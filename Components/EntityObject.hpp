@@ -2,14 +2,16 @@
 
 #include "Component.hpp"
 
+
 #include <memory>
 #include <utility>
 #include <vector>
 #include <string>
 
+
 class EntityObject : public Component {
-public:
-    std::vector<std::unique_ptr<Component>> components{};
+private:
+    std::vector<std::unique_ptr<Component>> components;
 
 public:
     std::string entityName;
@@ -21,9 +23,17 @@ public:
 
     }
 
+    std::vector<std::unique_ptr<Component>> &getComponents() {
+        return components;
+    }
+
     ~EntityObject() override = default;
 
-    void update() override;
+    void initializeComponents();
+
+    void render() override;
+
+    void update(const Input &inputSystem) override;
 
     void fixedUpdate(const float &deltaTime) override;
 

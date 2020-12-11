@@ -6,10 +6,6 @@
 #include "PhysicsComponent.hpp"
 
 
-void PhysicsComponent::update() {
-
-}
-
 void PhysicsComponent::fixedUpdate(const float &deltaTime) {
 
 }
@@ -51,12 +47,13 @@ Component *PhysicsComponent::clone(EntityId entityId,
 
 
     BodyType bodyType = StringToBodyType(bodyTypeString);
+    Vector2 position = Vector2(physicsComponent.position().x(), physicsComponent.position().y());
 
     /* Shape */
     if (shapeCircle != nullptr) {
         Box2DCircleData circleData{};
         circleData.radius = shapeCircle->radius();
-        circleData.position = Vector2(shapeCircle->positionF().x(), shapeCircle->positionF().y());
+        circleData.position = position;
         circleData.bodyType = bodyType;
         circleData.isSensor = physicsComponent.isSensor();
         circleData.userData = newPhysicsComponent;
@@ -66,7 +63,7 @@ Component *PhysicsComponent::clone(EntityId entityId,
         // BOX
         Box2DBoxData boxData{};
         boxData.size = Vector2(shapeBox->width(), shapeBox->height());
-        boxData.position = Vector2(shapeBox->positionF().x(), shapeBox->positionF().y());
+        boxData.position = position;
         boxData.bodyType = bodyType;
         boxData.isSensor = physicsComponent.isSensor();
         boxData.userData = newPhysicsComponent;
@@ -77,14 +74,30 @@ Component *PhysicsComponent::clone(EntityId entityId,
     return newPhysicsComponent;
 }
 
-void PhysicsComponent::startContact() {
+void PhysicsComponent::startContact(b2Contact *contact) {
     for (auto &contactHandler : contactHandlers) {
-        contactHandler->startContact();
+        contactHandler->startContact(contact);
     }
 }
 
-void PhysicsComponent::endContact() {
+void PhysicsComponent::endContact(b2Contact *contact) {
     for (auto &contactHandler : contactHandlers) {
-        contactHandler->endContact();
+        contactHandler->endContact(contact);
     }
+}
+
+void PhysicsComponent::render() {
+
+}
+
+void PhysicsComponent::update(const Input &inputSystem) {
+
+}
+
+void PhysicsComponent::setAngle(float angle) {
+    physicsAPI->setAngle(bodyId, angle );
+}
+
+void PhysicsComponent::destroyBody() {
+    physicsAPI->destroyBody(bodyId);
 }

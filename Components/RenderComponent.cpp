@@ -1,7 +1,10 @@
 #include "RenderComponent.hpp"
 #include "../Game.hpp"
-#include "WorldPositionComponent.hpp"
+#include "TransformComponent.hpp"
+#include "PhysicsComponent.hpp"
 #include "../../API/Rendering/RenderingAPI.hpp"
+#include "Generated/components.hxx"
+#include "../../Engine/Rendering/TextureManager.hpp"
 
 /**
  * This is a sample component, this one renders an imahe on the screen.
@@ -11,7 +14,7 @@ RenderComponent::RenderComponent(EntityId id) : Component(id),
                                                 _engineRenderingApi(*Game::getInstance()->getRenderingApi()),
                                                 _textureId(),
                                                 _texturePath(),
-                                                position(nullptr) {
+                                                transform(nullptr) {
 
 }
 
@@ -27,15 +30,15 @@ std::string RenderComponent::name() const {
  * @param textureId
  * @param engineRenderingApi
  */
-RenderComponent::RenderComponent(EntityId id, WorldPositionComponent *positionComponent, char const *texturePath,
+RenderComponent::RenderComponent(EntityId id, TransformComponent *positionComponent, const std::string& texturePath,
                                  std::string textureId)
         : Component(id),
-          position(positionComponent),
+          transform(positionComponent),
           _engineRenderingApi(*Game::getInstance()->getRenderingApi()),
           _textureId(std::move(textureId)) {
 
     _texturePath = texturePath;
-    _engineRenderingApi.loadTexture(texturePath, "");
+    _engineRenderingApi.loadTexture(texturePath.c_str(), textureId);
 }
 
 /**
@@ -54,21 +57,38 @@ void RenderComponent::setColor(int red, int blue, int green) {
  */
 void RenderComponent::render() {
     //Render the texture
-    _engineRenderingApi.drawTexture(_textureId, *position->x, *position->y, 859, 840, 2, 0);
+    _engineRenderingApi.drawTexture(_textureId, *transform->physicsX - (width * 0.5f), *transform->physicsY - (height * 0.5f), width, height, 2, transform->rotation);
 }
 
-
-/**
- * Update calls the "render function", this is needed to call update no mather what type it is.
- */
-void RenderComponent::update() {
-    render();
-}
 
 void RenderComponent::fixedUpdate(const float &deltaTime) {
-
+    const RPosition &rPosition = physics->getRPosition();
+    transform->setRotation(rPosition.rotation);
 }
 
 Component *RenderComponent::clone(EntityId entityId, const Components::component *component) {
-    return new RenderComponent(entityId);
+    const auto &resourceComponent = component->renderComponent();
+
+    auto* newComponent = new RenderComponent(entityId);
+    newComponent->_texturePath = resourceComponent->spritePath();
+    newComponent->_textureId = resourceComponent->spriteId();
+    newComponent->width = resourceComponent->width();
+    newComponent->height = resourceComponent->height();
+
+
+    TextureManager::GetInstance()->load(newComponent->_texturePath.c_str(),
+                                        newComponent->_textureId);
+    return newComponent;
+}
+
+void RenderComponent::update(const Input &inputSystem) {
+
+}
+
+void RenderComponent::setTransform(TransformComponent *pTransform) {
+    this->transform = pTransform;
+}
+
+void RenderComponent::setPhysicsComponent(PhysicsComponent *pComponent) {
+    this->physics = pComponent;
 }

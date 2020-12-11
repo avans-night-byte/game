@@ -1,9 +1,12 @@
 #include "CharacterComponent.hpp"
 
 #include "../Game.hpp"
+#include "HealthComponent.hpp"
+
+#include <memory>
+#include "../../Engine/Managers/ResourceManager.hpp"
 
 CharacterComponent::CharacterComponent(EntityId id) : Component(id), spriteSheet(nullptr) {
-
 }
 
 string CharacterComponent::name() const {
@@ -15,24 +18,25 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
     Game *game = Game::getInstance();
 
     this->resetMovement();
-    physicsComponent = make_unique<PhysicsComponent>(id,
-                                                     BodyType::Dynamic,
-                                                     Vector2(position.x, position.y),
-                                                     Vector2(20, 20));
+    physicsComponent = std::make_unique<PhysicsComponent>(id,
+                                                          BodyType::Dynamic,
+                                                          Vector2(position.x, position.y),
+                                                          Vector2(20, 20));
     physicsComponent->setFixedRotation(true);
     physicsComponent->setVelocity(Vector2());
 
     spriteSheet = game->getRenderingApi()->createSpriteSheet("../../Resources/Sprites/character.png",
-                                                             "spritesheet_char", 8, 11, 100, 105);
+                                                             "spritesheet_char", 100, 105);
 
-    worldPosition = make_unique<WorldPositionComponent>(id);
-
+    worldPosition = std::make_unique<TransformComponent>(id);
+    healthComponent = make_unique<HealthComponent>();
 
     game->addComponent(id, worldPosition.get());
     game->addComponent(id, physicsComponent.get());
 
     const RPosition &rPosition = physicsComponent->getRPosition();
-    worldPosition->setLocation(rPosition.X, rPosition.Y);
+    worldPosition->refLocation(rPosition.X, rPosition.Y);
+    worldPosition->setRotation(rPosition.rotation);
 
     spriteSheet->select_sprite(0, 0);
 }
@@ -40,6 +44,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
 void CharacterComponent::update(const Input &inputSystem) {
     bool stopped = false;
 
+    //TODO: Move naar engine
     if (inputSystem.keyMap.type == SDL_KEYUP) {
         stopped = true;
     }
@@ -57,7 +62,26 @@ void CharacterComponent::update(const Input &inputSystem) {
         currentMovementDirection[MovementDirection::Left] = !stopped;
     }
 
-    update();
+    if(inputSystem.keyMap.action == "ESCAPE"){
+        auto& p = *ResourceManager::getInstance();
+        p.loadResource("Options");
+
+    }
+
+
+    auto inputApi = Game::getInstance()->getInputAPI();
+
+    int mx, my;
+    inputApi->getMousePosition(mx, my);
+
+    auto mouseVector = Vector2(mx, my);
+    auto worldPos = Vector2(*worldPosition->physicsX, *worldPosition->physicsY);
+    auto mouseAngle = atan2(mouseVector.y - worldPos.y, mouseVector.x - worldPos.x);
+
+    const RPosition &rPosition = physicsComponent->getRPosition();
+    worldPosition->setRotation(rPosition.rotation);
+
+    physicsComponent->setAngle(mouseAngle);
 }
 
 void CharacterComponent::fixedUpdate(const float &deltaTime) {
@@ -137,10 +161,17 @@ Component *CharacterComponent::clone(EntityId entityId, const Components::compon
     return new CharacterComponent(entityId);
 }
 
-void CharacterComponent::startContact() {
+
+void CharacterComponent::render() {
+    spriteSheet->draw_selected_sprite(*worldPosition->physicsX - 42.5f, *worldPosition->physicsY - 75.0f, 1,
+                                      worldPosition->rotation);
+}
+
+void CharacterComponent::startContact(b2Contact *contact) {
 
 }
 
-void CharacterComponent::endContact() {
+void CharacterComponent::endContact(b2Contact *contact) {
 
 }
+

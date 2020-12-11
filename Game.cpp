@@ -13,6 +13,7 @@
 #include "./Components/CharacterComponent.hpp"
 #include "../Engine/Rendering/TMXLevel.hpp"
 #include "../Engine/Managers/ResourceManager.hpp"
+#include "Scenes/LevelBase.hpp"
 #include "Scenes/Level1/Level1.hpp"
 #include "../API/Engine/EngineWindowAPI.hpp"
 #include "../API/Audio/AudioAPI.hpp"
@@ -48,11 +49,6 @@ void Game::initialize() {
     game->componentFactory = make_unique<ComponentFactory>();
 
     resourceManager.loadResource("MainMenu");
-
-    //menuParser->loadScene("../../Resources/XML/Definition/MainMenu.xml");
-
-    // We should normally init when switching state.
-    //Credits::init(renderingAPI, engineWindowAPI, audioApi);
 }
 
 /**
@@ -65,27 +61,15 @@ void Game::gameLoop() {
     Game *game = getInstance();
 
     /** CREATE CHARACTER */
-    unique_ptr<CharacterComponent> characterComponent;
+    // TODO: Character data should be stored in a static class.
     EntityId characterEntityId;
 
     characterEntityId = game->createEntity();
-    characterComponent = make_unique<CharacterComponent>(characterEntityId, Vector2(100, 100));
+    game->characterComponent = make_unique<CharacterComponent>(characterEntityId, Vector2(100, 100));
 
-    game->addComponent(characterEntityId, characterComponent.get());
+    game->addComponent(characterEntityId, game->characterComponent.get());
 
-    /** Create Level **/
-    const TMXLevelData levelData = TMXLevelData("../../Resources/example.tmx",
-                                                "../../Resources/Sprites/Overworld.png",
-                                                "Overworld");
-
-    auto outEntities = std::multimap<std::string, const Components::component *>();
-    TMXLevel *tmxLevel = LevelParserAPI::loadLevel(outEntities,
-                                                   levelData,
-                                                   "../../Resources/XML/Definition/Level1Resources.xml");
-
-    game->levelBase = std::make_unique<Level1>(tmxLevel, characterComponent.get());
-    game->levelBase->LoadEntities(outEntities);
-
+    /* */
 
     bool isDebuggingPhysics = false;
 
@@ -102,6 +86,11 @@ void Game::gameLoop() {
 
     int avgFps = 0;
 
+    auto *resourceManager = ResourceManager::getInstance();
+
+    // Create texture once
+    renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", "0", 25,
+                             SDL_Color{255, 255, 255}, "fpsText");
     // Gameloop
     while (true) {
         // Poll input and keep track of lastInput
@@ -115,38 +104,47 @@ void Game::gameLoop() {
         float frameTime =
                 std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 100000.0f;
 
-        float frameTimeSeconds = std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 1000000.0f;
+        float frameTimeSeconds =
+                std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 1000000.0f;
 
         currentTime = newTime;
         accumulator += frameTime;
         totalTime += frameTimeSeconds;
 
 
-
         while (accumulator >= dt) {
-            physicsAPI->update(dt, velocityIterations, positionIterations);
-            game->levelBase->fixedUpdate(dt);
+            if (!resourceManager->inMenu) {
+                physicsAPI->update(dt, velocityIterations, positionIterations);
+                if (game->levelBase)
+                    game->levelBase->fixedUpdate(dt);
+            }
+
             t += dt;
             accumulator -= dt;
         }
 
-        menuParser->render();
-        game->levelBase->render();
-        game->levelBase->update(i);
-
+        if (resourceManager->inMenu) {
+            menuParser->render();
+        } else {
+            game->levelBase->render();
+            game->levelBase->update(i);
+        }
 
 
         frameCounter++;
         // The total frames in the last second are fps.
-        if(totalTime >= 1.0f){
+        if (totalTime >= 1.0f) {
             avgFps = frameCounter;
             frameCounter = 0;
             totalTime = 0;
 
+            renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", std::to_string(avgFps).c_str(),
+                                     25,
+                                     SDL_Color{255, 255, 255}, "fpsText");
         }
 
-        renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", std::to_string(avgFps).c_str(), 25, SDL_Color{255,255,255}, "fpsText");
-        renderingAPI->drawTexture("fpsText", 0, 0, 0,0, 1, 0);
+        renderingAPI->drawTexture("fpsText", 0, 0, 0, 0, 1, 0);
+
 
         if (isDebuggingPhysics)
             physicsAPI->DebugDraw(*renderingAPI, *engineWindowAPI->getRenderer());
@@ -164,6 +162,19 @@ void Game::gameLoop() {
             isDebuggingPhysics = true;
         } else if (i.keyMap.code == "\\") {
             isDebuggingPhysics = false;
+        }
+
+        physicsAPI->sweepBodies();
+        if (game->unLoadingLevel && physicsAPI->bodiesAreDestroyed()) {
+            game->levelBase->clearEntities();
+            game->levelBase = nullptr;
+            game->unLoadingLevel = false;
+
+            if(!game->_levelToLoad.empty())
+            {
+                ResourceManager::getInstance()->loadResource(std::string(game->_levelToLoad));
+                game->_levelToLoad = "";
+            }
         }
     }
 }
@@ -281,4 +292,21 @@ RenderingAPI *Game::getRenderingApi() {
 
 ComponentFactory *Game::getComponentFactory() {
     return componentFactory.get();
+}
+
+void Game::initializeLeveL(const string &levelName, const LevelData &data) {
+    levelBase = std::make_unique<LevelBase>();
+    levelBase->initialize(levelName, data);
+    levelBase->characterComponent = this->characterComponent.get(); // TODO: Character data should be stored in a static class
+}
+
+void Game::unloadLevel(const std::string& levelToLoad) {
+    ResourceManager::getInstance()->_currentLevel = "";
+    _levelToLoad = levelToLoad;
+    levelBase->destroyAllBodies();
+    unLoadingLevel = true;
+}
+
+const EngineInputAPI *Game::getInputAPI() {
+    return engineInputAPI;
 }

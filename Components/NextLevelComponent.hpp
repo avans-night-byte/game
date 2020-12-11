@@ -8,23 +8,26 @@
 // TODO: Don't use ContactHandler of Engine but of API (which does not exist yet).
 class NextLevelComponent : public Component, public ContactHandler {
 public:
-    std::string NextLevel = "Wow look at me!";
+    std::string NextLevel = "";
+    bool hasContactWithPlayer = false;
 
     explicit NextLevelComponent(EntityId id) : Component(id) {
 
     }
 
-    void startContact() override;
+    void startContact(b2Contact *contact) override;
 
-    void endContact() override;
+    void endContact(b2Contact *contact) override;
 
-    void update() override;
+    void render() override;
+
+    void update(const Input &inputSystem) override;
 
     void fixedUpdate(const float &deltaTime) override;
 
     [[nodiscard]] Component *clone(EntityId entityId, const Components::component *component) override;
 
-    std::string name() const override;
+    [[nodiscard]] std::string name() const override;
 };
 
 

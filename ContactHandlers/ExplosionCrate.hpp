@@ -15,7 +15,11 @@ public:
     }
 
 public:
-    void update() override {
+    void render() override {
+
+    }
+
+    void update(const Input &inputSystem) override {
 
     }
 
@@ -32,10 +36,10 @@ public:
     }
 
 public:
-    void startContact() override {
+    void startContact(b2Contact *contact) override {
     }
 
-    void endContact() override {
+    void endContact(b2Contact *contact) override {
 
     }
 };

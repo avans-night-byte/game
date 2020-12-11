@@ -2,6 +2,9 @@
 
 
 #include "../Components/EntityObject.hpp"
+#include "../Components/CharacterComponent.hpp"
+#include "../../Engine/Rendering/TMXLevel.hpp"
+
 
 #include <string>
 #include <map>
@@ -13,27 +16,42 @@ namespace Components {
     class component;
 }
 class Input;
-
 class ContactHandler;
 
 class LevelBase {
+private:
+    unique_ptr<TMXLevel> tmxLevel;
+    std::string levelName;
+
 public:
-    void LoadEntities(const std::multimap<std::string, const Components::component *> &loadedEntities);
+    CharacterComponent* characterComponent = nullptr; // TODO: Character data should be stored in a static class
+
+    void loadEntities(const std::multimap<std::string, Components::component *> &loadedEntities);
+
+    LevelBase() = default;
+
+    void initialize(const std::string& name, const LevelData &data);
 
 protected:
     std::vector<std::unique_ptr<EntityObject>> entities{};
 
 public:
-    virtual void render() = 0;
+    void render();
 
-    virtual void update(const Input &inputSystem) = 0;
+    void update(const Input &inputSystem);
 
-    virtual void fixedUpdate(const float &deltaTime) = 0;
+    void fixedUpdate(const float &deltaTime);
+
+    void destroyAllBodies();
+
+    void clearEntities();
 
 private:
-    void getContactHandlers(std::vector<ContactHandler *> &contactHandlers, const EntityObject *entityObject,
+    void getContactHandlers(std::vector<ContactHandler *> &contactHandlers, EntityObject *entityObject,
                             const std::vector<std::string> &handlerNames);
 
     void getContactHandlerNames(std::vector<std::string> &names,
                                 const Components::component &component);
+
+    TransformComponent* setPositionForComponent(EntityObject *pObject, Components::component *component);
 };
