@@ -7,7 +7,6 @@
 void NextLevelComponent::startContact(b2Contact *contact) {
     if(auto* characterComponent = static_cast<CharacterComponent*>((CharacterComponent*)contact->GetFixtureB()->GetBody()->GetUserData().pointer))
     {
-        //    ResourceManager::getInstance()->loadResource(NextLevel);
         hasContactWithPlayer = true;
     }
 }

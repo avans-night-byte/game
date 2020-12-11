@@ -168,5 +168,3 @@ void LevelBase::destroyAllBodies() {
 void LevelBase::clearEntities() {
     entities.clear();
 }
-
-
