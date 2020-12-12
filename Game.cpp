@@ -24,7 +24,6 @@ void Game::initialize() {
 
     _componentFactory = make_unique<ComponentFactory>();
 
-
     resourceManager.loadResource("MainMenu");
 }
 
