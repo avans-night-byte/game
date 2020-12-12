@@ -44,6 +44,10 @@ public:
 
     [[nodiscard]] Component *clone(EntityId entityId, const Components::component *component) override;
 
+    void initialize(EntityObject &entityParent) override;
+
+public:
+
     void setTransform(TransformComponent *pTransform);
 
     void setPhysicsComponent(PhysicsComponent *pComponent);

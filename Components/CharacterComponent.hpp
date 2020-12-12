@@ -73,7 +73,10 @@ public:
 
     [[nodiscard]] Component *clone(EntityId entityId, const Components::component *component) override;
 
+    void initialize(EntityObject &entityParent) override;
+
     [[nodiscard]] std::string name() const override;
+
 
 public:
     void startContact(b2Contact *contact) override;

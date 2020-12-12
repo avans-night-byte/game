@@ -4,6 +4,7 @@
 
 
 #include "PhysicsComponent.hpp"
+#include "EntityObject.hpp"
 
 
 void PhysicsComponent::fixedUpdate(const float &deltaTime) {
@@ -100,4 +101,8 @@ void PhysicsComponent::setAngle(float angle) {
 
 void PhysicsComponent::destroyBody() {
     _physicsAPI.destroyBody(_bodyId);
+}
+
+void PhysicsComponent::initialize(EntityObject &entityParent) {
+
 }

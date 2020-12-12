@@ -44,3 +44,7 @@ void NextLevelComponent::update(const Input &inputSystem) {
         ResourceManager::getInstance()->loadResource(NextLevel);
     }
 }
+
+void NextLevelComponent::initialize(EntityObject &entityParent) {
+
+}

@@ -175,3 +175,7 @@ void CharacterComponent::endContact(b2Contact *contact) {
 
 }
 
+void CharacterComponent::initialize(EntityObject &entityParent) {
+
+}
+

@@ -3,6 +3,7 @@
 #include "../../API/Physics/EnginePhysicsAPI.hpp"
 #include "../../API/RPosition.hpp"
 #include "Component.hpp"
+#include "EntityObject.hpp"
 
 namespace LevelResources {
     class physicsComponent;
@@ -62,6 +63,8 @@ public:
     [[nodiscard]] std::string name() const override;
 
     Component *clone(EntityId entityId, const Components::component *component) override;
+
+    void initialize(EntityObject &entityParent) override;
 
     void fixedUpdate(const float &deltaTime) override;
 

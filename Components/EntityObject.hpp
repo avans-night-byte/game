@@ -23,8 +23,20 @@ public:
 
     }
 
-    std::vector<std::unique_ptr<Component>> &getComponents() {
+    const std::vector<std::unique_ptr<Component>> &getComponents() {
         return components;
+    }
+
+    template<class T>
+    T *getComponent() {
+        static_assert(std::is_base_of<Component, T>::value, "T should inherit from class Component");
+
+        for (auto &comp: components) {
+            if (T *c = dynamic_cast<T *>(comp.get()))
+                return c;
+        }
+
+        return nullptr;
     }
 
     ~EntityObject() override = default;
@@ -42,4 +54,6 @@ public:
     [[nodiscard]]std::string name() const override;
 
     Component *clone(EntityId entityId, const Components::component *component) override;
+
+    void initialize(EntityObject &entityParent) override;
 };

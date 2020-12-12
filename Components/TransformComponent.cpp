@@ -1,5 +1,6 @@
 #include <Generated/components.hxx>
 #include "TransformComponent.hpp"
+#include "EntityObject.hpp"
 
 void TransformComponent::refLocation(const float &rX, const float &rY) {
     this->physicsX = &rX;
@@ -35,4 +36,8 @@ void TransformComponent::update(const Input &inputSystem) {
 
 void TransformComponent::setRotation(float r) {
     this->rotation = r;
+}
+
+void TransformComponent::initialize(EntityObject &entityParent) {
+
 }

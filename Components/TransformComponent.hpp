@@ -5,6 +5,7 @@
 
 
 #include "../../Engine/Vector2.hpp"
+#include "EntityObject.hpp"
 
 namespace Components {
     class component;
@@ -30,6 +31,10 @@ public:
     void fixedUpdate(const float &deltaTime) override;
 
     Component *clone(EntityId entityId, const Components::component *component) override;
+
+    void initialize(EntityObject &entityParent) override;
+
+public:
 
     [[nodiscard]] Vector2 getPosition() const { return Vector2(*physicsX, *physicsY); }
 

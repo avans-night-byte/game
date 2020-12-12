@@ -1,10 +1,8 @@
 #include "RenderComponent.hpp"
 #include "../Game.hpp"
-#include "TransformComponent.hpp"
 #include "PhysicsComponent.hpp"
-#include "../../API/Rendering/RenderingAPI.hpp"
+#include "TransformComponent.hpp"
 #include "Generated/components.hxx"
-#include "../../Engine/Rendering/TextureManager.hpp"
 
 /**
  * This is a sample component, this one renders an imahe on the screen.
@@ -30,7 +28,7 @@ std::string RenderComponent::name() const {
  * @param textureId
  * @param engineRenderingApi
  */
-RenderComponent::RenderComponent(EntityId id, TransformComponent *positionComponent, const std::string& texturePath,
+RenderComponent::RenderComponent(EntityId id, TransformComponent *positionComponent, const std::string &texturePath,
                                  std::string textureId)
         : Component(id),
           transform(positionComponent),
@@ -57,7 +55,8 @@ void RenderComponent::setColor(int red, int blue, int green) {
  */
 void RenderComponent::render() {
     //Render the texture
-    _engineRenderingApi.drawTexture(_textureId, *transform->physicsX - (width * 0.5f), *transform->physicsY - (height * 0.5f), width, height, 2, transform->rotation);
+    _engineRenderingApi.drawTexture(_textureId, *transform->physicsX - (width * 0.5f),
+                                    *transform->physicsY - (height * 0.5f), width, height, 2, transform->rotation);
 }
 
 
@@ -69,7 +68,7 @@ void RenderComponent::fixedUpdate(const float &deltaTime) {
 Component *RenderComponent::clone(EntityId entityId, const Components::component *component) {
     const auto &resourceComponent = component->renderComponent();
 
-    auto* newComponent = new RenderComponent(entityId);
+    auto *newComponent = new RenderComponent(entityId);
     newComponent->_texturePath = resourceComponent->spritePath();
     newComponent->_textureId = resourceComponent->spriteId();
     newComponent->width = resourceComponent->width();
@@ -91,4 +90,14 @@ void RenderComponent::setTransform(TransformComponent *pTransform) {
 
 void RenderComponent::setPhysicsComponent(PhysicsComponent *pComponent) {
     this->physics = pComponent;
+}
+
+void RenderComponent::initialize(EntityObject &entityParent) {
+    if (auto *transformComponent = entityParent.getComponent<TransformComponent>()) {
+        setTransform(transformComponent);
+    }
+
+    if (auto *physicsComponent = entityParent.getComponent<PhysicsComponent>()) {
+        setPhysicsComponent(physicsComponent);
+    }
 }
