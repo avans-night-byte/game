@@ -4,6 +4,12 @@
 #include "../Engine/Input/Input.hpp"
 #include "../Engine/Audio/AudioType.h"
 
+#include "../API/Input/EngineInputAPI.hpp"
+#include "../Engine/Engine.hpp"
+#include "../API/Engine/EngineWindowAPI.hpp"
+#include "../API/Audio/AudioAPI.hpp"
+#include "../API/XMLParser/MenuParserAPI.hpp"
+
 #include <list>
 #include <map>
 #include "memory"
@@ -19,39 +25,48 @@ class ComponentFactory;
 
 class LevelParserAPI;
 
+class InputAPI;
+
 class RenderingAPI;
 
 class CharacterComponent;
 
 class LevelBase;
-#include "../API/Input/EngineInputAPI.hpp"
+
 
 struct LevelData;
 
 
 class Game {
 private:
-    std::unique_ptr<CharacterComponent> characterComponent;
+    std::unique_ptr<CharacterComponent> _characterComponent;
 
-    static Game *instance;
+    static Game *_instance;
     static std::mutex mutex;
 
     std::string _levelToLoad;
 
 private:
-    System<Component> components;
-    std::list<EntityId> entities;
-    std::map<PlayerId, EntityId> players;
+    System<Component> _components;
 
-    std::unique_ptr<LevelBase> levelBase;
+    std::list<EntityId> _entities;
+    std::map<PlayerId, EntityId> _players;
 
-    std::unique_ptr<ComponentFactory> componentFactory;
+    std::unique_ptr<LevelBase> _levelBase;
+    std::unique_ptr<ComponentFactory> _componentFactory;
 
     bool unLoadingLevel = false;
 
+    std::unique_ptr<Engine> _engine;
+    std::unique_ptr<InputAPI> _inputAPI;
+    std::unique_ptr<WindowAPI> _windowAPI;
+    std::unique_ptr<RenderingAPI> _renderingAPI;
+    std::unique_ptr<PhysicsAPI> _physicsAPI;
+    std::unique_ptr<AudioAPI> _audioAPI;
+    std::unique_ptr<MenuParserAPI> _menuParser;
+
 protected:
     Game() = default;
-
     ~Game() = default;
 
 public:
@@ -62,14 +77,14 @@ public:
     static Game *getInstance();
 
 public:
-    static void initialize();
+    void initialize();
 
-    static void gameLoop();
+    void gameLoop();
 
     static void debugLog(Input i);
 
     inline LevelBase *getLevelBase() {
-        return levelBase.get();
+        return _levelBase.get();
     }
 
 public:
@@ -85,10 +100,9 @@ public:
     template<typename T>
     System<T> getComponents(EntityId id);
 
-    const EngineInputAPI *getInputAPI();
-    PhysicsAPI *getPhysicsAPI();
-
-    RenderingAPI *getRenderingApi();
+    InputAPI &getInputAPI();
+    PhysicsAPI &getPhysicsAPI();
+    RenderingAPI &getRenderingApi();
 
     ComponentFactory *getComponentFactory();
 

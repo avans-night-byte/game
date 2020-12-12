@@ -36,7 +36,7 @@ void ExampleScene::initialize() {
                                                    Vector2(0, 800),
                                                    Vector2(10000, 50));
 
-    // TODO: Create Entity class which stores all the components as smart pointers?
+    // TODO: Create Entity class which stores all the _components as smart pointers?
     game->addComponent(object1, physicsComponent1);
     game->addComponent(object2, physicsComponent2);
     game->addComponent(object3, physicsComponent3);

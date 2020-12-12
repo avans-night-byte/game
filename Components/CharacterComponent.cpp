@@ -25,7 +25,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
     physicsComponent->setFixedRotation(true);
     physicsComponent->setVelocity(Vector2());
 
-    spriteSheet = game->getRenderingApi()->createSpriteSheet("../../Resources/Sprites/character.png",
+    spriteSheet = game->getRenderingApi().createSpriteSheet("../../Resources/Sprites/character.png",
                                                              "spritesheet_char", 100, 105);
 
     worldPosition = std::make_unique<TransformComponent>(id);
@@ -44,7 +44,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
 void CharacterComponent::update(const Input &inputSystem) {
     bool stopped = false;
 
-    //TODO: Move naar engine
+    //TODO: Move naar _engine
     if (inputSystem.keyMap.type == SDL_KEYUP) {
         stopped = true;
     }
@@ -69,10 +69,10 @@ void CharacterComponent::update(const Input &inputSystem) {
     }
 
 
-    auto inputApi = Game::getInstance()->getInputAPI();
+    auto& inputApi = Game::getInstance()->getInputAPI();
 
     int mx, my;
-    inputApi->getMousePosition(mx, my);
+    inputApi.getMousePosition(mx, my);
 
     auto mouseVector = Vector2(mx, my);
     auto worldPos = Vector2(*worldPosition->physicsX, *worldPosition->physicsY);

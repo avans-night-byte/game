@@ -5,7 +5,7 @@
 #include "../../Engine/Rendering/TMXLevel.hpp"
 
 void Level1::render() {
-    _level->render(*Game::getInstance()->getRenderingApi());
+    _level->render(Game::getInstance()->getRenderingApi());
 }
 
 Level1::~Level1() {
@@ -14,15 +14,6 @@ Level1::~Level1() {
 
 Level1::Level1(TMXLevel* tmxLevel, CharacterComponent *characterComponent) : characterComponent(characterComponent) {
     _level = tmxLevel;
-    Game *game = Game::getInstance();
-
-//    EntityId object1 = game->createEntity();
-//    auto *physicsComponent1 = new PhysicsComponent(object1,
-//                                                   BodyType::Dynamic,
-//                                                   Vector2(129, 0),
-//                                                   Vector2(10, 10));
-
-//    game->addComponent(object1, physicsComponent1);
 }
 
 

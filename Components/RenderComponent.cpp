@@ -11,7 +11,7 @@
 */
 
 RenderComponent::RenderComponent(EntityId id) : Component(id),
-                                                _engineRenderingApi(*Game::getInstance()->getRenderingApi()),
+                                                _engineRenderingApi(Game::getInstance()->getRenderingApi()),
                                                 _textureId(),
                                                 _texturePath(),
                                                 transform(nullptr) {
@@ -34,7 +34,7 @@ RenderComponent::RenderComponent(EntityId id, TransformComponent *positionCompon
                                  std::string textureId)
         : Component(id),
           transform(positionComponent),
-          _engineRenderingApi(*Game::getInstance()->getRenderingApi()),
+          _engineRenderingApi(Game::getInstance()->getRenderingApi()),
           _textureId(std::move(textureId)) {
 
     _texturePath = texturePath;
@@ -53,7 +53,7 @@ void RenderComponent::setColor(int red, int blue, int green) {
 }
 
 /**
- *  Sample rendering function, the components are pretty much a poc.
+ *  Sample rendering function, the _components are pretty much a poc.
  */
 void RenderComponent::render() {
     //Render the texture
