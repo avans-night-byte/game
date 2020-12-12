@@ -20,7 +20,7 @@ LevelCharlie::LevelCharlie(CharacterComponent& characterComponent,
     const char *spritesheetName = "../../Resources/Sprites/Overworld.png";
     const char *spriteId = "Overworld";
 
-    _level = new TMXLevel(levelName, spritesheetName, spriteId, engineRenderingApi, *enginePhysicsApi.getPhysicsEngineAdapter());
+    _level = new TMXLevel(levelName, spritesheetName, spriteId, engineRenderingApi, enginePhysicsApi.getPhysicsEngineAdapter());
 
 
     Game *game = Game::getInstance();
