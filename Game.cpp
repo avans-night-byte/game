@@ -21,27 +21,22 @@ void Game::initialize() {
     _audioAPI = make_unique<AudioAPI>();
     _physicsAPI = make_unique<EnginePhysicsAPI>();
     _menuParser = make_unique<MenuParserAPI>(*_renderingAPI, _inputAPI->getInputEvent());
-
     _componentFactory = make_unique<ComponentFactory>();
 
+    _bodyHandlerAPI = std::make_unique<BodyHandlerAPI>(*_physicsAPI);
+
+
     resourceManager.loadResource("MainMenu");
+
+    auto characterId = createEntity();
+    _characterComponent = make_unique<CharacterComponent>(characterId, Vector2(100, 100));
+    addComponent(characterId, _characterComponent.get());
 }
 
 /**
  * Gameloop
  **/
 void Game::gameLoop() {
-
-    /** CREATE CHARACTER */
-    // TODO: Character data should be stored in a static class.
-    EntityId characterEntityId;
-
-    characterEntityId = createEntity();
-    _characterComponent = make_unique<CharacterComponent>(characterEntityId, Vector2(100, 100));
-    addComponent(characterEntityId, _characterComponent.get());
-
-    /* */
-
     bool isDebuggingPhysics = false;
 
     int32 velocityIterations = 6;
@@ -96,7 +91,7 @@ void Game::gameLoop() {
 
         if (resourceManager->inMenu) {
             _menuParser->render();
-        } else {
+        } else if (_levelBase) {
             _levelBase->render();
             _levelBase->update(i);
         }
@@ -136,23 +131,13 @@ void Game::gameLoop() {
             isDebuggingPhysics = false;
         }
 
-        _physicsAPI->sweepBodies();
-        if (unLoadingLevel && _physicsAPI->bodiesAreDestroyed()) {
-            _levelBase->clearEntities();
-            _levelBase = nullptr;
-            unLoadingLevel = false;
-
-            if (!Game::_levelToLoad.empty()) {
-                ResourceManager::getInstance()->loadResource(std::string(Game::_levelToLoad));
-                Game::_levelToLoad = "";
-            }
-        }
+        _bodyHandlerAPI->update();
     }
 }
 
 /*
- * The following section managers _components in the program, this is not a completed system but you could already use
- * it with your feature, just mage sure to check because some _components are not completely done.
+ * The following section managers components in the program, this is not a completed system but you could already use
+ * it with your feature, just mage sure to check because some components are not completely done.
  */
 
 /**
@@ -197,7 +182,7 @@ T *Game::getComponent(EntityId id) {
 }
 
 /**
- * Gets _components by entity id of all types.
+ * Gets components by entity id of all types.
  * @param id
  * @return
  */
@@ -214,7 +199,7 @@ System<Component> Game::getComponents(EntityId id) {
 }
 
 /**
- * Gets _components by entity id of a specified type.
+ * Gets components by entity id of a specified type.
  * @tparam T
  * @param id
  * @return
@@ -266,16 +251,26 @@ ComponentFactory *Game::getComponentFactory() {
 }
 
 void Game::initializeLeveL(const string &levelName, const LevelData &data) {
-    _levelBase = std::make_unique<LevelBase>();
-    _levelBase->initialize(levelName, data);
-    _levelBase->characterComponent = this->_characterComponent.get(); // TODO: Character data should be stored in a static class
+    if (_levelBase) {
+        unloadLevel();
+    }
+
+    (*_bodyHandlerAPI).eventOnBodiesHandled([this, levelName, data] {
+        _levelBase = std::make_unique<LevelBase>();
+        _levelBase->initialize(levelName, data);
+        _levelBase->characterComponent = this->_characterComponent.get(); // TODO: Character data should be stored in a static class
+    });
 }
 
-void Game::unloadLevel(const std::string &levelToLoad) {
-    ResourceManager::getInstance()->_currentLevel = "";
-    _levelToLoad = levelToLoad;
-    _levelBase->destroyAllBodies();
-    unLoadingLevel = true;
+void Game::unloadLevel() {
+    if(!_levelBase)
+        return;
+
+    (*_bodyHandlerAPI).eventOnWorldLocked([this] {
+        _levelBase->destroyAllBodies();
+        _levelBase->clearEntities();
+        _levelBase = nullptr;
+    });
 }
 
 InputAPI &Game::getInputAPI() {
