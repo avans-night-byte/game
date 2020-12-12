@@ -7,7 +7,7 @@
 #include "../API/Input/EngineInputAPI.hpp"
 #include "../Engine/Engine.hpp"
 #include "../API/Engine/EngineWindowAPI.hpp"
-#include "../API/Audio/AudioAPI.hpp"
+#include "../API/Audio/EngineAudioAPI.hpp"
 #include "../API/XMLParser/MenuParserAPI.hpp"
 
 #include <list>
