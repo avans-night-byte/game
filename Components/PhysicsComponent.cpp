@@ -11,22 +11,22 @@ void PhysicsComponent::fixedUpdate(const float &deltaTime) {
 }
 
 PhysicsComponent::PhysicsComponent(EntityId id)
-        : Component(id), physicsAPI(Game::getInstance()->getPhysicsAPI()) {
+        : Component(id), _physicsAPI(Game::getInstance()->getPhysicsAPI()) {
 
 }
 
 PhysicsComponent::PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, Vector2 size)
         : Component(id),
-          physicsAPI(Game::getInstance()->getPhysicsAPI()),
-          bodyId{this->initializeBoxBody(bodyType, position, size)} {
+          _physicsAPI(Game::getInstance()->getPhysicsAPI()),
+          _bodyId{this->initializeBoxBody(bodyType, position, size)} {
 
 
 }
 
 PhysicsComponent::PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, float radius)
         : Component(id),
-          physicsAPI(Game::getInstance()->getPhysicsAPI()),
-          bodyId(this->initializeCircleBody(bodyType, position, radius)) {
+          _physicsAPI(Game::getInstance()->getPhysicsAPI()),
+          _bodyId(this->initializeCircleBody(bodyType, position, radius)) {
 
 
 }
@@ -58,7 +58,7 @@ Component *PhysicsComponent::clone(EntityId entityId,
         circleData.isSensor = physicsComponent.isSensor();
         circleData.userData = newPhysicsComponent;
 
-        newPhysicsComponent->bodyId = physicsAPI->createBody(circleData);
+        newPhysicsComponent->_bodyId = _physicsAPI.createBody(circleData);
     } else {
         // BOX
         Box2DBoxData boxData{};
@@ -68,7 +68,7 @@ Component *PhysicsComponent::clone(EntityId entityId,
         boxData.isSensor = physicsComponent.isSensor();
         boxData.userData = newPhysicsComponent;
 
-        newPhysicsComponent->bodyId = physicsAPI->createBody(boxData);
+        newPhysicsComponent->_bodyId = _physicsAPI.createBody(boxData);
     }
 
     return newPhysicsComponent;
@@ -95,9 +95,9 @@ void PhysicsComponent::update(const Input &inputSystem) {
 }
 
 void PhysicsComponent::setAngle(float angle) {
-    physicsAPI->setAngle(bodyId, angle );
+    _physicsAPI.setAngle(_bodyId, angle );
 }
 
 void PhysicsComponent::destroyBody() {
-    physicsAPI->destroyBody(bodyId);
+    _physicsAPI.destroyBody(_bodyId);
 }

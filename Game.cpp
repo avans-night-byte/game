@@ -3,50 +3,27 @@
 
 #include "./Game.hpp"
 
-
-#include "../API/XMLParser/LevelParserAPI.hpp"
-#include "../API/Input/EngineInputAPI.hpp"
-#include "../API/XMLParser/MenuParserAPI.hpp"
-#include "../API/Physics/EnginePhysicsAPI.hpp"
-
 #include "./Components/ComponentFactory.hpp"
 #include "./Components/CharacterComponent.hpp"
 #include "../Engine/Rendering/TMXLevel.hpp"
-#include "../Engine/Managers/ResourceManager.hpp"
 #include "Scenes/LevelBase.hpp"
-#include "Scenes/Level1/Level1.hpp"
-#include "../API/Engine/EngineWindowAPI.hpp"
-#include "../API/Audio/AudioAPI.hpp"
+
 
 typedef signed int int32;
 
-const int width = 1920;
-const int height = 1080;
-
-Engine *engine;
-EngineInputAPI *engineInputAPI;
-EngineWindowAPI *engineWindowAPI;
-RenderingAPI *renderingAPI; // TODO:  EngineRenderingAPI -> RenderinAPI: Change this since we are using the interface instance.
-PhysicsAPI *physicsAPI;
-AudioAPI *audioApi;
-MenuParserAPI *menuParser;
-
-
 void Game::initialize() {
-    // Load in all resources
+    Engine::initWindow(1920, 1080);
     ResourceManager &resourceManager = *ResourceManager::instantiate("../../Resources/XML/Definition/Resources.xml");
 
-    Engine::initWindow(width, height);
-    renderingAPI = new EngineRenderingAPI();
-    engineInputAPI = new EngineInputAPI();
-    engineWindowAPI = new EngineWindowAPI(engine);
-    audioApi = new AudioAPI();
-    physicsAPI = new EnginePhysicsAPI();
-    menuParser = new MenuParserAPI(*renderingAPI, engineInputAPI->getInputEvent());
+    _renderingAPI = make_unique<EngineRenderingAPI>();
+    _inputAPI = make_unique<EngineInputAPI>();
+    _windowAPI = make_unique<EngineWindowAPI>(*_engine);
+    _audioAPI = make_unique<AudioAPI>();
+    _physicsAPI = make_unique<EnginePhysicsAPI>();
+    _menuParser = make_unique<MenuParserAPI>(*_renderingAPI, _inputAPI->getInputEvent());
 
+    _componentFactory = make_unique<ComponentFactory>();
 
-    Game *game = Game::getInstance();
-    game->componentFactory = make_unique<ComponentFactory>();
 
     resourceManager.loadResource("MainMenu");
 }
@@ -55,19 +32,14 @@ void Game::initialize() {
  * Gameloop
  **/
 void Game::gameLoop() {
-    physicsAPI->update(1, 5, 5);
-
-    // TODO: Please put this away after making gameloop not static.
-    Game *game = getInstance();
 
     /** CREATE CHARACTER */
     // TODO: Character data should be stored in a static class.
     EntityId characterEntityId;
 
-    characterEntityId = game->createEntity();
-    game->characterComponent = make_unique<CharacterComponent>(characterEntityId, Vector2(100, 100));
-
-    game->addComponent(characterEntityId, game->characterComponent.get());
+    characterEntityId = createEntity();
+    _characterComponent = make_unique<CharacterComponent>(characterEntityId, Vector2(100, 100));
+    addComponent(characterEntityId, _characterComponent.get());
 
     /* */
 
@@ -89,12 +61,12 @@ void Game::gameLoop() {
     auto *resourceManager = ResourceManager::getInstance();
 
     // Create texture once
-    renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", "0", 25,
-                             SDL_Color{255, 255, 255}, "fpsText");
+    _renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", "0", 25,
+                              SDL_Color{255, 255, 255}, "fpsText");
     // Gameloop
     while (true) {
         // Poll input and keep track of lastInput
-        Input i = engineInputAPI->getInput();
+        Input i = _inputAPI->getInput();
 
 
         /**  PHYSICS      */
@@ -114,9 +86,9 @@ void Game::gameLoop() {
 
         while (accumulator >= dt) {
             if (!resourceManager->inMenu) {
-                physicsAPI->update(dt, velocityIterations, positionIterations);
-                if (game->levelBase)
-                    game->levelBase->fixedUpdate(dt);
+                _physicsAPI->update(dt, velocityIterations, positionIterations);
+                if (_levelBase)
+                    _levelBase->fixedUpdate(dt);
             }
 
             t += dt;
@@ -124,13 +96,13 @@ void Game::gameLoop() {
         }
 
         if (resourceManager->inMenu) {
-            menuParser->render();
+            _menuParser->render();
         } else {
-            game->levelBase->render();
-            game->levelBase->update(i);
+            _levelBase->render();
+            _levelBase->update(i);
         }
 
-
+        //TODO: Move dit naar een eigen classe zodat het her gebruikt kan worden
         frameCounter++;
         // The total frames in the last second are fps.
         if (totalTime >= 1.0f) {
@@ -138,23 +110,24 @@ void Game::gameLoop() {
             frameCounter = 0;
             totalTime = 0;
 
-            renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", std::to_string(avgFps).c_str(),
-                                     25,
-                                     SDL_Color{255, 255, 255}, "fpsText");
+            _renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf",
+                                      std::to_string(avgFps).c_str(),
+                                      25,
+                                      SDL_Color{255, 255, 255}, "fpsText");
         }
 
-        renderingAPI->drawTexture("fpsText", 0, 0, 0, 0, 1, 0);
+        _renderingAPI->drawTexture("fpsText", 0, 0, 0, 0, 1, 0);
 
 
         if (isDebuggingPhysics)
-            physicsAPI->DebugDraw(*renderingAPI, *engineWindowAPI->getRenderer());
+            _physicsAPI->DebugDraw(*_renderingAPI, *_windowAPI->getRenderer());
 
-        SDL_RenderPresent(engineWindowAPI->getRenderer());
-        SDL_RenderClear(engineWindowAPI->getRenderer());
+        SDL_RenderPresent(_windowAPI->getRenderer());
+        SDL_RenderClear(_windowAPI->getRenderer());
 
 
         if (i.keyMap.action == "QUIT") {
-            engineWindowAPI->closeWindow();
+            _windowAPI->closeWindow();
             break;
         }
 
@@ -164,24 +137,23 @@ void Game::gameLoop() {
             isDebuggingPhysics = false;
         }
 
-        physicsAPI->sweepBodies();
-        if (game->unLoadingLevel && physicsAPI->bodiesAreDestroyed()) {
-            game->levelBase->clearEntities();
-            game->levelBase = nullptr;
-            game->unLoadingLevel = false;
+        _physicsAPI->sweepBodies();
+        if (unLoadingLevel && _physicsAPI->bodiesAreDestroyed()) {
+            _levelBase->clearEntities();
+            _levelBase = nullptr;
+            unLoadingLevel = false;
 
-            if(!game->_levelToLoad.empty())
-            {
-                ResourceManager::getInstance()->loadResource(std::string(game->_levelToLoad));
-                game->_levelToLoad = "";
+            if (!Game::_levelToLoad.empty()) {
+                ResourceManager::getInstance()->loadResource(std::string(Game::_levelToLoad));
+                Game::_levelToLoad = "";
             }
         }
     }
 }
 
 /*
- * The following section managers components in the program, this is not a completed system but you could already use
- * it with your feature, just mage sure to check because some components are not completely done.
+ * The following section managers _components in the program, this is not a completed system but you could already use
+ * it with your feature, just mage sure to check because some _components are not completely done.
  */
 
 /**
@@ -190,10 +162,10 @@ void Game::gameLoop() {
  * @return EntityId id - The id of the newly created entity.
  */
 EntityId Game::createEntity() {
-    auto it = entities.begin();
-    std::advance(it, entities.size());
+    auto it = _entities.begin();
+    std::advance(it, _entities.size());
     EntityId next = (*it) + 1;
-    entities.push_back(next);
+    _entities.push_back(next);
 
     return next;
 }
@@ -204,7 +176,7 @@ EntityId Game::createEntity() {
  * @param comp
  */
 void Game::addComponent(EntityId id, Component *comp) {
-    components.components.insert(std::pair<EntityId, Component *>(id, comp));
+    _components.components.insert(std::pair<EntityId, Component *>(id, comp));
 }
 
 template<typename T>
@@ -216,7 +188,7 @@ template<typename T>
  * @return
  */
 T *Game::getComponent(EntityId id) {
-    for (auto &component : components.components) {
+    for (auto &component : _components.components) {
         if ((component.first == id) && dynamic_cast<const T *>(component.second) != nullptr) {
             return (T *) component.second;
         }
@@ -226,14 +198,14 @@ T *Game::getComponent(EntityId id) {
 }
 
 /**
- * Gets components by entity id of all types.
+ * Gets _components by entity id of all types.
  * @param id
  * @return
  */
 System<Component> Game::getComponents(EntityId id) {
     System<Component> returnComps;
 
-    for (auto &component : components.components) {
+    for (auto &component : _components.components) {
         if (component.first == id) {
             returnComps.components.insert(std::pair<EntityId, Component *>(id, component.second));
         }
@@ -243,7 +215,7 @@ System<Component> Game::getComponents(EntityId id) {
 }
 
 /**
- * Gets components by entity id of a specified type.
+ * Gets _components by entity id of a specified type.
  * @tparam T
  * @param id
  * @return
@@ -252,7 +224,7 @@ template<typename T>
 System<T> Game::getComponents(EntityId id) {
     System<Component> returnComps;
 
-    for (auto &it : components.components) {
+    for (auto &it : _components.components) {
         T *component = dynamic_cast<const T *>(it.second);
         if (it.first == id && component != nullptr) {
             returnComps.components.insert(std::pair<EntityId, T *>(id, component));
@@ -265,7 +237,7 @@ System<T> Game::getComponents(EntityId id) {
 /**
  * Static methods should be defined outside the class.
  */
-Game *Game::instance{};
+Game *Game::_instance{};
 std::mutex Game::mutex;
 
 /**
@@ -275,38 +247,38 @@ std::mutex Game::mutex;
  */
 Game *Game::getInstance() {
     std::lock_guard<std::mutex> lock(mutex);
-    if (instance == nullptr) {
-        instance = new Game();
+    if (_instance == nullptr) {
+        _instance = new Game();
     }
 
-    return instance;
+    return _instance;
 }
 
-PhysicsAPI *Game::getPhysicsAPI() {
-    return physicsAPI;
+PhysicsAPI &Game::getPhysicsAPI() {
+    return *_physicsAPI;
 }
 
-RenderingAPI *Game::getRenderingApi() {
-    return renderingAPI;
+RenderingAPI &Game::getRenderingApi() {
+    return *_renderingAPI;
 }
 
 ComponentFactory *Game::getComponentFactory() {
-    return componentFactory.get();
+    return _componentFactory.get();
 }
 
 void Game::initializeLeveL(const string &levelName, const LevelData &data) {
-    levelBase = std::make_unique<LevelBase>();
-    levelBase->initialize(levelName, data);
-    levelBase->characterComponent = this->characterComponent.get(); // TODO: Character data should be stored in a static class
+    _levelBase = std::make_unique<LevelBase>();
+    _levelBase->initialize(levelName, data);
+    _levelBase->characterComponent = this->_characterComponent.get(); // TODO: Character data should be stored in a static class
 }
 
-void Game::unloadLevel(const std::string& levelToLoad) {
+void Game::unloadLevel(const std::string &levelToLoad) {
     ResourceManager::getInstance()->_currentLevel = "";
     _levelToLoad = levelToLoad;
-    levelBase->destroyAllBodies();
+    _levelBase->destroyAllBodies();
     unLoadingLevel = true;
 }
 
-const EngineInputAPI *Game::getInputAPI() {
-    return engineInputAPI;
+InputAPI &Game::getInputAPI() {
+    return *_inputAPI;
 }

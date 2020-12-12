@@ -5,4 +5,4 @@
 </p>
 
 ## Running the game
-See [the Engine repository](https://github.com/avans-night-byte/engine/) for build and run instructions.
+See [the Engine repository](https://github.com/avans-night-byte/_engine/) for build and run instructions.

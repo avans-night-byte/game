@@ -109,7 +109,7 @@ void LevelBase::getContactHandlerNames(std::vector<std::string> &names,
 
 
 void LevelBase::render() {
-    tmxLevel->render(*Game::getInstance()->getRenderingApi());
+    tmxLevel->render(Game::getInstance()->getRenderingApi());
     for (auto &entity : entities) {
         entity->render();
     }
