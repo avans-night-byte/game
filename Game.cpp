@@ -18,7 +18,7 @@ void Game::initialize() {
     _renderingAPI = make_unique<EngineRenderingAPI>();
     _inputAPI = make_unique<EngineInputAPI>();
     _windowAPI = make_unique<EngineWindowAPI>(*_engine);
-    _audioAPI = make_unique<AudioAPI>();
+    _audioAPI = make_unique<EngineAudioAPI>();
     _physicsAPI = make_unique<EnginePhysicsAPI>();
     _menuParser = make_unique<MenuParserAPI>(*_renderingAPI, _inputAPI->getInputEvent());
     _componentFactory = make_unique<ComponentFactory>();
@@ -56,7 +56,7 @@ void Game::gameLoop() {
 
     // Create texture once
     _renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", "0", 25,
-                              SDL_Color{255, 255, 255}, "fpsText");
+                              "ffffff", "fpsText");
     // Gameloop
     while (true) {
         // Poll input and keep track of lastInput
@@ -105,9 +105,9 @@ void Game::gameLoop() {
             totalTime = 0;
 
             _renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf",
-                                      std::to_string(avgFps).c_str(),
+                                      std::to_string(avgFps),
                                       25,
-                                      SDL_Color{255, 255, 255}, "fpsText");
+                                      "ffffff", "fpsText");
         }
 
         _renderingAPI->drawTexture("fpsText", 0, 0, 0, 0, 1, 0);
@@ -116,8 +116,8 @@ void Game::gameLoop() {
         if (isDebuggingPhysics)
             _physicsAPI->DebugDraw(*_renderingAPI, *_windowAPI->getRenderer());
 
-        SDL_RenderPresent(_windowAPI->getRenderer());
-        SDL_RenderClear(_windowAPI->getRenderer());
+
+        _renderingAPI->render();
 
 
         if (i.keyMap.action == "QUIT") {
