@@ -60,14 +60,18 @@ private:
     std::unique_ptr<ComponentFactory> _componentFactory;
 
     bool unLoadingLevel = false;
+    bool _gameloop = true;
 
     std::unique_ptr<Engine> _engine;
     std::unique_ptr<InputAPI> _inputAPI;
     std::unique_ptr<WindowAPI> _windowAPI;
     std::unique_ptr<RenderingAPI> _renderingAPI;
     std::unique_ptr<PhysicsAPI> _physicsAPI;
-    std::unique_ptr<AudioAPI> _audioAPI;
     std::unique_ptr<MenuParserAPI> _menuParser;
+
+private:
+    void QuitLevel(std::string command);
+    void QuitGame(std::string command);
 
 protected:
     Game() = default;
@@ -113,4 +117,6 @@ public:
     void initializeLeveL(const std::string &levelName, const LevelData &data);
 
     void unloadLevel();
+
+
 };

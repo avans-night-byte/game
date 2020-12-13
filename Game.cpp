@@ -18,9 +18,8 @@ void Game::initialize() {
     _renderingAPI = make_unique<EngineRenderingAPI>();
     _inputAPI = make_unique<EngineInputAPI>();
     _windowAPI = make_unique<EngineWindowAPI>(*_engine);
-    _audioAPI = make_unique<EngineAudioAPI>();
     _physicsAPI = make_unique<EnginePhysicsAPI>();
-    _menuParser = make_unique<MenuParserAPI>(*_renderingAPI, _inputAPI->getInputEvent());
+    _menuParser = make_unique<MenuParserAPI>(*_renderingAPI,_inputAPI->getInputEvent());
     _componentFactory = make_unique<ComponentFactory>();
 
     _bodyHandlerAPI = std::make_unique<BodyHandlerAPI>(*_physicsAPI);
@@ -31,6 +30,9 @@ void Game::initialize() {
     auto characterId = createEntity();
     _characterComponent = make_unique<CharacterComponent>(characterId, Vector2(100, 100));
     addComponent(characterId, _characterComponent.get());
+
+    _menuParser->getCustomEventHandler() += std::bind(&Game::QuitLevel, this, std::placeholders::_1);
+    _menuParser->getCustomEventHandler() += std::bind(&Game::QuitGame, this, std::placeholders::_1);
 }
 
 /**
@@ -58,10 +60,14 @@ void Game::gameLoop() {
     _renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", "0", 25,
                               "ffffff", "fpsText");
     // Gameloop
-    while (true) {
+    while (_gameloop) {
         // Poll input and keep track of lastInput
         Input i = _inputAPI->getInput();
 
+        if (i.keyMap.action == "QUIT") {
+            Game::QuitGame("close");
+            break;
+        }
 
         /**  PHYSICS      */
         auto newTime = std::chrono::high_resolution_clock::now();
@@ -116,14 +122,7 @@ void Game::gameLoop() {
         if (isDebuggingPhysics)
             _physicsAPI->DebugDraw(*_renderingAPI, *_windowAPI->getRenderer());
 
-
         _renderingAPI->render();
-
-
-        if (i.keyMap.action == "QUIT") {
-            _windowAPI->closeWindow();
-            break;
-        }
 
         if (i.keyMap.code == "]") {
             isDebuggingPhysics = true;
@@ -133,6 +132,17 @@ void Game::gameLoop() {
 
         _bodyHandlerAPI->update();
     }
+}
+
+void Game::QuitLevel(std::string command){
+    if(command != "unloadLevel") return;
+    ResourceManager::getInstance()->quitLevel = true;
+}
+
+void Game::QuitGame(std::string command){
+    if(command != "close") return;
+    _gameloop = false;
+    _windowAPI->closeWindow();
 }
 
 /*
@@ -263,7 +273,7 @@ void Game::initializeLeveL(const string &levelName, const LevelData &data) {
 }
 
 void Game::unloadLevel() {
-    if(!_levelBase)
+    if (!_levelBase)
         return;
 
     (*_bodyHandlerAPI).eventOnWorldLocked([this] {
