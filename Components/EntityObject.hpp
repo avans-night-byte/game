@@ -8,10 +8,14 @@
 #include <vector>
 #include <string>
 
+class PhysicsComponent;
+class TransformComponent;
 
 class EntityObject : public Component {
 private:
     std::vector<std::unique_ptr<Component>> components;
+    TransformComponent* transformComponent = nullptr;
+    PhysicsComponent* physicsComponent = nullptr;
 
 public:
     std::string entityName;
@@ -22,6 +26,9 @@ public:
                                                                 entityName(std::move(name)) {
 
     }
+
+    TransformComponent* getTransform();
+    PhysicsComponent *getPhysicsComponent();
 
     const std::vector<std::unique_ptr<Component>> &getComponents() {
         return components;
@@ -56,4 +63,5 @@ public:
     Component *clone(EntityId entityId, const Components::component *component) override;
 
     void initialize(EntityObject &entityParent) override;
+
 };

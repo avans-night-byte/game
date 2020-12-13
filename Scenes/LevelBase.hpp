@@ -24,7 +24,7 @@ private:
     std::string levelName;
 
 public:
-    CharacterComponent* characterComponent = nullptr; // TODO: Character data should be stored in a static class
+    CharacterComponent* _characterComponent = nullptr; // TODO: Character data should be stored in global resource file
 
     void loadEntities(const std::multimap<std::string, Components::component *> &loadedEntities);
 
@@ -50,6 +50,5 @@ private:
     void getContactHandlers(std::vector<ContactHandler *> &contactHandlers, EntityObject *entityObject,
                             const std::vector<std::string> &handlerNames);
 
-    void getContactHandlerNames(std::vector<std::string> &names,
-                                const Components::component &component);
+    void getContactHandlerNames(std::vector<std::string> &names, const Components::component &component);
 };

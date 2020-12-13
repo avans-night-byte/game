@@ -18,7 +18,7 @@ protected:
     EntityId owner;
 
 public:
-    inline const EntityId &getEntityId() {
+    const EntityId getEntityId() {
         return owner;
     }
 

@@ -1,8 +1,8 @@
 #include "ComponentFactory.hpp"
 #include "EntityObject.hpp"
 #include "RenderComponent.hpp"
-#include "../Game.hpp"
 #include "TransformComponent.hpp"
+#include "PhysicsComponent.hpp"
 
 std::string EntityObject::name() const {
     return "EntityObject";
@@ -57,4 +57,21 @@ void EntityObject::initializeComponents() {
 
 void EntityObject::initialize(EntityObject &entityParent) {
 
+}
+
+TransformComponent *EntityObject::getTransform() {
+    if(!transformComponent)
+        transformComponent = getComponent<TransformComponent>();
+
+    if(!transformComponent)
+        throw std::runtime_error("Entity must have transform component");
+
+    return transformComponent;
+}
+
+PhysicsComponent *EntityObject::getPhysicsComponent() {
+    if(!physicsComponent)
+        physicsComponent = getComponent<PhysicsComponent>();
+
+    return physicsComponent;
 }

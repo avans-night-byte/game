@@ -62,7 +62,7 @@ void RenderComponent::render() {
 
 void RenderComponent::fixedUpdate(const float &deltaTime) {
     if (physics != nullptr) {
-        const RPosition &rPosition = physics->getRPosition();
+        const RTransform &rPosition = physics->getRTransform();
         transform->setRotation(rPosition.rotation);
     }
 }

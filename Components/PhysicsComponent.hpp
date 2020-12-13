@@ -1,10 +1,10 @@
 #pragma once
 
 #include "../../API/Physics/EnginePhysicsAPI.hpp"
-#include "../../API/RPosition.hpp"
+#include "../../API/RTransform.hpp"
 #include "Component.hpp"
 
-namespace LevelResources {
+namespace Components {
     class physicsComponent;
 }
 class TransformComponent;
@@ -35,7 +35,7 @@ public:
 
     ~PhysicsComponent() override = default;
 
-    inline RPosition getRPosition() {
+    inline RTransform getRTransform() {
         return _physicsAPI.getRPosition(_bodyId);
     }
 
@@ -97,7 +97,11 @@ private:
     }
 
 public:
-    static TransformComponent *setPositionPhysicsResource(EntityObject *pObject, Components::component *component);
+    static TransformComponent *setPositionPhysicsResource(EntityObject *pObject, Components::physicsComponent &component);
+
+    void setTransform(Vector2 pos, float angle);
+
+    void addForce(Vector2 dir);
 };
 
 

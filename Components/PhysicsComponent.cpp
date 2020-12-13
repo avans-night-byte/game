@@ -1,7 +1,6 @@
 #include <Generated/level-resources.hxx>
+#include <Generated/components.hxx>
 #include "../Game.hpp"
-#include "../../API/RPosition.hpp"
-
 
 #include "PhysicsComponent.hpp"
 #include "EntityObject.hpp"
@@ -55,7 +54,8 @@ Component *PhysicsComponent::clone(EntityId entityId,
         circleData.radius = shapeCircle->radius();
         circleData.position = position;
         circleData.bodyType = bodyType;
-        circleData.isSensor = physicsComponent.isSensor();
+        circleData.isSensor = physicsComponent.isSensor().present() && physicsComponent.isSensor().get();
+        circleData.isBullet = physicsComponent.isBullet().present() && physicsComponent.isBullet().get();
         circleData.userData = newPhysicsComponent;
 
         newPhysicsComponent->_bodyId = _physicsAPI.createBody(circleData);
@@ -65,7 +65,8 @@ Component *PhysicsComponent::clone(EntityId entityId,
         boxData.size = Vector2(shapeBox->width(), shapeBox->height());
         boxData.position = position;
         boxData.bodyType = bodyType;
-        boxData.isSensor = physicsComponent.isSensor();
+        boxData.isSensor = physicsComponent.isSensor().present() && physicsComponent.isSensor().get();
+        boxData.isBullet = physicsComponent.isBullet().present() && physicsComponent.isBullet().get();
         boxData.userData = newPhysicsComponent;
 
         newPhysicsComponent->_bodyId = _physicsAPI.createBody(boxData);
@@ -102,13 +103,12 @@ void PhysicsComponent::destroyBody() {
     _physicsAPI.destroyBody(_bodyId);
 }
 
-TransformComponent *PhysicsComponent::setPositionPhysicsResource(EntityObject *pObject, Components::component *component) {
+TransformComponent *PhysicsComponent::setPositionPhysicsResource(EntityObject *pObject, Components::physicsComponent &component) {
     for (auto &c : pObject->getComponents()) {
         auto *worldPositionComponent = dynamic_cast<TransformComponent *>(c.get());
         if (worldPositionComponent != nullptr) {
-            auto &pPhysicsComponent = component->physicsComponent().get();
-            pPhysicsComponent.position().x() = float(*worldPositionComponent->physicsX);
-            pPhysicsComponent.position().y() = float(*worldPositionComponent->physicsY);
+            component.position().x() = float(*worldPositionComponent->physicsX);
+            component.position().y() = float(*worldPositionComponent->physicsY);
             return worldPositionComponent;
         }
     }
@@ -118,4 +118,12 @@ TransformComponent *PhysicsComponent::setPositionPhysicsResource(EntityObject *p
 
 void PhysicsComponent::initialize(EntityObject &entityParent) {
 
+}
+
+void PhysicsComponent::setTransform(Vector2 pos, float angle) {
+    _physicsAPI.setTransform(_bodyId, pos, angle / 180.f * M_PI);
+}
+
+void PhysicsComponent::addForce(Vector2 dir) {
+    _physicsAPI.addForce(_bodyId, dir);
 }

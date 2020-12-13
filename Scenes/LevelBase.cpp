@@ -40,35 +40,39 @@ void LevelBase::loadEntities(const std::multimap<std::string, Components::compon
         auto *resourceComponent = entityPhysicsComponent.second;
         std::vector<std::string> foundHandlerName{};
 
-        this->getContactHandlerNames(foundHandlerName, *resourceComponent);
-        if (foundHandlerName.empty())
-            continue;
-
         auto *entityObject = entityPhysicsComponent.first;
 
-        std::vector<ContactHandler *> contactHandlers{};
-        getContactHandlers(contactHandlers, entityObject, foundHandlerName);
-        auto *transformComponent = PhysicsComponent::setPositionPhysicsResource(entityObject, resourceComponent);
+        auto *transformComponent = PhysicsComponent::setPositionPhysicsResource(entityObject,
+                                                                                resourceComponent->physicsComponent().get());
         auto *physicsComponent = (PhysicsComponent *) componentFactory->getComponent(entityObject->getEntityId(),
                                                                                      "PhysicsComponent",
                                                                                      resourceComponent);
 
-        for (ContactHandler *handler : contactHandlers) {
-            physicsComponent->contactHandlers.push_back(handler);
-        }
-
         if (transformComponent) {
-            const RPosition &rPosition = physicsComponent->getRPosition();
+            const RTransform &rPosition = physicsComponent->getRTransform();
             transformComponent->refLocation(rPosition.X, rPosition.Y);
         }
 
         entityObject->addComponent(physicsComponent);
+
+        this->getContactHandlerNames(foundHandlerName, *resourceComponent);
+        if (foundHandlerName.empty()) {
+            std::vector<ContactHandler *> contactHandlers{};
+            getContactHandlers(contactHandlers, entityObject, foundHandlerName);
+
+            for (ContactHandler *handler : contactHandlers) {
+                physicsComponent->contactHandlers.push_back(handler);
+            }
+        }
     }
 
 
     for (auto &entity : entities) {
         entity->initializeComponents();
     }
+
+    // TODO: Remove
+    _characterComponent->initializeWeapons(entities);
 }
 
 void LevelBase::getContactHandlers(std::vector<ContactHandler *> &contactHandlers,
@@ -113,18 +117,18 @@ void LevelBase::render() {
     for (auto &entity : entities) {
         entity->render();
     }
-    characterComponent->render();
+    _characterComponent->render();
 }
 
 void LevelBase::update(const Input &inputSystem) {
-    characterComponent->update(inputSystem);
+    _characterComponent->update(inputSystem);
     for (auto &entity : entities) {
         entity->update(inputSystem);
     }
 }
 
 void LevelBase::fixedUpdate(const float &deltaTime) {
-    characterComponent->fixedUpdate(deltaTime);
+    _characterComponent->fixedUpdate(deltaTime);
     for (auto &entity : entities) {
         entity->fixedUpdate(deltaTime);
     }
