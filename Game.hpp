@@ -65,6 +65,7 @@ private:
     std::unique_ptr<Engine> _engine;
     std::unique_ptr<InputAPI> _inputAPI;
     std::unique_ptr<WindowAPI> _windowAPI;
+    std::unique_ptr<AudioAPI> _audioAPI;
     std::unique_ptr<RenderingAPI> _renderingAPI;
     std::unique_ptr<PhysicsAPI> _physicsAPI;
     std::unique_ptr<MenuParserAPI> _menuParser;

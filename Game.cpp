@@ -7,6 +7,7 @@
 #include "./Components/CharacterComponent.hpp"
 #include "../Engine/Rendering/TMXLevel.hpp"
 #include "Scenes/LevelBase.hpp"
+#include "UI/FrameCounter.h"
 
 
 typedef signed int int32;
@@ -17,11 +18,11 @@ void Game::initialize() {
 
     _renderingAPI = make_unique<EngineRenderingAPI>();
     _inputAPI = make_unique<EngineInputAPI>();
-    _windowAPI = make_unique<EngineWindowAPI>(*_engine);
+    _windowAPI = make_unique<EngineWindowAPI>();
+    _audioAPI = make_unique<EngineAudioAPI>();
     _physicsAPI = make_unique<EnginePhysicsAPI>();
-    _menuParser = make_unique<MenuParserAPI>(*_renderingAPI,_inputAPI->getInputEvent());
+    _menuParser = make_unique<MenuParserAPI>(*_renderingAPI, _inputAPI->getInputEvent());
     _componentFactory = make_unique<ComponentFactory>();
-
     _bodyHandlerAPI = std::make_unique<BodyHandlerAPI>(*_physicsAPI);
 
 
@@ -49,12 +50,10 @@ void Game::gameLoop() {
 
     auto currentTime = std::chrono::high_resolution_clock::now();
     float accumulator = 0.0;
-    int frameCounter = 0;
     float totalTime = 0;
 
-    int avgFps = 0;
-
     auto *resourceManager = ResourceManager::getInstance();
+    FrameCounter fpsCounter {*_renderingAPI};
 
     // Create texture once
     _renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", "0", 25,
@@ -102,22 +101,7 @@ void Game::gameLoop() {
             _levelBase->update(i);
         }
 
-        //TODO: Move dit naar een eigen classe zodat het her gebruikt kan worden
-        frameCounter++;
-        // The total frames in the last second are fps.
-        if (totalTime >= 1.0f) {
-            avgFps = frameCounter;
-            frameCounter = 0;
-            totalTime = 0;
-
-            _renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf",
-                                      std::to_string(avgFps),
-                                      25,
-                                      "ffffff", "fpsText");
-        }
-
-        _renderingAPI->drawTexture("fpsText", 0, 0, 0, 0, 1, 0);
-
+        fpsCounter.render();
 
         if (isDebuggingPhysics)
             _physicsAPI->DebugDraw(*_renderingAPI, *_windowAPI->getRenderer());
