@@ -35,7 +35,7 @@ void LevelBase::loadEntities(const std::multimap<std::string, Components::compon
     }
 
 
-    /** Contact Handlers **/
+    /** Contact Handlers & TransformComponent **/
     for (auto &entityPhysicsComponent : entitiesPhysicsComponent) {
         auto *resourceComponent = entityPhysicsComponent.second;
         std::vector<std::string> foundHandlerName{};
@@ -48,7 +48,7 @@ void LevelBase::loadEntities(const std::multimap<std::string, Components::compon
 
         std::vector<ContactHandler *> contactHandlers{};
         getContactHandlers(contactHandlers, entityObject, foundHandlerName);
-        auto *worldPositionComponent = setPositionForComponent(entityObject, resourceComponent);
+        auto *transformComponent = PhysicsComponent::setPositionPhysicsResource(entityObject, resourceComponent);
         auto *physicsComponent = (PhysicsComponent *) componentFactory->getComponent(entityObject->getEntityId(),
                                                                                      "PhysicsComponent",
                                                                                      resourceComponent);
@@ -57,16 +57,16 @@ void LevelBase::loadEntities(const std::multimap<std::string, Components::compon
             physicsComponent->contactHandlers.push_back(handler);
         }
 
-        if (worldPositionComponent) {
+        if (transformComponent) {
             const RPosition &rPosition = physicsComponent->getRPosition();
-            worldPositionComponent->refLocation(rPosition.X, rPosition.Y);
+            transformComponent->refLocation(rPosition.X, rPosition.Y);
         }
 
         entityObject->addComponent(physicsComponent);
     }
 
 
-    for(auto &entity : entities) {
+    for (auto &entity : entities) {
         entity->initializeComponents();
     }
 }
@@ -137,20 +137,6 @@ void LevelBase::initialize(const std::string &name, const LevelData &data) {
     this->tmxLevel = std::unique_ptr<TMXLevel>(tmx);
     this->loadEntities(outEntities);
     this->levelName = name;
-}
-
-TransformComponent *LevelBase::setPositionForComponent(EntityObject *pObject, Components::component *component) {
-    for (auto &c : pObject->getComponents()) {
-        auto *worldPositionComponent = dynamic_cast<TransformComponent *>(c.get());
-        if (worldPositionComponent != nullptr) {
-            auto &pPhysicsComponent = component->physicsComponent().get();
-            pPhysicsComponent.position().x() = float(*worldPositionComponent->physicsX);
-            pPhysicsComponent.position().y() = float(*worldPositionComponent->physicsY);
-            return worldPositionComponent;
-        }
-    }
-
-    return nullptr;
 }
 
 void LevelBase::destroyAllBodies() {

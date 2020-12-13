@@ -5,6 +5,7 @@
 
 #include "PhysicsComponent.hpp"
 #include "EntityObject.hpp"
+#include "TransformComponent.hpp"
 
 
 void PhysicsComponent::fixedUpdate(const float &deltaTime) {
@@ -28,8 +29,6 @@ PhysicsComponent::PhysicsComponent(EntityId id, BodyType bodyType, Vector2 posit
         : Component(id),
           _physicsAPI(Game::getInstance()->getPhysicsAPI()),
           _bodyId(this->initializeCircleBody(bodyType, position, radius)) {
-
-
 }
 
 string PhysicsComponent::name() const {
@@ -101,6 +100,20 @@ void PhysicsComponent::setAngle(float angle) {
 
 void PhysicsComponent::destroyBody() {
     _physicsAPI.destroyBody(_bodyId);
+}
+
+TransformComponent *PhysicsComponent::setPositionPhysicsResource(EntityObject *pObject, Components::component *component) {
+    for (auto &c : pObject->getComponents()) {
+        auto *worldPositionComponent = dynamic_cast<TransformComponent *>(c.get());
+        if (worldPositionComponent != nullptr) {
+            auto &pPhysicsComponent = component->physicsComponent().get();
+            pPhysicsComponent.position().x() = float(*worldPositionComponent->physicsX);
+            pPhysicsComponent.position().y() = float(*worldPositionComponent->physicsY);
+            return worldPositionComponent;
+        }
+    }
+
+    return nullptr;
 }
 
 void PhysicsComponent::initialize(EntityObject &entityParent) {

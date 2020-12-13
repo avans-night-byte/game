@@ -61,8 +61,10 @@ void RenderComponent::render() {
 
 
 void RenderComponent::fixedUpdate(const float &deltaTime) {
-    const RPosition &rPosition = physics->getRPosition();
-    transform->setRotation(rPosition.rotation);
+    if (physics != nullptr) {
+        const RPosition &rPosition = physics->getRPosition();
+        transform->setRotation(rPosition.rotation);
+    }
 }
 
 Component *RenderComponent::clone(EntityId entityId, const Components::component *component) {
@@ -84,20 +86,12 @@ void RenderComponent::update(const Input &inputSystem) {
 
 }
 
-void RenderComponent::setTransform(TransformComponent *pTransform) {
-    this->transform = pTransform;
-}
-
-void RenderComponent::setPhysicsComponent(PhysicsComponent *pComponent) {
-    this->physics = pComponent;
-}
-
 void RenderComponent::initialize(EntityObject &entityParent) {
     if (auto *transformComponent = entityParent.getComponent<TransformComponent>()) {
-        setTransform(transformComponent);
+        transform = transformComponent;
     }
 
     if (auto *physicsComponent = entityParent.getComponent<PhysicsComponent>()) {
-        setPhysicsComponent(physicsComponent);
+        physics = physicsComponent;
     }
 }

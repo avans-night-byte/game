@@ -1,5 +1,8 @@
+#include "ComponentFactory.hpp"
 #include "EntityObject.hpp"
 #include "RenderComponent.hpp"
+#include "../Game.hpp"
+#include "TransformComponent.hpp"
 
 std::string EntityObject::name() const {
     return "EntityObject";
@@ -32,6 +35,21 @@ void EntityObject::update(const Input &inputSystem) {
 }
 
 void EntityObject::initializeComponents() {
+    // Add Transform component if it doesn't exist.
+    bool transformFound = false;
+    for (auto &comp: components) {
+        if (auto *transform = getComponent<TransformComponent>()) {
+            transformFound = true;
+            break;
+        }
+    }
+
+    if (!transformFound) {
+        auto *componentFactory = Game::getInstance()
+                ->getComponentFactory()->getComponent<TransformComponent>(getEntityId());
+        addComponent((Component*)componentFactory);
+    }
+
     for (auto &comp : components) {
         comp->initialize(*this);
     }

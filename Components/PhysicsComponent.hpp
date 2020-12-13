@@ -3,11 +3,12 @@
 #include "../../API/Physics/EnginePhysicsAPI.hpp"
 #include "../../API/RPosition.hpp"
 #include "Component.hpp"
-#include "EntityObject.hpp"
 
 namespace LevelResources {
     class physicsComponent;
 }
+class TransformComponent;
+class EntityObject;
 
 class PhysicsComponent : public Component, public ContactHandler {
 private:
@@ -94,6 +95,9 @@ private:
         box2DBoxData.radius = radius;
         return _physicsAPI.createBody(box2DBoxData);
     }
+
+public:
+    static TransformComponent *setPositionPhysicsResource(EntityObject *pObject, Components::component *component);
 };
 
 
