@@ -121,8 +121,8 @@ void Game::gameLoop() {
         if (isDebuggingPhysics)
             _physicsAPI->DebugDraw(*_renderingAPI, *_windowAPI->getRenderer());
 
-        SDL_RenderPresent(_windowAPI->getRenderer());
-        SDL_RenderClear(_windowAPI->getRenderer());
+
+        _renderingAPI->render();
 
 
         if (i.keyMap.action == "QUIT") {
