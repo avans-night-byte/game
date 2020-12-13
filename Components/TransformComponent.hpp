@@ -4,7 +4,7 @@
 #include <string>
 
 
-#include "../../Engine/Vector2.hpp"
+#include "../../Engine/Helpers/Vector2.hpp"
 
 namespace Components {
     class component;

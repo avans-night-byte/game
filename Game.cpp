@@ -8,11 +8,13 @@
 #include "../Engine/Rendering/TMXLevel.hpp"
 #include "Scenes/LevelBase.hpp"
 #include "UI/FrameCounter.h"
+#include "Helpers/GameTime.h"
 
 
 typedef signed int int32;
 
 void Game::initialize() {
+    GameTime::getInstance();
     Engine::initWindow(1920, 1080);
     ResourceManager &resourceManager = *ResourceManager::instantiate("../../Resources/XML/Definition/Resources.xml");
 
@@ -24,7 +26,6 @@ void Game::initialize() {
     _menuParser = make_unique<MenuParserAPI>(*_renderingAPI, _inputAPI->getInputEvent());
     _componentFactory = make_unique<ComponentFactory>();
     _bodyHandlerAPI = std::make_unique<BodyHandlerAPI>(*_physicsAPI);
-
 
     resourceManager.loadResource("MainMenu");
 
@@ -42,18 +43,12 @@ void Game::initialize() {
 void Game::gameLoop() {
     bool isDebuggingPhysics = false;
 
-    int32 velocityIterations = 6;
-    int32 positionIterations = 2;
-
-    float t = 0.0f;
-    float dt = 1 / 60.0;
-
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float accumulator = 0.0;
-    float totalTime = 0;
-
     auto *resourceManager = ResourceManager::getInstance();
-    FrameCounter fpsCounter {*_renderingAPI};
+    FrameCounter fpsCounter{*_renderingAPI};
+
+    GameTime &time = GameTime::getInstance();
+
+    time.getFixedUpdateEvent() += std::bind(&PhysicsAPI::update, _physicsAPI.get(), std::placeholders::_1);
 
     // Create texture once
     _renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", "0", 25,
@@ -62,36 +57,11 @@ void Game::gameLoop() {
     while (_gameloop) {
         // Poll input and keep track of lastInput
         Input i = _inputAPI->getInput();
+        time.update();
 
         if (i.keyMap.action == "QUIT") {
             Game::QuitGame("close");
             break;
-        }
-
-        /**  PHYSICS      */
-        auto newTime = std::chrono::high_resolution_clock::now();
-
-        // Gets the time in microseconds and converts them into seconds.
-        float frameTime =
-                std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 100000.0f;
-
-        float frameTimeSeconds =
-                std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 1000000.0f;
-
-        currentTime = newTime;
-        accumulator += frameTime;
-        totalTime += frameTimeSeconds;
-
-
-        while (accumulator >= dt) {
-            if (!resourceManager->inMenu) {
-                _physicsAPI->update(dt, velocityIterations, positionIterations);
-                if (_levelBase)
-                    _levelBase->fixedUpdate(dt);
-            }
-
-            t += dt;
-            accumulator -= dt;
         }
 
         if (resourceManager->inMenu) {
@@ -102,7 +72,6 @@ void Game::gameLoop() {
         }
 
         fpsCounter.render();
-
         if (isDebuggingPhysics)
             _physicsAPI->DebugDraw(*_renderingAPI, *_windowAPI->getRenderer());
 
@@ -118,13 +87,13 @@ void Game::gameLoop() {
     }
 }
 
-void Game::QuitLevel(std::string command){
-    if(command != "unloadLevel") return;
+void Game::QuitLevel(std::string command) {
+    if (command != "unloadLevel") return;
     ResourceManager::getInstance()->quitLevel = true;
 }
 
-void Game::QuitGame(std::string command){
-    if(command != "close") return;
+void Game::QuitGame(std::string command) {
+    if (command != "close") return;
     _gameloop = false;
     _windowAPI->closeWindow();
 }
@@ -245,14 +214,17 @@ ComponentFactory *Game::getComponentFactory() {
 }
 
 void Game::initializeLeveL(const string &levelName, const LevelData &data) {
+    GameTime time = GameTime::getInstance();
     if (_levelBase) {
         unloadLevel();
+        //time.getFixedUpdateEvent() -= std::bind(&LevelBase::fixedUpdate, _levelBase.get(), std::placeholders::_1);
     }
 
     (*_bodyHandlerAPI).eventOnBodiesHandled([this, levelName, data] {
         _levelBase = std::make_unique<LevelBase>();
         _levelBase->initialize(levelName, data);
         _levelBase->characterComponent = this->_characterComponent.get(); // TODO: Character data should be stored in a static class
+        GameTime::getInstance().getFixedUpdateEvent() += std::bind(&LevelBase::fixedUpdate, _levelBase.get(), std::placeholders::_1);
     });
 }
 

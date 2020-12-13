@@ -123,7 +123,10 @@ void LevelBase::update(const Input &inputSystem) {
     }
 }
 
-void LevelBase::fixedUpdate(const float &deltaTime) {
+void LevelBase::fixedUpdate(float deltaTime) {
+
+    if(this == nullptr || characterComponent == nullptr) return;
+
     characterComponent->fixedUpdate(deltaTime);
     for (auto &entity : entities) {
         entity->fixedUpdate(deltaTime);
