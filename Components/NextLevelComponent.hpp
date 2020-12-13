@@ -8,7 +8,7 @@
 // TODO: Don't use ContactHandler of Engine but of API (which does not exist yet).
 class NextLevelComponent : public Component, public ContactHandler {
 public:
-    std::string NextLevel = "";
+    std::string NextLevel;
     bool hasContactWithPlayer = false;
 
     explicit NextLevelComponent(EntityId id) : Component(id) {

@@ -10,6 +10,9 @@
 #include "../API/Audio/EngineAudioAPI.hpp"
 #include "../API/XMLParser/MenuParserAPI.hpp"
 
+#include "../API/Input/EngineInputAPI.hpp"
+#include "../API/Physics/BodyHandlerAPI.hpp"
+
 #include <list>
 #include <map>
 #include "memory"
@@ -45,6 +48,7 @@ private:
     static std::mutex mutex;
 
     std::string _levelToLoad;
+    std::unique_ptr<BodyHandlerAPI> _bodyHandlerAPI;
 
 private:
     System<Component> _components;
@@ -108,5 +112,5 @@ public:
 
     void initializeLeveL(const std::string &levelName, const LevelData &data);
 
-    void unloadLevel(const std::string& levelToLoad);
+    void unloadLevel();
 };
