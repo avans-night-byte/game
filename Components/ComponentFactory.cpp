@@ -21,6 +21,7 @@ ComponentFactory::ComponentFactory() {
     components["RenderComponent"] = make_unique<RenderComponent>(entityId);
     components["EntityObject"] = make_unique<EntityObject>(entityId);
     components["ExplosionCrate"] = make_unique<ExplosionCrate>(entityId);
+    components["BulletComponent"] = make_unique<BulletComponent>(entityId);
 }
 
 Component *ComponentFactory::getComponent(const EntityId &id,

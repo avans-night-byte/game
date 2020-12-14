@@ -1,5 +1,6 @@
 #include <Generated/components.hxx>
 #include "TransformComponent.hpp"
+#include "EntityObject.hpp"
 
 void TransformComponent::refLocation(const float &rX, const float &rY) {
     this->physicsX = &rX;
@@ -16,13 +17,18 @@ std::string TransformComponent::name() const {
 }
 
 Component *TransformComponent::clone(EntityId entityId, const Components::component *component) {
-    auto &resourceWorldPosition = component->transformComponent().get();
-    auto *position = resourceWorldPosition.position()._clone();
+    auto newTransformComponent = new TransformComponent(entityId);
 
-    auto newWorldPositionComponent = new TransformComponent(entityId);
-    newWorldPositionComponent->refLocation(position->x(), position->y());
+    if (component != nullptr) {
+        auto &resourceTransform = component->transformComponent().get();
+        auto *position = resourceTransform.position()._clone();
 
-    return newWorldPositionComponent;
+        newTransformComponent->refLocation(position->x(), position->y());
+    } else {
+        newTransformComponent->refLocation(0, 0);
+    }
+
+    return newTransformComponent;
 }
 
 void TransformComponent::render() {
@@ -35,4 +41,8 @@ void TransformComponent::update(const Input &inputSystem) {
 
 void TransformComponent::setRotation(float r) {
     this->rotation = r;
+}
+
+void TransformComponent::initialize(EntityObject &entityParent) {
+
 }

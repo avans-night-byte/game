@@ -5,8 +5,9 @@
 
 #include <memory>
 #include "../../Engine/Managers/ResourceManager.hpp"
+#include "WeaponComponent.hpp"
 
-CharacterComponent::CharacterComponent(EntityId id) : Component(id), spriteSheet(nullptr) {
+CharacterComponent::CharacterComponent(EntityId id) : Component(id), _pSpriteSheet(nullptr) {
 }
 
 string CharacterComponent::name() const {
@@ -18,27 +19,27 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
     Game *game = Game::getInstance();
 
     this->resetMovement();
-    physicsComponent = std::make_unique<PhysicsComponent>(id,
-                                                          BodyType::Dynamic,
-                                                          Vector2(position.x, position.y),
-                                                          Vector2(20, 20));
-    physicsComponent->setFixedRotation(true);
-    physicsComponent->setVelocity(Vector2());
+    _physicsComponent = std::make_unique<PhysicsComponent>(id,
+                                                           BodyType::Dynamic,
+                                                           Vector2(position.x, position.y),
+                                                           20.0f);
+    _physicsComponent->setFixedRotation(true);
+    _physicsComponent->setVelocity(Vector2());
 
-    spriteSheet = game->getRenderingApi().createSpriteSheet("../../Resources/Sprites/character.png",
-                                                             "spritesheet_char", 100, 105);
+    _pSpriteSheet = game->getRenderingApi().createSpriteSheet("../../Resources/Sprites/character.png",
+                                                              "spritesheet_char", 100, 105);
 
-    worldPosition = std::make_unique<TransformComponent>(id);
-    healthComponent = make_unique<HealthComponent>();
+    _transform = std::make_unique<TransformComponent>(id);
+    _healthComponent = make_unique<HealthComponent>();
 
-    game->addComponent(id, worldPosition.get());
-    game->addComponent(id, physicsComponent.get());
+    game->addComponent(id, _transform.get());
+    game->addComponent(id, _physicsComponent.get());
 
-    const RPosition &rPosition = physicsComponent->getRPosition();
-    worldPosition->refLocation(rPosition.X, rPosition.Y);
-    worldPosition->setRotation(rPosition.rotation);
+    const RTransform &rPosition = _physicsComponent->getRTransform();
+    _transform->refLocation(rPosition.X, rPosition.Y);
+    _transform->setRotation(rPosition.rotation);
 
-    spriteSheet->select_sprite(0, 0);
+    _pSpriteSheet->select_sprite(0, 0);
 }
 
 void CharacterComponent::update(const Input &inputSystem) {
@@ -50,38 +51,41 @@ void CharacterComponent::update(const Input &inputSystem) {
     }
 
     if (inputSystem.keyMap.action == "UP") {
-        currentMovementDirection[MovementDirection::Up] = !stopped;
+        _currentMovementDirection[MovementDirection::Up] = !stopped;
     }
     if (inputSystem.keyMap.action == "DOWN") {
-        currentMovementDirection[MovementDirection::Down] = !stopped;
+        _currentMovementDirection[MovementDirection::Down] = !stopped;
     }
     if (inputSystem.keyMap.action == "RIGHT") {
-        currentMovementDirection[MovementDirection::Right] = !stopped;
+        _currentMovementDirection[MovementDirection::Right] = !stopped;
     }
     if (inputSystem.keyMap.action == "LEFT") {
-        currentMovementDirection[MovementDirection::Left] = !stopped;
+        _currentMovementDirection[MovementDirection::Left] = !stopped;
     }
 
-    if(inputSystem.keyMap.action == "ESCAPE"){
-        auto& p = *ResourceManager::getInstance();
+    if (inputSystem.keyMap.action == "ESCAPE") {
+        auto &p = *ResourceManager::getInstance();
         p.loadResource("Options");
+    }
 
+    if (inputSystem.keyMap.action == "CLICK_LEFT") {
+        _weapon->shoot(*_transform);
     }
 
 
-    auto& inputApi = Game::getInstance()->getInputAPI();
+    auto &inputApi = Game::getInstance()->getInputAPI();
 
     int mx, my;
     inputApi.getMousePosition(mx, my);
 
     auto mouseVector = Vector2(mx, my);
-    auto worldPos = Vector2(*worldPosition->physicsX, *worldPosition->physicsY);
+    auto worldPos = Vector2(*_transform->physicsX, *_transform->physicsY);
     auto mouseAngle = atan2(mouseVector.y - worldPos.y, mouseVector.x - worldPos.x);
 
-    const RPosition &rPosition = physicsComponent->getRPosition();
-    worldPosition->setRotation(rPosition.rotation);
-
-    physicsComponent->setAngle(mouseAngle);
+    const RTransform &rPosition = _physicsComponent->getRTransform();
+    _transform->setRotation(rPosition.rotation);
+    
+    _physicsComponent->setAngle(mouseAngle);
 }
 
 void CharacterComponent::fixedUpdate(const float &deltaTime) {
@@ -92,7 +96,7 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
     bool movingHor = false;
     bool movingVer = false;
 
-    for (it = currentMovementDirection.begin(); it != currentMovementDirection.end(); it++) {
+    for (it = _currentMovementDirection.begin(); it != _currentMovementDirection.end(); it++) {
         switch (it->first) {
             case Left:
                 if (!it->second && movingHor != true) {
@@ -151,10 +155,10 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
 }
 
 void CharacterComponent::resetMovement() {
-    currentMovementDirection[Left] = false;
-    currentMovementDirection[Right] = false;
-    currentMovementDirection[Up] = false;
-    currentMovementDirection[Down] = false;
+    _currentMovementDirection[Left] = false;
+    _currentMovementDirection[Right] = false;
+    _currentMovementDirection[Up] = false;
+    _currentMovementDirection[Down] = false;
 }
 
 Component *CharacterComponent::clone(EntityId entityId, const Components::component *component) {
@@ -163,8 +167,8 @@ Component *CharacterComponent::clone(EntityId entityId, const Components::compon
 
 
 void CharacterComponent::render() {
-    spriteSheet->draw_selected_sprite(*worldPosition->physicsX - 42.5f, *worldPosition->physicsY - 75.0f, 1,
-                                      worldPosition->rotation);
+    _pSpriteSheet->draw_selected_sprite(*_transform->physicsX - 42.5f, *_transform->physicsY - 75.0f, 1,
+                                        _transform->rotation);
 }
 
 void CharacterComponent::startContact(b2Contact *contact) {
@@ -173,5 +177,20 @@ void CharacterComponent::startContact(b2Contact *contact) {
 
 void CharacterComponent::endContact(b2Contact *contact) {
 
+}
+
+void CharacterComponent::initialize(EntityObject &entityParent) {
+
+}
+
+// TODO: Write a global-object-resource file that can load every globally used objects (weapons, bullets, characters)
+void CharacterComponent::initializeWeapons(std::vector<std::unique_ptr<EntityObject>> &entities) {
+    for (auto &entity : entities) {
+        if (auto *bullet = entity->getComponent<BulletComponent>()) {
+            auto id = getEntityId();
+            _weapon = std::make_unique<WeaponComponent>(id, *entity);
+            break;
+        }
+    }
 }
 
