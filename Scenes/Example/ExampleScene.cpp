@@ -2,6 +2,7 @@
 
 #include "../../Components/PhysicsComponent.hpp"
 #include "../../Components/CharacterComponent.hpp"
+#include "../../Game.hpp"
 
 void ExampleScene::initialize() {
     Game *game = Game::getInstance();

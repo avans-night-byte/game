@@ -1,16 +1,14 @@
 #include "CharacterComponent.hpp"
+#include "../Pooling/PoolingSystem.hpp"
 
 #include "../Game.hpp"
-#include "HealthComponent.hpp"
 
 #include <memory>
-#include "../../Engine/Managers/ResourceManager.hpp"
-#include "WeaponComponent.hpp"
 
 CharacterComponent::CharacterComponent(EntityId id) : Component(id), _pSpriteSheet(nullptr) {
 }
 
-string CharacterComponent::name() const {
+std::string CharacterComponent::name() const {
     return "CharacterComponent";
 }
 
@@ -30,7 +28,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
                                                               "spritesheet_char", 100, 105);
 
     _transform = std::make_unique<TransformComponent>(id);
-    _healthComponent = make_unique<HealthComponent>();
+    _healthComponent = std::make_unique<HealthComponent>();
 
     game->addComponent(id, _transform.get());
     game->addComponent(id, _physicsComponent.get());
@@ -84,7 +82,7 @@ void CharacterComponent::update(const Input &inputSystem) {
 
     const RTransform &rPosition = _physicsComponent->getRTransform();
     _transform->setRotation(rPosition.rotation);
-    
+
     _physicsComponent->setAngle(mouseAngle);
 }
 
@@ -92,7 +90,7 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
     Vector2 velocity;
     getVelocity(velocity);
 
-    map<MovementDirection, bool>::iterator it;
+    std::map<MovementDirection, bool>::iterator it;
     bool movingHor = false;
     bool movingVer = false;
 
@@ -189,8 +187,13 @@ void CharacterComponent::initializeWeapons(std::vector<std::unique_ptr<EntityObj
         if (auto *bullet = entity->getComponent<BulletComponent>()) {
             auto id = getEntityId();
             _weapon = std::make_unique<WeaponComponent>(id, *entity);
+
+            // TODO: Line 184 should fix this poop code.
+            auto pool = std::make_unique<PoolingSystem<BulletComponent>>(*entity);
+            pool->initialize();
+//            Game::getInstance()->_poolBullet = std::move(pool);
+
             break;
         }
     }
 }
-

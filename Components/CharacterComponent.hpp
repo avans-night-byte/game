@@ -8,7 +8,6 @@
 #include "HealthComponent.hpp"
 #include "BulletComponent.hpp"
 #include "WeaponComponent.hpp"
-#include "../Game.hpp"
 
 class Game;
 class HealthComponent;
@@ -28,11 +27,11 @@ private:
     std::map<MovementDirection, bool> _currentMovementDirection;
     Spritesheet *_pSpriteSheet{};
 
-    unique_ptr<TransformComponent> _transform;
-    unique_ptr<HealthComponent> _healthComponent;
-    unique_ptr<PhysicsComponent> _physicsComponent;
+    std::unique_ptr<TransformComponent> _transform;
+    std::unique_ptr<HealthComponent> _healthComponent;
+    std::unique_ptr<PhysicsComponent> _physicsComponent;
 
-    unique_ptr<WeaponComponent> _weapon;
+    std::unique_ptr<WeaponComponent> _weapon;
 
     void resetMovement();
 

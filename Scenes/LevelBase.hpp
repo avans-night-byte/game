@@ -20,7 +20,7 @@ class ContactHandler;
 
 class LevelBase {
 private:
-    unique_ptr<TMXLevel> tmxLevel;
+    std::unique_ptr<TMXLevel> tmxLevel;
     std::string levelName;
 
 public:

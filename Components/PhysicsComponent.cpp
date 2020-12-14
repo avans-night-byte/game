@@ -30,7 +30,7 @@ PhysicsComponent::PhysicsComponent(EntityId id, BodyType bodyType, Vector2 posit
           _bodyId(this->initializeCircleBody(bodyType, position, radius)) {
 }
 
-string PhysicsComponent::name() const {
+std::string PhysicsComponent::name() const {
     return "PhysicsComponent";
 }
 

@@ -108,7 +108,7 @@ void LevelBase::getContactHandlerNames(std::vector<std::string> &names,
     auto &physicsComponent = component.physicsComponent().get();
 
     for (auto &n : physicsComponent.contactHandler()) {
-        names.push_back((string) n.c_str());
+        names.push_back((std::string) n.c_str());
     }
 }
 
