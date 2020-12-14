@@ -8,10 +8,14 @@
 #include <vector>
 #include <string>
 
+class PhysicsComponent;
+class TransformComponent;
 
 class EntityObject : public Component {
 private:
     std::vector<std::unique_ptr<Component>> components;
+    TransformComponent* transformComponent = nullptr;
+    PhysicsComponent* physicsComponent = nullptr;
 
 public:
     std::string entityName;
@@ -23,8 +27,23 @@ public:
 
     }
 
-    std::vector<std::unique_ptr<Component>> &getComponents() {
+    TransformComponent* getTransform();
+    PhysicsComponent *getPhysicsComponent();
+
+    const std::vector<std::unique_ptr<Component>> &getComponents() {
         return components;
+    }
+
+    template<class T>
+    T *getComponent() {
+        static_assert(std::is_base_of<Component, T>::value, "T should inherit from class Component");
+
+        for (auto &comp: components) {
+            if (T *c = dynamic_cast<T *>(comp.get()))
+                return c;
+        }
+
+        return nullptr;
     }
 
     ~EntityObject() override = default;
@@ -42,4 +61,7 @@ public:
     [[nodiscard]]std::string name() const override;
 
     Component *clone(EntityId entityId, const Components::component *component) override;
+
+    void initialize(EntityObject &entityParent) override;
+
 };

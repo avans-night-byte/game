@@ -35,6 +35,10 @@ public:
         return new ExplosionCrate(entityId);
     }
 
+    void initialize(EntityObject &entityParent) override {
+
+    }
+
 public:
     void startContact(b2Contact *contact) override {
     }

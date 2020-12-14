@@ -1,12 +1,14 @@
 #pragma once
 
 #include "../../API/Physics/EnginePhysicsAPI.hpp"
-#include "../../API/RPosition.hpp"
+#include "../../API/RTransform.hpp"
 #include "Component.hpp"
 
-namespace LevelResources {
+namespace Components {
     class physicsComponent;
 }
+class TransformComponent;
+class EntityObject;
 
 class PhysicsComponent : public Component, public ContactHandler {
 private:
@@ -33,7 +35,7 @@ public:
 
     ~PhysicsComponent() override = default;
 
-    inline RPosition getRPosition() {
+    inline RTransform getRTransform() {
         return _physicsAPI.getRPosition(_bodyId);
     }
 
@@ -63,6 +65,8 @@ public:
 
     Component *clone(EntityId entityId, const Components::component *component) override;
 
+    void initialize(EntityObject &entityParent) override;
+
     void fixedUpdate(const float &deltaTime) override;
 
     void render() override;
@@ -91,6 +95,13 @@ private:
         box2DBoxData.radius = radius;
         return _physicsAPI.createBody(box2DBoxData);
     }
+
+public:
+    static TransformComponent *setPositionPhysicsResource(EntityObject *pObject, Components::physicsComponent &component);
+
+    void setTransform(Vector2 pos, float angle);
+
+    void addForce(Vector2 dir);
 };
 
 

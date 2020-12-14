@@ -2,21 +2,19 @@
 
 
 #include "./Component.hpp"
-#include "TransformComponent.hpp"
 #include <string>
 
 class RenderingAPI;
 class Spritesheet; // TODO: Remove
 class PhysicsComponent;
-
-class WorldPositionComponent;
+class TransformComponent;
 
 class RenderComponent : public Component {
 private:
     Spritesheet* spriteSheet; // TODO: Remove, store it in the backend in a map.
 
-    TransformComponent *transform;
-    PhysicsComponent *physics;
+    TransformComponent *transform = nullptr;
+    PhysicsComponent *physics = nullptr;
 
     int r{}, g{}, b{};
     float width;
@@ -44,7 +42,5 @@ public:
 
     [[nodiscard]] Component *clone(EntityId entityId, const Components::component *component) override;
 
-    void setTransform(TransformComponent *pTransform);
-
-    void setPhysicsComponent(PhysicsComponent *pComponent);
+    void initialize(EntityObject &entityParent) override;
 };

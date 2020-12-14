@@ -228,8 +228,8 @@ void Game::initializeLeveL(const string &levelName, const LevelData &data) {
 
     (*_bodyHandlerAPI).eventOnBodiesHandled([this, levelName, data] {
         _levelBase = std::make_unique<LevelBase>();
+        _levelBase->_characterComponent = this->_characterComponent.get(); // TODO: Character data should be stored in a static class
         _levelBase->initialize(levelName, data);
-        _levelBase->characterComponent = this->_characterComponent.get(); // TODO: Character data should be stored in a static class
     });
 }
 
