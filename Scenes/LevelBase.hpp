@@ -40,7 +40,7 @@ public:
 
     void update(const Input &inputSystem);
 
-    void fixedUpdate(const float &deltaTime);
+    void fixedUpdate(float deltaTime);
 
     void destroyAllBodies();
 
