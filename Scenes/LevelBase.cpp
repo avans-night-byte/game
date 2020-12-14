@@ -4,6 +4,7 @@
 #include "../../API/XMLParser/LevelParserAPI.hpp"
 
 #include "Generated/level-resources.hxx"
+#include "../Helpers/GameTime.h"
 
 void LevelBase::loadEntities(const std::multimap<std::string, Components::component *> &loadedEntities) {
     auto componentFactory = Game::getInstance()->getComponentFactory();
@@ -127,7 +128,7 @@ void LevelBase::update(const Input &inputSystem) {
     }
 }
 
-void LevelBase::fixedUpdate(const float &deltaTime) {
+void LevelBase::fixedUpdate(float deltaTime) {
     _characterComponent->fixedUpdate(deltaTime);
     for (auto &entity : entities) {
         entity->fixedUpdate(deltaTime);

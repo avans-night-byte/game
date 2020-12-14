@@ -4,7 +4,7 @@
 #include <string>
 
 
-#include "../../Engine/Vector2.hpp"
+#include "../../Engine/Helpers/Vector2.hpp"
 #include "EntityObject.hpp"
 #include <math.h>
 

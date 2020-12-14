@@ -7,30 +7,34 @@
 #include "./Components/CharacterComponent.hpp"
 #include "../Engine/Rendering/TMXLevel.hpp"
 #include "Scenes/LevelBase.hpp"
+#include "UI/FrameCounter.h"
+#include "Helpers/GameTime.h"
 
 
 typedef signed int int32;
 
 void Game::initialize() {
+    GameTime::getInstance();
     Engine::initWindow(1920, 1080);
     ResourceManager &resourceManager = *ResourceManager::instantiate("../../Resources/XML/Definition/Resources.xml");
 
     _renderingAPI = make_unique<EngineRenderingAPI>();
     _inputAPI = make_unique<EngineInputAPI>();
-    _windowAPI = make_unique<EngineWindowAPI>(*_engine);
+    _windowAPI = make_unique<EngineWindowAPI>();
     _audioAPI = make_unique<EngineAudioAPI>();
     _physicsAPI = make_unique<EnginePhysicsAPI>();
     _menuParser = make_unique<MenuParserAPI>(*_renderingAPI, _inputAPI->getInputEvent());
     _componentFactory = make_unique<ComponentFactory>();
-
     _bodyHandlerAPI = std::make_unique<BodyHandlerAPI>(*_physicsAPI);
-
 
     resourceManager.loadResource("MainMenu");
 
     auto characterId = createEntity();
     _characterComponent = make_unique<CharacterComponent>(characterId, Vector2(100, 100));
     addComponent(characterId, _characterComponent.get());
+
+    _menuParser->getCustomEventHandler() += std::bind(&Game::QuitLevel, this, std::placeholders::_1);
+    _menuParser->getCustomEventHandler() += std::bind(&Game::QuitGame, this, std::placeholders::_1);
 }
 
 /**
@@ -39,54 +43,25 @@ void Game::initialize() {
 void Game::gameLoop() {
     bool isDebuggingPhysics = false;
 
-    int32 velocityIterations = 6;
-    int32 positionIterations = 2;
-
-    float t = 0.0f;
-    float dt = 1 / 60.0;
-
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float accumulator = 0.0;
-    int frameCounter = 0;
-    float totalTime = 0;
-
-    int avgFps = 0;
-
     auto *resourceManager = ResourceManager::getInstance();
+    FrameCounter fpsCounter{*_renderingAPI};
+
+    GameTime &time = GameTime::getInstance();
+    time.getFixedUpdateEvent() += std::bind(&Game::FixedUpdate, this, std::placeholders::_1);
 
     // Create texture once
     _renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", "0", 25,
                               "ffffff", "fpsText");
     // Gameloop
-    while (true) {
+    while (_gameloop) {
+        time.update();
+
         // Poll input and keep track of lastInput
         Input i = _inputAPI->getInput();
 
-
-        /**  PHYSICS      */
-        auto newTime = std::chrono::high_resolution_clock::now();
-
-        // Gets the time in microseconds and converts them into seconds.
-        float frameTime =
-                std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 100000.0f;
-
-        float frameTimeSeconds =
-                std::chrono::duration_cast<std::chrono::microseconds>(newTime - currentTime).count() / 1000000.0f;
-
-        currentTime = newTime;
-        accumulator += frameTime;
-        totalTime += frameTimeSeconds;
-
-
-        while (accumulator >= dt) {
-            if (!resourceManager->inMenu) {
-                _physicsAPI->update(dt, velocityIterations, positionIterations);
-                if (_levelBase)
-                    _levelBase->fixedUpdate(dt);
-            }
-
-            t += dt;
-            accumulator -= dt;
+        if (i.keyMap.action == "QUIT") {
+            Game::QuitGame("close");
+            break;
         }
 
         if (resourceManager->inMenu) {
@@ -96,34 +71,11 @@ void Game::gameLoop() {
             _levelBase->update(i);
         }
 
-        //TODO: Move dit naar een eigen classe zodat het her gebruikt kan worden
-        frameCounter++;
-        // The total frames in the last second are fps.
-        if (totalTime >= 1.0f) {
-            avgFps = frameCounter;
-            frameCounter = 0;
-            totalTime = 0;
-
-            _renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf",
-                                      std::to_string(avgFps),
-                                      25,
-                                      "ffffff", "fpsText");
-        }
-
-        _renderingAPI->drawTexture("fpsText", 0, 0, 0, 0, 1, 0);
-
-
+        fpsCounter.render();
         if (isDebuggingPhysics)
             _physicsAPI->DebugDraw(*_renderingAPI, *_windowAPI->getRenderer());
 
-
         _renderingAPI->render();
-
-
-        if (i.keyMap.action == "QUIT") {
-            _windowAPI->closeWindow();
-            break;
-        }
 
         if (i.keyMap.code == "]") {
             isDebuggingPhysics = true;
@@ -133,6 +85,25 @@ void Game::gameLoop() {
 
         _bodyHandlerAPI->update();
     }
+}
+
+void Game::FixedUpdate(float deltaTime){
+    if (!ResourceManager::getInstance()->inMenu) {
+        _physicsAPI->update(deltaTime);
+        if (_levelBase)
+            _levelBase->fixedUpdate(deltaTime);
+    }
+}
+
+void Game::QuitLevel(std::string command) {
+    if (command != "unloadLevel") return;
+    ResourceManager::getInstance()->quitLevel = true;
+}
+
+void Game::QuitGame(std::string command) {
+    if (command != "close") return;
+    _gameloop = false;
+    _windowAPI->closeWindow();
 }
 
 /*
@@ -263,7 +234,7 @@ void Game::initializeLeveL(const string &levelName, const LevelData &data) {
 }
 
 void Game::unloadLevel() {
-    if(!_levelBase)
+    if (!_levelBase)
         return;
 
     (*_bodyHandlerAPI).eventOnWorldLocked([this] {
