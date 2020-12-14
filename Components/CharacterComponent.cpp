@@ -22,7 +22,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
     _physicsComponent = std::make_unique<PhysicsComponent>(id,
                                                            BodyType::Dynamic,
                                                            Vector2(position.x, position.y),
-                                                           20.0f);
+                                                           Vector2(20.0f, 20.0f));
     _physicsComponent->setFixedRotation(true);
     _physicsComponent->setVelocity(Vector2());
 

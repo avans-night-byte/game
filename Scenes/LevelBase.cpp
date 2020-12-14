@@ -56,7 +56,7 @@ void LevelBase::loadEntities(const std::multimap<std::string, Components::compon
         entityObject->addComponent(physicsComponent);
 
         this->getContactHandlerNames(foundHandlerName, *resourceComponent);
-        if (foundHandlerName.empty()) {
+        if (!foundHandlerName.empty()) {
             std::vector<ContactHandler *> contactHandlers{};
             getContactHandlers(contactHandlers, entityObject, foundHandlerName);
 

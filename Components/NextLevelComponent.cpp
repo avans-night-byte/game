@@ -5,8 +5,7 @@
 #include "../Game.hpp"
 
 void NextLevelComponent::startContact(b2Contact *contact) {
-    if(auto* characterComponent = static_cast<CharacterComponent*>((CharacterComponent*)contact->GetFixtureB()->GetBody()->GetUserData().pointer))
-    {
+    if (auto *characterComponent = static_cast<CharacterComponent *>((CharacterComponent *) contact->GetFixtureB()->GetBody()->GetUserData().pointer)) {
         hasContactWithPlayer = true;
     }
 }
@@ -16,8 +15,7 @@ std::string NextLevelComponent::name() const {
 }
 
 void NextLevelComponent::endContact(b2Contact *contact) {
-    if(auto* characterComponent = static_cast<CharacterComponent*>((CharacterComponent*)contact->GetFixtureB()->GetBody()->GetUserData().pointer))
-    {
+    if (auto *characterComponent = static_cast<CharacterComponent *>((CharacterComponent *) contact->GetFixtureB()->GetBody()->GetUserData().pointer)) {
         hasContactWithPlayer = false;
     }
 }
@@ -38,9 +36,7 @@ void NextLevelComponent::render() {
 }
 
 void NextLevelComponent::update(const Input &inputSystem) {
-    if(inputSystem.keyMap.code == "E" && hasContactWithPlayer)
-    {
-        Game* game = Game::getInstance();
+    if (inputSystem.keyMap.code == "E" && hasContactWithPlayer) {
         ResourceManager::getInstance()->loadResource(NextLevel);
     }
 }
