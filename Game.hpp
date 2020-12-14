@@ -120,4 +120,5 @@ public:
     void unloadLevel();
 
 
+    void FixedUpdate(float deltaTime);
 };

@@ -49,6 +49,10 @@ float GameTime::getFrameTimeMiliSeconds() const{
     return _frameTimeMiliSeconds;
 }
 
+float GameTime::getAccumulator() const {
+    return _accumulator;
+}
+
 void GameTime::resetTotalTime() {
     _totalTime = 0;
 }
@@ -56,3 +60,4 @@ void GameTime::resetTotalTime() {
 Event<float> &GameTime::getFixedUpdateEvent(){
     return _fixedUpdateEventHandler;
 }
+

@@ -17,9 +17,9 @@ private:
 
     std::chrono::time_point<std::chrono::system_clock> _currentTime;
 
+    static GameTime *_instance;
     Event<float> _fixedUpdateEventHandler;
 
-    static GameTime *_instance;
 public:
     static GameTime &getInstance();
 
@@ -33,15 +33,24 @@ public:
 
     float getTotalTime() const;
 
+    float getAccumulator() const;
+
     float getFrameTimeSeconds() const;
 
     float getFrameTimeMiliSeconds() const;
 
-    Event<float> &getFixedUpdateEvent();
-
 public:
     void resetTotalTime();
 
+    void setAccumulator(float value);
+
+    void setDeltaTime(float value);
+
+    void setTime(float value);
+
+public:
+
+    Event<float> &getFixedUpdateEvent();
 };
 
 

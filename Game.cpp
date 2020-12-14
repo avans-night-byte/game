@@ -47,17 +47,17 @@ void Game::gameLoop() {
     FrameCounter fpsCounter{*_renderingAPI};
 
     GameTime &time = GameTime::getInstance();
-
-    time.getFixedUpdateEvent() += std::bind(&PhysicsAPI::update, _physicsAPI.get(), std::placeholders::_1);
+    time.getFixedUpdateEvent() += std::bind(&Game::FixedUpdate, this, std::placeholders::_1);
 
     // Create texture once
     _renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", "0", 25,
                               "ffffff", "fpsText");
     // Gameloop
     while (_gameloop) {
+        time.update();
+
         // Poll input and keep track of lastInput
         Input i = _inputAPI->getInput();
-        time.update();
 
         if (i.keyMap.action == "QUIT") {
             Game::QuitGame("close");
@@ -84,6 +84,14 @@ void Game::gameLoop() {
         }
 
         _bodyHandlerAPI->update();
+    }
+}
+
+void Game::FixedUpdate(float deltaTime){
+    if (!ResourceManager::getInstance()->inMenu) {
+        _physicsAPI->update(deltaTime);
+        if (_levelBase)
+            _levelBase->fixedUpdate(deltaTime);
     }
 }
 
@@ -214,17 +222,14 @@ ComponentFactory *Game::getComponentFactory() {
 }
 
 void Game::initializeLeveL(const string &levelName, const LevelData &data) {
-    GameTime time = GameTime::getInstance();
     if (_levelBase) {
         unloadLevel();
-        //time.getFixedUpdateEvent() -= std::bind(&LevelBase::fixedUpdate, _levelBase.get(), std::placeholders::_1);
     }
 
     (*_bodyHandlerAPI).eventOnBodiesHandled([this, levelName, data] {
         _levelBase = std::make_unique<LevelBase>();
         _levelBase->initialize(levelName, data);
         _levelBase->characterComponent = this->_characterComponent.get(); // TODO: Character data should be stored in a static class
-        GameTime::getInstance().getFixedUpdateEvent() += std::bind(&LevelBase::fixedUpdate, _levelBase.get(), std::placeholders::_1);
     });
 }
 
