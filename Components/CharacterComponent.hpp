@@ -9,6 +9,7 @@
 #include "BulletComponent.hpp"
 #include "WeaponComponent.hpp"
 #include "../Game.hpp"
+#include "Inventory/InventoryComponent.hpp"
 
 class Game;
 class HealthComponent;
@@ -31,6 +32,7 @@ private:
     unique_ptr<TransformComponent> _transform;
     unique_ptr<HealthComponent> _healthComponent;
     unique_ptr<PhysicsComponent> _physicsComponent;
+    unique_ptr<InventoryComponent> _inventoryComponent;
 
     unique_ptr<WeaponComponent> _weapon;
 
