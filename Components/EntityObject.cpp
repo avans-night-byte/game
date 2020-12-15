@@ -38,16 +38,16 @@ void EntityObject::initializeComponents() {
     // Add Transform component if it doesn't exist.
     bool transformFound = false;
     for (auto &comp: components) {
-        if (auto *transform = getComponent<TransformComponent>()) {
+        if (getComponent<TransformComponent>()) {
             transformFound = true;
             break;
         }
     }
 
     if (!transformFound) {
-        auto *componentFactory = Game::getInstance()
+        auto *pTransformComponent = Game::getInstance()
                 ->getComponentFactory()->getComponent<TransformComponent>(getEntityId());
-        addComponent((Component*)componentFactory);
+        addComponent((Component*)pTransformComponent);
     }
 
     for (auto &comp : components) {

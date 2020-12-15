@@ -2,7 +2,6 @@
 
 
 #include "../Components/EntityObject.hpp"
-#include "../Components/CharacterComponent.hpp"
 #include "../../Engine/Rendering/TMXLevel.hpp"
 
 
@@ -17,6 +16,8 @@ namespace Components {
 }
 class Input;
 class ContactHandler;
+class CharacterComponent;
+class LevelData;
 
 class LevelBase {
 private:
@@ -25,8 +26,6 @@ private:
 
 public:
     CharacterComponent* _characterComponent = nullptr; // TODO: Character data should be stored in global resource file
-
-    void loadEntities(const std::multimap<std::string, Components::component *> &loadedEntities);
 
     LevelBase() = default;
 
@@ -45,10 +44,4 @@ public:
     void destroyAllBodies();
 
     void clearEntities();
-
-private:
-    void getContactHandlers(std::vector<ContactHandler *> &contactHandlers, EntityObject *entityObject,
-                            const std::vector<std::string> &handlerNames);
-
-    void getContactHandlerNames(std::vector<std::string> &names, const Components::component &component);
 };

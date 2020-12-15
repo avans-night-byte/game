@@ -1,5 +1,5 @@
 #include "CharacterComponent.hpp"
-#include "../Pooling/PoolingSystem.hpp"
+#include "../Object/Pool.hpp"
 
 #include "../Game.hpp"
 
@@ -189,8 +189,8 @@ void CharacterComponent::initializeWeapons(std::vector<std::unique_ptr<EntityObj
             _weapon = std::make_unique<WeaponComponent>(id, *entity);
 
             // TODO: Line 184 should fix this poop code.
-            auto pool = std::make_unique<PoolingSystem<BulletComponent>>(*entity);
-            pool->initialize();
+            auto pool = std::make_unique<Pool>(*entity);
+            pool->initialize<BulletComponent>();
 //            Game::getInstance()->_poolBullet = std::move(pool);
 
             break;

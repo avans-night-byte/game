@@ -14,7 +14,7 @@
 #include "../API/Physics/BodyHandlerAPI.hpp"
 
 #include "Components/BulletComponent.hpp"
-#include "./Pooling/PoolingSystem.hpp"
+#include "./Object/Pool.hpp"
 
 #include <list>
 #include <map>
@@ -66,11 +66,6 @@ private:
     std::unique_ptr<BodyHandlerAPI> _bodyHandlerAPI;
     std::unique_ptr<PhysicsAPI> _physicsAPI;
     std::unique_ptr<MenuParserAPI> _menuParser;
-
-public:
-//    std::unique_ptr<PoolingSystem<BulletComponent>> _poolBullet;
-
-
 
 private:
     void QuitLevel(std::string command);

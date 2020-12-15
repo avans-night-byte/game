@@ -35,7 +35,7 @@ public:
 
     explicit RenderComponent(EntityId id);
 
-    RenderComponent(EntityId id, TransformComponent *positionComponent, const std::string &texturePath,
+    RenderComponent(EntityId id, TransformComponent *transform, const std::string &texturePath,
                     std::string textureId);
 
     [[nodiscard]] std::string name() const override;

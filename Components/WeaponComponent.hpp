@@ -13,7 +13,7 @@ public:
     }
 
 private:
-    EntityObject& _bulletEntity; // TODO: Pooling system for bullets.
+    EntityObject& _bulletEntity; // TODO: Object system for bullets.
 
 public:
     void render() override;
