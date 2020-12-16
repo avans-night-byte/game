@@ -10,7 +10,7 @@
 #include "../TransformComponent.hpp"
 #include "../../Engine/Input/Input.hpp"
 #include "../../../Engine/Rendering/TextWrapper.hpp"
-#include "../../../Engine/Helpers/Event.h"
+#include "../../../API//Helpers/Event.h"
 
 
 class InventoryComponent : public Component {

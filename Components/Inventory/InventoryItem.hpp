@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "../../../Engine/Helpers/Vector2.hpp"
+#include "../../../API//Helpers/Vector2.hpp"
 
 class InventoryItem {
 public:
