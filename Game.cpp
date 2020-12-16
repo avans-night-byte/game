@@ -28,6 +28,11 @@ void Game::initialize() {
     _bodyHandlerAPI = std::make_unique<BodyHandlerAPI>(*_physicsAPI);
 
     resourceManager.loadResource("MainMenu");
+    resourceManager.loadResource("MainObjects");
+
+
+    bulletPool = std::make_unique<Pool>();
+    bulletPool->initialize<BulletComponent>("MainPool", "bullet1", 100);
 
     auto characterId = createEntity();
     _characterComponent = std::make_unique<CharacterComponent>(characterId, Vector2(100, 100));
@@ -230,6 +235,13 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
         _levelBase = std::make_unique<LevelBase>();
         _levelBase->_characterComponent = this->_characterComponent.get(); // TODO: Character data should be stored in a static class
         _levelBase->initialize(levelName, data);
+    });
+}
+
+void Game::addEventBodyHandler(const std::function<void()>& function)
+{
+    (*_bodyHandlerAPI).eventOnWorldLocked([function] {
+        function();
     });
 }
 

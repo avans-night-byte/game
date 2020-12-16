@@ -1,31 +1,33 @@
 #pragma once
-#include "../Components/EntityObject.hpp"
-#include "../Game.hpp"
 
-#include "queue"
+#include "../Components/EntityObject.hpp"
+#include "GlobalObjects.hpp"
+
 #include <type_traits>
 #include <stdexcept>
+#include <vector>
 
 class Pool {
 private:
     EntityId _id{};
 
-    std::queue<EntityObject> _queue{};
-    const EntityObject &_entityObject;
+    std::vector<std::unique_ptr<EntityObject>> _pool;
+    int currentIndex = 0;
+    int size;
 
 public:
-    explicit Pool(EntityObject &entityObject) : _entityObject(entityObject) {
-
-    }
-
     template<class T>
-    void initialize() {
+    void initialize(const std::string& loadList, const std::string& entityName, int startAmount){
         static_assert(std::is_base_of<Component, T>::value);
 
-        if (_entityObject.getComponent<T>() == nullptr) {
-            throw std::runtime_error(_entityObject.name() + " does not contain component: " + typeid(T).name());
+        this->size = startAmount;
+        auto entity = GlobalObjects::getInstance()->loadEntity(loadList, entityName);
+        if (entity->getComponent<T>() == nullptr) {
+            throw std::runtime_error(entity->name() + " does not contain component: " + typeid(T).name());
         }
-
-        // TODO: Instantiate objects from here
+        GlobalObjects::getInstance()->loadEntities(_pool, loadList, entityName, startAmount);
     }
+
+    EntityObject* getEntity();
 };
+

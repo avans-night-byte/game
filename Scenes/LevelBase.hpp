@@ -4,7 +4,6 @@
 #include "../Components/EntityObject.hpp"
 #include "../../Engine/Rendering/TMXLevel.hpp"
 
-
 #include <string>
 #include <map>
 #include <vector>
@@ -18,11 +17,12 @@ class Input;
 class ContactHandler;
 class CharacterComponent;
 class LevelData;
+class BulletComponent;
 
 class LevelBase {
 private:
-    std::unique_ptr<TMXLevel> tmxLevel;
-    std::string levelName;
+    std::unique_ptr<TMXLevel> _tmxLevel;
+    std::string _levelName;
 
 public:
     CharacterComponent* _characterComponent = nullptr; // TODO: Character data should be stored in global resource file

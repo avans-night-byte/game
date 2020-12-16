@@ -24,7 +24,7 @@ void ObjectLoader::loadEntities(const std::multimap<std::string, Components::com
         const auto &component = loadedEntity.second;
         const auto &componentName = component->componentName();
 
-        if (componentFactory->IsPhysicsComponent(componentName)) {
+        if (ComponentFactory::IsPhysicsComponent(componentName)) {
             /** ContactHandler **/
             entitiesPhysicsComponent[newEntity] = component;
         } else {

@@ -47,6 +47,8 @@ Component *PhysicsComponent::clone(EntityId entityId,
 
     BodyType bodyType = StringToBodyType(bodyTypeString);
     Vector2 position = Vector2(physicsComponent.position().x(), physicsComponent.position().y());
+    bool isEnabled = physicsComponent.isEnabled().present() ? physicsComponent.isSensor().get()
+                                                            : Components::physicsComponent::isEnabled_default_value();
 
     /* Shape */
     if (shapeCircle != nullptr) {
@@ -56,8 +58,9 @@ Component *PhysicsComponent::clone(EntityId entityId,
         circleData.bodyType = bodyType;
         circleData.isSensor = physicsComponent.isSensor().present() && physicsComponent.isSensor().get();
         circleData.isBullet = physicsComponent.isBullet().present() && physicsComponent.isBullet().get();
-        circleData.userData = newPhysicsComponent;
+        circleData.isEnabled = isEnabled;
 
+        circleData.userData = newPhysicsComponent;
         newPhysicsComponent->_bodyId = _physicsAPI.createBody(circleData);
     } else {
         // BOX
@@ -67,8 +70,9 @@ Component *PhysicsComponent::clone(EntityId entityId,
         boxData.bodyType = bodyType;
         boxData.isSensor = physicsComponent.isSensor().present() && physicsComponent.isSensor().get();
         boxData.isBullet = physicsComponent.isBullet().present() && physicsComponent.isBullet().get();
-        boxData.userData = newPhysicsComponent;
+        boxData.isEnabled = isEnabled;
 
+        boxData.userData = newPhysicsComponent;
         newPhysicsComponent->_bodyId = _physicsAPI.createBody(boxData);
     }
 
@@ -96,14 +100,15 @@ void PhysicsComponent::update(const Input &inputSystem) {
 }
 
 void PhysicsComponent::setAngle(float angle) {
-    _physicsAPI.setAngle(_bodyId, angle );
+    _physicsAPI.setAngle(_bodyId, angle);
 }
 
 void PhysicsComponent::destroyBody() {
     _physicsAPI.destroyBody(_bodyId);
 }
 
-TransformComponent *PhysicsComponent::setPositionPhysicsResource(EntityObject *pObject, Components::physicsComponent &component) {
+TransformComponent *
+PhysicsComponent::setPositionPhysicsResource(EntityObject *pObject, Components::physicsComponent &component) {
     for (auto &c : pObject->getComponents()) {
         auto *worldPositionComponent = dynamic_cast<TransformComponent *>(c.get());
         if (worldPositionComponent != nullptr) {
@@ -127,3 +132,12 @@ void PhysicsComponent::setTransform(Vector2 pos, float angle) {
 void PhysicsComponent::addForce(Vector2 dir) {
     _physicsAPI.addForce(_bodyId, dir);
 }
+
+void PhysicsComponent::setEnabled(bool b) {
+
+    Game::getInstance()->addEventBodyHandler(
+            [pPhysicsApi = &_physicsAPI, this, b] {
+                pPhysicsApi->setEnabled(_bodyId, b);
+            });
+}
+

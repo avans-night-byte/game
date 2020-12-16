@@ -8,7 +8,7 @@
 
 
 void LevelBase::render() {
-    tmxLevel->render(Game::getInstance()->getRenderingApi());
+    _tmxLevel->render(Game::getInstance()->getRenderingApi());
     for (auto &entity : entities) {
         entity->render();
     }
@@ -32,17 +32,11 @@ void LevelBase::fixedUpdate(float deltaTime) {
 void LevelBase::initialize(const std::string &name, const LevelData &data) {
     auto outEntities = std::multimap<std::string, Components::component *>();
 
-    this->tmxLevel = std::unique_ptr<TMXLevel>(LevelParserAPI::loadLevel(outEntities, data));
-    this->levelName = name;
+    this->_tmxLevel = std::unique_ptr<TMXLevel>(LevelParserAPI::loadLevel(outEntities, data));
+    this->_levelName = name;
 
 
     ObjectLoader::loadEntities(outEntities, this->entities);
-    ResourceManager::getInstance()->loadResource("MainObjects");
-    auto bullet = GlobalObjects::getInstance()->getLoadedEntity("MainObjects", "bullet1", 1000);
-
-
-    // TODO: Remove
-    _characterComponent->initializeWeapons(entities);
 }
 
 void LevelBase::destroyAllBodies() {
@@ -54,7 +48,7 @@ void LevelBase::destroyAllBodies() {
         }
     }
 
-    tmxLevel->cleanup();
+    _tmxLevel->cleanup();
 }
 
 void LevelBase::clearEntities() {

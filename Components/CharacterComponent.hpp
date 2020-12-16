@@ -79,8 +79,6 @@ public:
 
     void initialize(EntityObject &entityParent) override;
 
-    void initializeWeapons(std::vector<std::unique_ptr<EntityObject>>& entities);
-
     [[nodiscard]] std::string name() const override;
 
 

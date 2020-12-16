@@ -13,8 +13,8 @@
 #include "../API/Input/EngineInputAPI.hpp"
 #include "../API/Physics/BodyHandlerAPI.hpp"
 
-#include "Components/BulletComponent.hpp"
 #include "./Object/Pool.hpp"
+#include "./Components/BulletComponent.hpp"
 
 #include <list>
 #include <map>
@@ -116,8 +116,15 @@ public:
 
     void initializeLeveL(const std::string &levelName, const LevelData &data);
 
+    void addEventBodyHandler(const std::function<void()>& function);
+
     void unloadLevel();
 
 
     void FixedUpdate(float deltaTime);
+
+
+    // TODO: Make a pool system class that creates pools with the given names from xml.
+    std::unique_ptr<Pool> bulletPool;
+
 };

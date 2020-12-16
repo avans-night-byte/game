@@ -29,6 +29,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
 
     _transform = std::make_unique<TransformComponent>(id);
     _healthComponent = std::make_unique<HealthComponent>();
+    _weapon = std::make_unique<WeaponComponent>(id, *game->bulletPool);
 
     game->addComponent(id, _transform.get());
     game->addComponent(id, _physicsComponent.get());
@@ -179,21 +180,4 @@ void CharacterComponent::endContact(b2Contact *contact) {
 
 void CharacterComponent::initialize(EntityObject &entityParent) {
 
-}
-
-// TODO: Write a global-object-resource file that can load every globally used objects (weapons, bullets, characters)
-void CharacterComponent::initializeWeapons(std::vector<std::unique_ptr<EntityObject>> &entities) {
-    for (auto &entity : entities) {
-        if (auto *bullet = entity->getComponent<BulletComponent>()) {
-            auto id = getEntityId();
-            _weapon = std::make_unique<WeaponComponent>(id, *entity);
-
-            // TODO: Line 184 should fix this poop code.
-            auto pool = std::make_unique<Pool>(*entity);
-            pool->initialize<BulletComponent>();
-//            Game::getInstance()->_poolBullet = std::move(pool);
-
-            break;
-        }
-    }
 }

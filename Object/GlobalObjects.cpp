@@ -6,6 +6,7 @@
 #include "ObjectLoader.hpp"
 
 #include <memory>
+#include <iostream>
 
 GlobalObjects *GlobalObjects::_instance{};
 std::mutex GlobalObjects::_mutex;
@@ -19,20 +20,34 @@ GlobalObjects *GlobalObjects::getInstance() {
     return _instance;
 }
 
-void GlobalObjects::initializeObjects(const std::string &name, const std::string &path) {
+void GlobalObjects::initializeObjects(const std::string &name,
+                                      const std::string &path,
+                                      const std::string &poolName,
+                                      const std::string &poolPath) {
     if (_objectsLists.find(name) != _objectsLists.end())
-        throw std::runtime_error("ObjectList: '" + name + "' already exists!");
+    {
+        std::cout << "Skipping: '" + name + "', already loaded" << std::endl;
+    }
+    if (_objectsLists.find(poolName) != _objectsLists.end())
+    {
+        std::cout << "Skipping: '" + poolName + "', already loaded" << std::endl;
+    }
 
+    auto poolList = Objects::objectList_(std::string(poolPath));
     auto objectList = Objects::objectList_(path);
     std::multimap<std::string, Components::component *> loadedEntities;
     LevelParserAPI::loadEntities(loadedEntities, objectList->object());
 
-
     _objectsLists[name] = loadedEntities;
+
+    std::multimap<std::string, Components::component *> loadedEntitiesPool;
+    LevelParserAPI::loadEntities(loadedEntitiesPool, poolList->object());
+
+    _objectsLists[poolName] = loadedEntitiesPool;
 }
 
 std::unique_ptr<EntityObject>
-GlobalObjects::getLoadedEntity(const std::string &fromList, const std::string &entityName) {
+GlobalObjects::loadEntity(const std::string &fromList, const std::string &entityName) {
     auto map = _objectsLists.find(fromList);
     if (map == _objectsLists.end())
         throw std::runtime_error(fromList + " does not exist in the global list");
@@ -55,8 +70,9 @@ GlobalObjects::getLoadedEntity(const std::string &fromList, const std::string &e
     return std::move(entities.at(0));
 }
 
-std::vector<std::unique_ptr<EntityObject>>
-GlobalObjects::getLoadedEntity(const std::string &fromList, const std::string &entityName, int amount) {
+void GlobalObjects::loadEntities(std::vector<std::unique_ptr<EntityObject>> &entities,
+                                 const std::string &fromList,
+                                 const std::string &entityName, int amount) {
     auto map = _objectsLists.find(fromList);
     if (map == _objectsLists.end())
         throw std::runtime_error(fromList + " does not exist in the global list");
@@ -69,11 +85,9 @@ GlobalObjects::getLoadedEntity(const std::string &fromList, const std::string &e
         entityToLoad.insert(pair);
     }
 
-    std::vector<std::unique_ptr<EntityObject>> entities{};
     getObjectFromLoader(entityToLoad,
                         entities,
                         amount);
-    return entities;
 }
 
 void GlobalObjects::getObjectFromLoader(const std::multimap<std::string, Components::component *> &loadedEntities,
