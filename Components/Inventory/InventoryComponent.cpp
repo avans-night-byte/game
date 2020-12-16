@@ -14,17 +14,9 @@ InventoryComponent::InventoryComponent(EntityId id) : Component(id), _renderingA
 
     _emptySlot = Vector2(1,1);
 
-    //Init inventory
-    for (int x = 1; x < _rows; ++x) {
-        for (int y = 1; y < _columns; ++y) {
-            Vector2 position =  {_startX + (_offset * x), _startY + (_offset * y)};
-            Vector2 index(x, y);
-
-            addToInventory(new InventoryItem{ 10, "crate", InventoryItem::object});
-            addToInventory(new InventoryItem{ 1, "crate", InventoryItem::object});
-            addToInventory(new InventoryItem{10, "boar", InventoryItem::object});
-        }
-    }
+    addToInventory(new InventoryItem{ 100, "crate", InventoryItem::object});
+    addToInventory(new InventoryItem{ 50, "crate", InventoryItem::object});
+    addToInventory(new InventoryItem{1, "boar", InventoryItem::resource});
 }
 
 void InventoryComponent::initialize(EntityObject &entityParent) {
