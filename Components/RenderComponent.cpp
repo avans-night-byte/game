@@ -39,6 +39,8 @@ RenderComponent::RenderComponent(EntityId id, TransformComponent *positionCompon
     _engineRenderingApi.loadTexture(texturePath.c_str(), textureId);
 }
 
+RenderComponent::RenderComponent(EntityId id, TransformComponent *positionComponent, std::string textureId) : Component(id), transform(positionComponent), _engineRenderingApi(Game::getInstance()->getRenderingApi()), _textureId(std::move(textureId)) {}
+
 /**
  * @param red
  * @param blue
@@ -55,8 +57,9 @@ void RenderComponent::setColor(int red, int blue, int green) {
  */
 void RenderComponent::render() {
     //Render the texture
-    _engineRenderingApi.drawTexture(_textureId, *transform->physicsX - (width * 0.5f),
-                                    *transform->physicsY - (height * 0.5f), width, height, 2, transform->rotation);
+    Vector2 v2 = transform->getPosition();
+    _engineRenderingApi.drawTexture(_textureId, v2.x - (width * 0.5f),
+                                    v2.y - (height * 0.5f), width, height, 2, transform->rotation);
 }
 
 

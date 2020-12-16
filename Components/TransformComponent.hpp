@@ -4,7 +4,7 @@
 #include <string>
 
 
-#include "../../Engine/Helpers/Vector2.hpp"
+#include "../../API/Helpers/Vector2.hpp"
 #include "EntityObject.hpp"
 #include <math.h>
 
@@ -13,10 +13,17 @@ namespace Components {
 }
 
 class TransformComponent : public Component {
+private:
+    float _x;
+    float _y;
+
+    const float *_physicsX = nullptr;
+    const float *_physicsY = nullptr;
+
 public:
     float rotation = 0;
-    const float *physicsX = nullptr;
-    const float *physicsY = nullptr;
+
+
 
 public:
     void render() override;
@@ -54,7 +61,15 @@ public:
 
 public:
 
-    [[nodiscard]] Vector2 getPosition() const { return Vector2(*physicsX, *physicsY); }
+    [[nodiscard]] Vector2 getPosition() const {
+        if(_physicsX == nullptr || _physicsY == nullptr){
+            return Vector2( _x, _y);
+        }
+        return Vector2(*_physicsX + _x, *_physicsY + _y);
+    }
 
     [[nodiscard]]std::string name() const override;
+
+    TransformComponent &operator=(Vector2& v2);
+
 };

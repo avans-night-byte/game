@@ -6,6 +6,7 @@
 #include <memory>
 #include "../../Engine/Managers/ResourceManager.hpp"
 #include "WeaponComponent.hpp"
+#include "Inventory/InventoryComponent.hpp"
 
 CharacterComponent::CharacterComponent(EntityId id) : Component(id), _pSpriteSheet(nullptr) {
 }
@@ -31,6 +32,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
 
     _transform = std::make_unique<TransformComponent>(id);
     _healthComponent = make_unique<HealthComponent>();
+    _inventoryComponent = make_unique<InventoryComponent>(id);
 
     game->addComponent(id, _transform.get());
     game->addComponent(id, _physicsComponent.get());
@@ -68,7 +70,7 @@ void CharacterComponent::update(const Input &inputSystem) {
         p.loadResource("Options");
     }
 
-    if (inputSystem.keyMap.action == "CLICK_LEFT") {
+    if (inputSystem.keyMap.action == "CLICK_LEFT" && !_inventoryComponent->isMenuOpen()) {
         _weapon->shoot(*_transform);
     }
 
@@ -79,13 +81,14 @@ void CharacterComponent::update(const Input &inputSystem) {
     inputApi.getMousePosition(mx, my);
 
     auto mouseVector = Vector2(mx, my);
-    auto worldPos = Vector2(*_transform->physicsX, *_transform->physicsY);
+    auto worldPos = _transform->getPosition();
     auto mouseAngle = atan2(mouseVector.y - worldPos.y, mouseVector.x - worldPos.x);
 
     const RTransform &rPosition = _physicsComponent->getRTransform();
     _transform->setRotation(rPosition.rotation);
     
     _physicsComponent->setAngle(mouseAngle);
+    _inventoryComponent->update(inputSystem);
 }
 
 void CharacterComponent::fixedUpdate(const float &deltaTime) {
@@ -99,7 +102,7 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
     for (it = _currentMovementDirection.begin(); it != _currentMovementDirection.end(); it++) {
         switch (it->first) {
             case Left:
-                if (!it->second && movingHor != true) {
+                if (!it->second && !movingHor) {
                     velocity.x = 0;
                     movingHor = false;
                     break;
@@ -147,6 +150,8 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
                 velocity.y = 2000;
                 movingVer = true;
                 break;
+            case None:
+                break;
         }
 
         setVelocity(velocity * deltaTime);
@@ -167,8 +172,11 @@ Component *CharacterComponent::clone(EntityId entityId, const Components::compon
 
 
 void CharacterComponent::render() {
-    _pSpriteSheet->draw_selected_sprite(*_transform->physicsX - 42.5f, *_transform->physicsY - 75.0f, 1,
+    Vector2 v2 = _transform->getPosition();
+    _pSpriteSheet->draw_selected_sprite(v2.x - 42.5f, v2.y - 75.0f, 1,
                                         _transform->rotation);
+
+    _inventoryComponent->render();
 }
 
 void CharacterComponent::startContact(b2Contact *contact) {

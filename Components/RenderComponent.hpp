@@ -11,6 +11,8 @@ class TransformComponent;
 
 class RenderComponent : public Component {
 private:
+
+
     Spritesheet* spriteSheet; // TODO: Remove, store it in the backend in a map.
 
     TransformComponent *transform = nullptr;
@@ -37,6 +39,8 @@ public:
 
     RenderComponent(EntityId id, TransformComponent *positionComponent, const std::string &texturePath,
                     std::string textureId);
+
+    RenderComponent(EntityId id, TransformComponent *positionComponent, std::string textureId);
 
     [[nodiscard]] std::string name() const override;
 

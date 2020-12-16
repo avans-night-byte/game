@@ -107,8 +107,8 @@ TransformComponent *PhysicsComponent::setPositionPhysicsResource(EntityObject *p
     for (auto &c : pObject->getComponents()) {
         auto *worldPositionComponent = dynamic_cast<TransformComponent *>(c.get());
         if (worldPositionComponent != nullptr) {
-            component.position().x() = float(*worldPositionComponent->physicsX);
-            component.position().y() = float(*worldPositionComponent->physicsY);
+            component.position().x() = float(worldPositionComponent->getPosition().x);
+            component.position().y() = float(worldPositionComponent->getPosition().y);
             return worldPositionComponent;
         }
     }
