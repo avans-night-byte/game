@@ -3,9 +3,14 @@
 #include <utility>
 
 
-InventoryItem::InventoryItem(Vector2 &position, Vector2 &index, int count, std::string name, itemType type) : _position(position), _index(index), _quantity(count), _name(std::move(name)), _type(type) {}
+InventoryItem::InventoryItem(int count, std::string name, itemType type) : _quantity(count), _name(std::move(name)), _type(type) {}
 
-void InventoryItem::onClick() {
+void InventoryItem::setIndex(Vector2 &value){
+    _index = value;
+}
+
+void InventoryItem::setPosition(Vector2 &value){
+    _position = value;
 }
 
 std::string InventoryItem::getName() {
@@ -24,8 +29,8 @@ int InventoryItem::getItemQuantity() const{
     return _quantity;
 }
 
-int InventoryItem::addItemQuantity(int quantity) const {
-    _quantity + quantity;
+int InventoryItem::addItemQuantity(int quantity) {
+    _quantity += quantity;
     return _quantity;
 }
 

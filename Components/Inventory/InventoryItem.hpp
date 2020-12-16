@@ -19,7 +19,7 @@ private:
     itemType _type;
 
 public:
-    InventoryItem(Vector2 &position, Vector2 &index, int count, std::string name, itemType type);
+    InventoryItem(int quantity, std::string name, itemType type);
 
     void onClick();
 
@@ -28,7 +28,11 @@ public:
     Vector2 &getIndex();
 
     [[nodiscard]] int getItemQuantity() const;
-    int addItemQuantity(int quantity) const;
+    int addItemQuantity(int quantity);
+
+    void setIndex(Vector2 &value);
+
+    void setPosition(Vector2 &value);
 };
 
 

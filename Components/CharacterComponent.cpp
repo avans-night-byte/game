@@ -70,7 +70,7 @@ void CharacterComponent::update(const Input &inputSystem) {
         p.loadResource("Options");
     }
 
-    if (inputSystem.keyMap.action == "CLICK_LEFT") {
+    if (inputSystem.keyMap.action == "CLICK_LEFT" && !_inventoryComponent->isMenuOpen()) {
         _weapon->shoot(*_transform);
     }
 
@@ -102,7 +102,7 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
     for (it = _currentMovementDirection.begin(); it != _currentMovementDirection.end(); it++) {
         switch (it->first) {
             case Left:
-                if (!it->second && movingHor != true) {
+                if (!it->second && !movingHor) {
                     velocity.x = 0;
                     movingHor = false;
                     break;
@@ -149,6 +149,8 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
 
                 velocity.y = 2000;
                 movingVer = true;
+                break;
+            case None:
                 break;
         }
 

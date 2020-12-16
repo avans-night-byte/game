@@ -10,6 +10,7 @@
 #include "../TransformComponent.hpp"
 #include "../../Engine/Input/Input.hpp"
 #include "../../../Engine/Rendering/TextWrapper.hpp"
+#include "../../../Engine/Helpers/Event.h"
 
 
 class InventoryComponent : public Component {
@@ -27,8 +28,12 @@ class InventoryComponent : public Component {
 
     bool _isOpen = false;
 
+    Vector2 _emptySlot;
+
     std::vector<InventoryItem*> _inventory;
     std::map<std::string, TextWrapper*> _quantityText;
+
+    Event<InventoryItem&> _onInventoryClickEvent;
 
     RenderingAPI &_renderingAPI;
 
@@ -50,9 +55,23 @@ public:
 
     void addToInventory(InventoryItem *item);
 
-    void removeFromInventory(std::string &name, int count);
+    void removeFromInventory(const std::string &name, int count);
 
-    int getInventorySize() const;
+    [[nodiscard]] int getInventorySize() const;
 
+    [[nodiscard]] bool isMenuOpen() const;
+
+    Event<InventoryItem&> &getEventManager();
+
+private:
     InventoryItem *findInventoryItem(const std::string &name);
+
+    InventoryItem *findInventoryItem(Vector2 &index);
+
+    bool findEmptySlot();
+
+    void onClick(const Input &input);
+
+    void checkItemIfEmpty(const std::string &name);
+
 };
