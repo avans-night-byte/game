@@ -8,6 +8,7 @@
 #include "HealthComponent.hpp"
 #include "BulletComponent.hpp"
 #include "WeaponComponent.hpp"
+#include "Inventory/InventoryComponent.hpp"
 
 class Game;
 class HealthComponent;
@@ -30,6 +31,7 @@ private:
     std::unique_ptr<TransformComponent> _transform;
     std::unique_ptr<HealthComponent> _healthComponent;
     std::unique_ptr<PhysicsComponent> _physicsComponent;
+    std::unique_ptr<InventoryComponent> _inventoryComponent;
 
     std::unique_ptr<WeaponComponent> _weapon;
 

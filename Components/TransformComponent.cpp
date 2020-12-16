@@ -3,8 +3,8 @@
 #include "EntityObject.hpp"
 
 void TransformComponent::refLocation(const float &rX, const float &rY) {
-    this->physicsX = &rX;
-    this->physicsY = &rY;
+    this->_physicsX = &rX;
+    this->_physicsY = &rY;
 }
 
 
@@ -45,4 +45,11 @@ void TransformComponent::setRotation(float r) {
 
 void TransformComponent::initialize(EntityObject &entityParent) {
 
+}
+
+TransformComponent &TransformComponent::operator=(Vector2 &v2) {
+    this->_x = v2.x;
+    this->_y = v2.y;
+
+    return *this;
 }
