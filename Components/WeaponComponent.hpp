@@ -3,18 +3,18 @@
 #include "Component.hpp"
 #include "TransformComponent.hpp"
 #include "../Object/Pool.hpp"
+#include "../Game.hpp"
+#include "../Scenes/LevelBase.hpp"
 #include <string>
 
 class BulletComponent;
 
 class WeaponComponent : public Component {
 public:
-    WeaponComponent(EntityId id, Pool& bulletPool) : Component(id), _bulletPool(bulletPool) {
-
-    }
+    explicit WeaponComponent(EntityId id);
 
 private:
-    Pool& _bulletPool; // TODO: Object system for bullets.
+    Pool &_bulletPool;
 
 public:
     void render() override;

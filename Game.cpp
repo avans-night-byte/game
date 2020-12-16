@@ -5,11 +5,8 @@
 
 #include "./Components/ComponentFactory.hpp"
 #include "./Components/CharacterComponent.hpp"
-#include "../Engine/Rendering/TMXLevel.hpp"
-#include "Scenes/LevelBase.hpp"
 #include "UI/FrameCounter.h"
-#include "Helpers/GameTime.h"
-
+#include "./Scenes/PoolLevel.hpp"
 
 typedef signed int int32;
 
@@ -30,9 +27,10 @@ void Game::initialize() {
     resourceManager.loadResource("MainMenu");
     resourceManager.loadResource("MainObjects");
 
+    _poolLevelBase = std::make_unique<PoolLevel>();
 
-    bulletPool = std::make_unique<Pool>();
-    bulletPool->initialize<BulletComponent>("MainPool", "bullet1", 100);
+    _poolLevelBase->addPool("MainPool", "bullet1", 20);
+
 
     auto characterId = createEntity();
     _characterComponent = std::make_unique<CharacterComponent>(characterId, Vector2(100, 100));
@@ -73,7 +71,9 @@ void Game::gameLoop() {
             _menuParser->render();
         } else if (_levelBase) {
             _levelBase->render();
+            _poolLevelBase->render(); // TODO Make a list of level base and put for loop here
             _levelBase->update(i);
+            _poolLevelBase->update(i);
         }
 
         fpsCounter.render();
@@ -97,6 +97,7 @@ void Game::FixedUpdate(float deltaTime){
         _physicsAPI->update(deltaTime);
         if (_levelBase)
             _levelBase->fixedUpdate(deltaTime);
+        _poolLevelBase->fixedUpdate(deltaTime);
     }
 }
 

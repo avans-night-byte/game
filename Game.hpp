@@ -35,6 +35,8 @@ class CharacterComponent;
 
 class LevelBase;
 
+class PoolLevel;
+
 class Component;
 
 struct LevelData;
@@ -52,7 +54,9 @@ private:
 
     std::list<EntityId> _entities;
 
-    std::unique_ptr<LevelBase> _levelBase;
+    std::unique_ptr<LevelBase> _levelBase; // TODO: Make a list out of this so we can switch from levels without destroying the other one.
+    std::unique_ptr<PoolLevel> _poolLevelBase;
+
     std::unique_ptr<ComponentFactory> _componentFactory;
 
     bool _gameLoop = true;
@@ -89,11 +93,11 @@ public:
 
     void gameLoop();
 
-    inline LevelBase *getLevelBase() {
-        return _levelBase.get();
+public:
+    inline PoolLevel* getPoolLevel() {
+        return _poolLevelBase.get();
     }
 
-public:
     EntityId createEntity();
 
     void addComponent(EntityId id, Component *comp);
@@ -116,15 +120,9 @@ public:
 
     void initializeLeveL(const std::string &levelName, const LevelData &data);
 
-    void addEventBodyHandler(const std::function<void()>& function);
+    void addEventBodyHandler(const std::function<void()> &function);
 
     void unloadLevel();
 
-
     void FixedUpdate(float deltaTime);
-
-
-    // TODO: Make a pool system class that creates pools with the given names from xml.
-    std::unique_ptr<Pool> bulletPool;
-
 };

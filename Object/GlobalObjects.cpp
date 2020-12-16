@@ -24,12 +24,10 @@ void GlobalObjects::initializeObjects(const std::string &name,
                                       const std::string &path,
                                       const std::string &poolName,
                                       const std::string &poolPath) {
-    if (_objectsLists.find(name) != _objectsLists.end())
-    {
+    if (_objectsLists.find(name) != _objectsLists.end()) {
         std::cout << "Skipping: '" + name + "', already loaded" << std::endl;
     }
-    if (_objectsLists.find(poolName) != _objectsLists.end())
-    {
+    if (_objectsLists.find(poolName) != _objectsLists.end()) {
         std::cout << "Skipping: '" + poolName + "', already loaded" << std::endl;
     }
 
@@ -55,7 +53,7 @@ GlobalObjects::loadEntity(const std::string &fromList, const std::string &entity
     if (map->second.find(entityName) == map->second.end())
         throw std::runtime_error(entityName + " does not exist in " + fromList);
 
-    // Make a map with every loaded component for entityName
+    // Make a map with every loaded component for _entityName
     auto entityIt = map->second.equal_range(entityName);
     std::multimap<std::string, Components::component *> entityToLoad{};
     for (auto &it = entityIt.first; it != entityIt.second; it++) {
@@ -77,7 +75,7 @@ void GlobalObjects::loadEntities(std::vector<std::unique_ptr<EntityObject>> &ent
     if (map == _objectsLists.end())
         throw std::runtime_error(fromList + " does not exist in the global list");
 
-    // Make a map with every loaded component for entityName
+    // Make a map with every loaded component for _entityName
     auto entityIt = map->second.equal_range(entityName);
     std::multimap<std::string, Components::component *> entityToLoad{};
     for (auto &it = entityIt.first; it != entityIt.second; it++) {

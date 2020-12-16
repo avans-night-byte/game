@@ -4,7 +4,6 @@
 #include "../../API/XMLParser/LevelParserAPI.hpp"
 #include "../Components/CharacterComponent.hpp"
 #include "../Object/ObjectLoader.hpp"
-#include "../Object/GlobalObjects.hpp"
 
 
 void LevelBase::render() {
@@ -12,6 +11,7 @@ void LevelBase::render() {
     for (auto &entity : entities) {
         entity->render();
     }
+
     _characterComponent->render();
 }
 
@@ -27,6 +27,7 @@ void LevelBase::fixedUpdate(float deltaTime) {
     for (auto &entity : entities) {
         entity->fixedUpdate(deltaTime);
     }
+
 }
 
 void LevelBase::initialize(const std::string &name, const LevelData &data) {

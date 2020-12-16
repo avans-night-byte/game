@@ -29,19 +29,20 @@ public:
 
     LevelBase() = default;
 
-    void initialize(const std::string& name, const LevelData &data);
 
-protected:
+private:
     std::vector<std::unique_ptr<EntityObject>> entities{};
 
 public:
-    void render();
+    virtual void initialize(const std::string& name, const LevelData &data);
 
-    void update(const Input &inputSystem);
+    virtual void render();
 
-    void fixedUpdate(float deltaTime);
+    virtual void update(const Input &inputSystem);
 
-    void destroyAllBodies();
+    virtual void fixedUpdate(float deltaTime);
 
-    void clearEntities();
+    virtual void destroyAllBodies();
+
+    virtual void clearEntities();
 };

@@ -1,7 +1,4 @@
 #include "CharacterComponent.hpp"
-#include "../Object/Pool.hpp"
-
-#include "../Game.hpp"
 
 #include <memory>
 
@@ -29,7 +26,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
 
     _transform = std::make_unique<TransformComponent>(id);
     _healthComponent = std::make_unique<HealthComponent>();
-    _weapon = std::make_unique<WeaponComponent>(id, *game->bulletPool);
+    _weapon = std::make_unique<WeaponComponent>(id);
 
     game->addComponent(id, _transform.get());
     game->addComponent(id, _physicsComponent.get());

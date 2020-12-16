@@ -46,6 +46,8 @@ public:
         return nullptr;
     }
 
+    Component* getComponent(std::string componentName);
+
     ~EntityObject() override = default;
 
     void initializeComponents();
