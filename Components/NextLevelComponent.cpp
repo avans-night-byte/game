@@ -36,7 +36,7 @@ void NextLevelComponent::render() {
 }
 
 void NextLevelComponent::update(const Input &inputSystem) {
-    if (inputSystem.keyMap.code == "E" && hasContactWithPlayer) {
+    if (inputSystem.keyMap.action == "INTERACT" && hasContactWithPlayer) {
         ResourceManager::getInstance()->loadResource(NextLevel);
     }
 }
