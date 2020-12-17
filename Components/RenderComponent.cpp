@@ -23,15 +23,15 @@ std::string RenderComponent::name() const {
 /**
  * Instantiates the rendering and passes any needed variables like the engineRenderingApi
  * @param id
- * @param positionComponent
+ * @param transform
  * @param texturePath
  * @param textureId
  * @param engineRenderingApi
  */
-RenderComponent::RenderComponent(EntityId id, TransformComponent *positionComponent, const std::string &texturePath,
+RenderComponent::RenderComponent(EntityId id, TransformComponent *transform, const std::string &texturePath,
                                  std::string textureId)
         : Component(id),
-          transform(positionComponent),
+          transform(transform),
           _engineRenderingApi(Game::getInstance()->getRenderingApi()),
           _textureId(std::move(textureId)) {
 

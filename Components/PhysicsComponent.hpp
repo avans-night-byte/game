@@ -102,6 +102,8 @@ public:
     void setTransform(Vector2 pos, float angle);
 
     void addForce(Vector2 dir);
+
+    void setEnabled(bool b);
 };
 
 

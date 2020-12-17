@@ -37,7 +37,7 @@ public:
 
     explicit RenderComponent(EntityId id);
 
-    RenderComponent(EntityId id, TransformComponent *positionComponent, const std::string &texturePath,
+    RenderComponent(EntityId id, TransformComponent *transform, const std::string &texturePath,
                     std::string textureId);
 
     RenderComponent(EntityId id, TransformComponent *positionComponent, std::string textureId);

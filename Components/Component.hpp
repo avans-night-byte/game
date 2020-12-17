@@ -18,6 +18,10 @@ protected:
     EntityId owner;
 
 public:
+    Component(EntityId id, Component& component) {
+        component.owner = id;
+    }
+
     const EntityId getEntityId() {
         return owner;
     }
