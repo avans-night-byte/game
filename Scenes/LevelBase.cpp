@@ -49,6 +49,7 @@ void LevelBase::loadEntities(const std::multimap<std::string, Components::compon
         std::vector<ContactHandler *> contactHandlers{};
         getContactHandlers(contactHandlers, entityObject, foundHandlerName);
         auto *worldPositionComponent = setPositionForComponent(entityObject, resourceComponent);
+
         auto *physicsComponent = (PhysicsComponent *) componentFactory->getComponent(entityObject->getEntityId(),
                                                                                      "PhysicsComponent",
                                                                                      resourceComponent);
