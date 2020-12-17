@@ -29,7 +29,7 @@ void Game::initialize() {
 
     _poolLevelBase = std::make_unique<PoolLevel>();
 
-    _poolLevelBase->addPool("MainPool", "bullet1", 20);
+    _poolLevelBase->addPool("MainPool", "bullet1", 100);
 
 
     auto characterId = createEntity();
@@ -251,8 +251,9 @@ void Game::unloadLevel() {
         return;
 
     (*_bodyHandlerAPI).eventOnWorldLocked([this] {
-        _levelBase->destroyAllBodies();
         _levelBase->clearEntities();
+        _poolLevelBase->clearEntities();
+
         _levelBase = nullptr;
     });
 }

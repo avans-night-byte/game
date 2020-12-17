@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+
 void PoolLevel::initialize(const std::string &name, const LevelData &data) {
 
 }
@@ -30,10 +31,10 @@ void PoolLevel::fixedUpdate(float deltaTime) {
     }
 }
 
-void PoolLevel::destroyAllBodies() {
-}
-
 void PoolLevel::clearEntities() {
+    for (auto &pool : _poolList) {
+        pool->resetEntities();
+    }
 }
 
 void PoolLevel::addPool(const std::string &loadList, const std::string &entityName, int startAmount) {

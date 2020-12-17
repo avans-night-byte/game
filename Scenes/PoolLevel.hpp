@@ -19,8 +19,6 @@ public:
 
     void fixedUpdate(float deltaTime) override;
 
-    void destroyAllBodies() override;
-
     void clearEntities() override;
 
     void addPool(const std::string& loadList,
