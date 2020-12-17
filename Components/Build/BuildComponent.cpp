@@ -32,7 +32,7 @@ std::string BuildComponent::name() const {
     return "BuildComponent";
 }
 
-Component *BuildComponent::clone(EntityId entityId, const Components::component *component) {
+Component *BuildComponent::build(EntityId entityId, const Components::component *component) {
     return nullptr;
 }
 
