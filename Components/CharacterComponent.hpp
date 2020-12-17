@@ -8,7 +8,6 @@
 #include "HealthComponent.hpp"
 #include "BulletComponent.hpp"
 #include "WeaponComponent.hpp"
-#include "../Game.hpp"
 #include "Inventory/InventoryComponent.hpp"
 
 class Game;
@@ -29,12 +28,12 @@ private:
     std::map<MovementDirection, bool> _currentMovementDirection;
     Spritesheet *_pSpriteSheet{};
 
-    unique_ptr<TransformComponent> _transform;
-    unique_ptr<HealthComponent> _healthComponent;
-    unique_ptr<PhysicsComponent> _physicsComponent;
-    unique_ptr<InventoryComponent> _inventoryComponent;
+    std::unique_ptr<TransformComponent> _transform;
+    std::unique_ptr<HealthComponent> _healthComponent;
+    std::unique_ptr<PhysicsComponent> _physicsComponent;
+    std::unique_ptr<InventoryComponent> _inventoryComponent;
 
-    unique_ptr<WeaponComponent> _weapon;
+    std::unique_ptr<WeaponComponent> _weapon;
 
     void resetMovement();
 
@@ -81,8 +80,6 @@ public:
     [[nodiscard]] Component *clone(EntityId entityId, const Components::component *component) override;
 
     void initialize(EntityObject &entityParent) override;
-
-    void initializeWeapons(std::vector<std::unique_ptr<EntityObject>>& entities);
 
     [[nodiscard]] std::string name() const override;
 

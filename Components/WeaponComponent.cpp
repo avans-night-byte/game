@@ -1,8 +1,14 @@
 #include "WeaponComponent.hpp"
 
-#include "TransformComponent.hpp"
 #include "PhysicsComponent.hpp"
+#include "../Scenes/PoolLevel.hpp"
+
 #include <iostream>
+
+WeaponComponent::WeaponComponent(EntityId id) : Component(id),
+                                                _bulletPool(Game::getInstance()->getPoolLevel()->getPool("bullet1")) {
+
+}
 
 void WeaponComponent::render() {
 
@@ -28,8 +34,12 @@ void WeaponComponent::initialize(EntityObject &entityParent) {
 
 }
 
-void WeaponComponent::shoot(const TransformComponent& transform) {
-    PhysicsComponent* physicsComponent = _bulletEntity.getPhysicsComponent();
+void WeaponComponent::shoot(const TransformComponent &transform) {
+    EntityObject *bullet = _bulletPool.getEntity();
+
+    PhysicsComponent *physicsComponent = bullet->getPhysicsComponent();
+    Game::getInstance()->addEventBodyHandler([physicsComponent] { physicsComponent->setEnabled(true); });
+
 
     Vector2 spawnPos = transform.getPosition() + (transform.right() * 100);
 

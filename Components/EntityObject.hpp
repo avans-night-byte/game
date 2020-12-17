@@ -35,7 +35,7 @@ public:
     }
 
     template<class T>
-    T *getComponent() {
+    T *getComponent() const {
         static_assert(std::is_base_of<Component, T>::value, "T should inherit from class Component");
 
         for (auto &comp: components) {
@@ -45,6 +45,8 @@ public:
 
         return nullptr;
     }
+
+    Component* getComponent(std::string componentName);
 
     ~EntityObject() override = default;
 

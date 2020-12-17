@@ -5,11 +5,8 @@
 
 #include "./Components/ComponentFactory.hpp"
 #include "./Components/CharacterComponent.hpp"
-#include "../Engine/Rendering/TMXLevel.hpp"
-#include "Scenes/LevelBase.hpp"
 #include "UI/FrameCounter.h"
-#include "Helpers/GameTime.h"
-
+#include "./Scenes/PoolLevel.hpp"
 
 typedef signed int int32;
 
@@ -18,19 +15,25 @@ void Game::initialize() {
     Engine::initWindow(1920, 1080);
     ResourceManager &resourceManager = *ResourceManager::instantiate("../../Resources/XML/Definition/Resources.xml");
 
-    _renderingAPI = make_unique<EngineRenderingAPI>();
-    _inputAPI = make_unique<EngineInputAPI>();
-    _windowAPI = make_unique<EngineWindowAPI>();
-    _audioAPI = make_unique<EngineAudioAPI>();
-    _physicsAPI = make_unique<EnginePhysicsAPI>();
-    _menuParser = make_unique<MenuParserAPI>(*_renderingAPI, _inputAPI->getInputEvent());
-    _componentFactory = make_unique<ComponentFactory>();
+    _renderingAPI = std::make_unique<EngineRenderingAPI>();
+    _inputAPI = std::make_unique<EngineInputAPI>();
+    _windowAPI = std::make_unique<EngineWindowAPI>();
+    _audioAPI = std::make_unique<EngineAudioAPI>();
+    _physicsAPI = std::make_unique<EnginePhysicsAPI>();
+    _menuParser = std::make_unique<MenuParserAPI>(*_renderingAPI, _inputAPI->getInputEvent());
+    _componentFactory = std::make_unique<ComponentFactory>();
     _bodyHandlerAPI = std::make_unique<BodyHandlerAPI>(*_physicsAPI);
 
     resourceManager.loadResource("MainMenu");
+    resourceManager.loadResource("MainObjects");
+
+    _poolLevelBase = std::make_unique<PoolLevel>();
+
+    _poolLevelBase->addPool("MainPool", "bullet1", 100);
+
 
     auto characterId = createEntity();
-    _characterComponent = make_unique<CharacterComponent>(characterId, Vector2(100, 100));
+    _characterComponent = std::make_unique<CharacterComponent>(characterId, Vector2(100, 100));
     addComponent(characterId, _characterComponent.get());
 
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitLevel, this, std::placeholders::_1);
@@ -53,7 +56,7 @@ void Game::gameLoop() {
     _renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", "0", 25,
                               "ffffff", "fpsText");
     // Gameloop
-    while (_gameloop) {
+    while (_gameLoop) {
         time.update();
 
         // Poll input and keep track of lastInput
@@ -68,7 +71,9 @@ void Game::gameLoop() {
             _menuParser->render();
         } else if (_levelBase) {
             _levelBase->render();
+            _poolLevelBase->render(); // TODO Make a list of level base and put for loop here
             _levelBase->update(i);
+            _poolLevelBase->update(i);
         }
 
         fpsCounter.render();
@@ -92,6 +97,7 @@ void Game::FixedUpdate(float deltaTime){
         _physicsAPI->update(deltaTime);
         if (_levelBase)
             _levelBase->fixedUpdate(deltaTime);
+        _poolLevelBase->fixedUpdate(deltaTime);
     }
 }
 
@@ -102,7 +108,7 @@ void Game::QuitLevel(std::string command) {
 
 void Game::QuitGame(std::string command) {
     if (command != "close") return;
-    _gameloop = false;
+    _gameLoop = false;
     _windowAPI->closeWindow();
 }
 
@@ -221,7 +227,7 @@ ComponentFactory *Game::getComponentFactory() {
     return _componentFactory.get();
 }
 
-void Game::initializeLeveL(const string &levelName, const LevelData &data) {
+void Game::initializeLeveL(const std::string &levelName, const LevelData &data) {
     if (_levelBase) {
         unloadLevel();
     }
@@ -233,13 +239,21 @@ void Game::initializeLeveL(const string &levelName, const LevelData &data) {
     });
 }
 
+void Game::addEventBodyHandler(const std::function<void()>& function)
+{
+    (*_bodyHandlerAPI).eventOnWorldLocked([function] {
+        function();
+    });
+}
+
 void Game::unloadLevel() {
     if (!_levelBase)
         return;
 
     (*_bodyHandlerAPI).eventOnWorldLocked([this] {
-        _levelBase->destroyAllBodies();
         _levelBase->clearEntities();
+        _poolLevelBase->clearEntities();
+
         _levelBase = nullptr;
     });
 }

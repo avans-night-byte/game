@@ -1,8 +1,5 @@
 #include "CharacterComponent.hpp"
 
-#include "../Game.hpp"
-#include "HealthComponent.hpp"
-
 #include <memory>
 #include "../../Engine/Managers/ResourceManager.hpp"
 #include "WeaponComponent.hpp"
@@ -11,7 +8,7 @@
 CharacterComponent::CharacterComponent(EntityId id) : Component(id), _pSpriteSheet(nullptr) {
 }
 
-string CharacterComponent::name() const {
+std::string CharacterComponent::name() const {
     return "CharacterComponent";
 }
 
@@ -31,8 +28,9 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
                                                               "spritesheet_char", 100, 105);
 
     _transform = std::make_unique<TransformComponent>(id);
-    _healthComponent = make_unique<HealthComponent>();
-    _inventoryComponent = make_unique<InventoryComponent>(id);
+    _healthComponent = std::make_unique<HealthComponent>();
+    _weapon = std::make_unique<WeaponComponent>(id);
+    _inventoryComponent = std::make_unique<InventoryComponent>(id);
 
     game->addComponent(id, _transform.get());
     game->addComponent(id, _physicsComponent.get());
@@ -86,7 +84,7 @@ void CharacterComponent::update(const Input &inputSystem) {
 
     const RTransform &rPosition = _physicsComponent->getRTransform();
     _transform->setRotation(rPosition.rotation);
-    
+
     _physicsComponent->setAngle(mouseAngle);
     _inventoryComponent->update(inputSystem);
 }
@@ -95,7 +93,7 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
     Vector2 velocity;
     getVelocity(velocity);
 
-    map<MovementDirection, bool>::iterator it;
+    std::map<MovementDirection, bool>::iterator it;
     bool movingHor = false;
     bool movingVer = false;
 
@@ -190,15 +188,3 @@ void CharacterComponent::endContact(b2Contact *contact) {
 void CharacterComponent::initialize(EntityObject &entityParent) {
 
 }
-
-// TODO: Write a global-object-resource file that can load every globally used objects (weapons, bullets, characters)
-void CharacterComponent::initializeWeapons(std::vector<std::unique_ptr<EntityObject>> &entities) {
-    for (auto &entity : entities) {
-        if (auto *bullet = entity->getComponent<BulletComponent>()) {
-            auto id = getEntityId();
-            _weapon = std::make_unique<WeaponComponent>(id, *entity);
-            break;
-        }
-    }
-}
-

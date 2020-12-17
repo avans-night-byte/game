@@ -38,16 +38,16 @@ void EntityObject::initializeComponents() {
     // Add Transform component if it doesn't exist.
     bool transformFound = false;
     for (auto &comp: components) {
-        if (auto *transform = getComponent<TransformComponent>()) {
+        if (getComponent<TransformComponent>()) {
             transformFound = true;
             break;
         }
     }
 
     if (!transformFound) {
-        auto *componentFactory = Game::getInstance()
+        auto *pTransformComponent = Game::getInstance()
                 ->getComponentFactory()->getComponent<TransformComponent>(getEntityId());
-        addComponent((Component*)componentFactory);
+        addComponent((Component *) pTransformComponent);
     }
 
     for (auto &comp : components) {
@@ -60,18 +60,28 @@ void EntityObject::initialize(EntityObject &entityParent) {
 }
 
 TransformComponent *EntityObject::getTransform() {
-    if(!transformComponent)
+    if (!transformComponent)
         transformComponent = getComponent<TransformComponent>();
 
-    if(!transformComponent)
+    if (!transformComponent)
         throw std::runtime_error("Entity must have transform component");
 
     return transformComponent;
 }
 
 PhysicsComponent *EntityObject::getPhysicsComponent() {
-    if(!physicsComponent)
+    if (!physicsComponent)
         physicsComponent = getComponent<PhysicsComponent>();
 
     return physicsComponent;
+}
+
+Component *EntityObject::getComponent(std::string componentName) {
+    for (auto &comp : components) {
+        if (comp->name() == componentName) {
+            return comp.get();
+        }
+    }
+
+    return nullptr;
 }
