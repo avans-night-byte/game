@@ -1,10 +1,10 @@
 #include <Generated/level-resources.hxx>
-#include <Generated/components.hxx>
+#include <memory>
 #include "../Game.hpp"
 
 #include "PhysicsComponent.hpp"
-#include "EntityObject.hpp"
 #include "TransformComponent.hpp"
+#include "../../Engine/Physics/PhysicsEngineAdapter.hpp"
 
 
 void PhysicsComponent::fixedUpdate(const float &deltaTime) {
@@ -50,30 +50,30 @@ Component *PhysicsComponent::build(EntityId entityId,
     bool isEnabled = physicsComponent.isEnabled().present() ? physicsComponent.isSensor().get()
                                                             : Components::physicsComponent::isEnabled_default_value();
 
+    std::unique_ptr<Box2DData> box2DData = std::make_unique<Box2DData>();
+    box2DData->position = position;
+    box2DData->bodyType = bodyType;
+    box2DData->isEnabled = isEnabled;
+    box2DData->isSensor = physicsComponent.isSensor().present() ? physicsComponent.isSensor().get()
+                                                                : Components::physicsComponent::isSensor_default_value();
+
+    box2DData->isBullet = physicsComponent.isBullet().present() ? physicsComponent.isBullet().get()
+                                                                : Components::physicsComponent::isBullet_default_value();
+    box2DData->userData = newPhysicsComponent;
+
     /* Shape */
     if (shapeCircle != nullptr) {
-        Box2DCircleData circleData{};
-        circleData.radius = shapeCircle->radius();
-        circleData.position = position;
-        circleData.bodyType = bodyType;
-        circleData.isSensor = physicsComponent.isSensor().present() && physicsComponent.isSensor().get();
-        circleData.isBullet = physicsComponent.isBullet().present() && physicsComponent.isBullet().get();
-        circleData.isEnabled = isEnabled;
+        std::unique_ptr<Box2DCircleData> circleData((Box2DCircleData *) box2DData.release());
 
-        circleData.userData = newPhysicsComponent;
-        newPhysicsComponent->_bodyId = _physicsAPI.createBody(circleData);
+        circleData->radius = shapeCircle->radius();
+        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*circleData.release());
     } else {
         // BOX
-        Box2DBoxData boxData{};
-        boxData.size = Vector2(shapeBox->width(), shapeBox->height());
-        boxData.position = position;
-        boxData.bodyType = bodyType;
-        boxData.isSensor = physicsComponent.isSensor().present() && physicsComponent.isSensor().get();
-        boxData.isBullet = physicsComponent.isBullet().present() && physicsComponent.isBullet().get();
-        boxData.isEnabled = isEnabled;
+        std::unique_ptr<Box2DBoxData> boxData((Box2DBoxData *) box2DData.release());
 
-        boxData.userData = newPhysicsComponent;
-        newPhysicsComponent->_bodyId = _physicsAPI.createBody(boxData);
+        boxData->size = Vector2(shapeBox->width(), shapeBox->height());
+
+        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*boxData.release());
     }
 
     return newPhysicsComponent;
