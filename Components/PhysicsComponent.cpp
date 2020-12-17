@@ -34,7 +34,7 @@ std::string PhysicsComponent::name() const {
     return "PhysicsComponent";
 }
 
-Component *PhysicsComponent::clone(EntityId entityId,
+Component *PhysicsComponent::build(EntityId entityId,
                                    const Components::component *component) {
 
     auto newPhysicsComponent = new PhysicsComponent(entityId);

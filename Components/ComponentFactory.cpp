@@ -32,8 +32,8 @@ Component *ComponentFactory::getComponent(const EntityId &id,
 
     if (component == nullptr) {
         std::cout << "Couldn't find " + name + ", will create EntityObject component." << std::endl;
-        return components["EntityObject"]->clone(id, nullptr);
+        return components["EntityObject"]->build(id, nullptr);
     }
 
-    return component->clone(id, loadedComponent);
+    return component->build(id, loadedComponent);
 }

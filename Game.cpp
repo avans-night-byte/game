@@ -92,7 +92,7 @@ void Game::gameLoop() {
     }
 }
 
-void Game::FixedUpdate(float deltaTime){
+void Game::FixedUpdate(float deltaTime) {
     if (!ResourceManager::getInstance()->inMenu) {
         _physicsAPI->update(deltaTime);
         if (_levelBase)
@@ -239,8 +239,7 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
     });
 }
 
-void Game::addEventBodyHandler(const std::function<void()>& function)
-{
+void Game::addEventBodyHandler(const std::function<void()> &function) {
     (*_bodyHandlerAPI).eventOnWorldLocked([function] {
         function();
     });
