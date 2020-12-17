@@ -41,7 +41,7 @@ public:
 
     virtual std::string name() const = 0;
 
-    virtual Component *clone(EntityId entityId, const Components::component *component) = 0;
+    virtual Component *build(EntityId entityId, const Components::component *component) = 0;
 
     virtual void initialize(EntityObject &entityParent) = 0;
 };

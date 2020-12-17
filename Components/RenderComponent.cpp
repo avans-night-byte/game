@@ -70,7 +70,7 @@ void RenderComponent::fixedUpdate(const float &deltaTime) {
     }
 }
 
-Component *RenderComponent::clone(EntityId entityId, const Components::component *component) {
+Component *RenderComponent::build(EntityId entityId, const Components::component *component) {
     const auto &resourceComponent = component->renderComponent();
 
     auto *newComponent = new RenderComponent(entityId);

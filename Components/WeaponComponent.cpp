@@ -26,7 +26,7 @@ std::string WeaponComponent::name() const {
     return "WeaponComponent";
 }
 
-Component *WeaponComponent::clone(EntityId entityId, const Components::component *component) {
+Component *WeaponComponent::build(EntityId entityId, const Components::component *component) {
     return nullptr;
 }
 

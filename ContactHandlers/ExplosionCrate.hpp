@@ -31,7 +31,7 @@ public:
         return "ExplosionCrate";
     }
 
-    Component *clone(EntityId entityId, const Components::component *component) override {
+    Component *build(EntityId entityId, const Components::component *component) override {
         return new ExplosionCrate(entityId);
     }
 

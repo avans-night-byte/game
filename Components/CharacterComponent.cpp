@@ -164,7 +164,7 @@ void CharacterComponent::resetMovement() {
     _currentMovementDirection[Down] = false;
 }
 
-Component *CharacterComponent::clone(EntityId entityId, const Components::component *component) {
+Component *CharacterComponent::build(EntityId entityId, const Components::component *component) {
     return new CharacterComponent(entityId);
 }
 

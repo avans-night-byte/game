@@ -25,7 +25,7 @@ public:
 
     void fixedUpdate(const float &deltaTime) override;
 
-    [[nodiscard]] Component *clone(EntityId entityId, const Components::component *component) override;
+    [[nodiscard]] Component *build(EntityId entityId, const Components::component *component) override;
 
     void initialize(EntityObject &entityParent) override;
 
