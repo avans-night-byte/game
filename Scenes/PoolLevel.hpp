@@ -1,4 +1,4 @@
-#pragma onec
+#pragma once
 
 
 #include "LevelBase.hpp"
@@ -18,8 +18,6 @@ public:
     void update(const Input &inputSystem) override;
 
     void fixedUpdate(float deltaTime) override;
-
-    void destroyAllBodies() override;
 
     void clearEntities() override;
 

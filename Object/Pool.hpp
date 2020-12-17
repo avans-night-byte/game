@@ -28,8 +28,9 @@ public:
 
 
 public:
-
     void initialize(const std::string& loadList, const std::string& entityName, int startAmount);
+
+    void resetEntities();
 
     EntityObject* getEntity();
 };

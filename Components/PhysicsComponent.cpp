@@ -134,10 +134,6 @@ void PhysicsComponent::addForce(Vector2 dir) {
 }
 
 void PhysicsComponent::setEnabled(bool b) {
-
-    Game::getInstance()->addEventBodyHandler(
-            [pPhysicsApi = &_physicsAPI, this, b] {
-                pPhysicsApi->setEnabled(_bodyId, b);
-            });
+    _physicsAPI.setEnabled(_bodyId, b);
 }
 

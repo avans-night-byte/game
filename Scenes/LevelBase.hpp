@@ -42,7 +42,5 @@ public:
 
     virtual void fixedUpdate(float deltaTime);
 
-    virtual void destroyAllBodies();
-
     virtual void clearEntities();
 };

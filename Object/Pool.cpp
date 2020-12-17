@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Pool.hpp"
+#include "../Components/PhysicsComponent.hpp"
 
 
 EntityObject *Pool::getEntity() {
@@ -24,4 +25,18 @@ void Pool::initialize(const std::string &loadList, const std::string &entityName
 
     auto entity = GlobalObjects::getInstance()->loadEntity(loadList, entityName);
     GlobalObjects::getInstance()->loadEntities(_pool, loadList, entityName, startAmount);
+}
+
+void Pool::resetEntities() {
+    for (auto &entity: _pool) {
+        for (auto &comp : entity->getComponents()) {
+            if (auto *physicsComponent = dynamic_cast<PhysicsComponent *>(comp.get())) {
+                physicsComponent->setEnabled(false);
+            }
+        }
+    }
+
+    this->currentIndex = 0;
+    this->amountSpawned = 0;
+    this->entitiesInUse.clear();
 }

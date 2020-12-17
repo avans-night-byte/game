@@ -40,7 +40,7 @@ void LevelBase::initialize(const std::string &name, const LevelData &data) {
     ObjectLoader::loadEntities(outEntities, this->entities);
 }
 
-void LevelBase::destroyAllBodies() {
+void LevelBase::clearEntities() {
     for (auto &entity : entities) {
         for (auto &comp : entity->getComponents()) {
             if (auto *physicsComponent = dynamic_cast<PhysicsComponent *>(comp.get())) {
@@ -50,8 +50,5 @@ void LevelBase::destroyAllBodies() {
     }
 
     _tmxLevel->cleanup();
-}
-
-void LevelBase::clearEntities() {
     entities.clear();
 }

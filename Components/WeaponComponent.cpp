@@ -34,11 +34,12 @@ void WeaponComponent::initialize(EntityObject &entityParent) {
 
 }
 
-void WeaponComponent::shoot(const TransformComponent& transform) {
+void WeaponComponent::shoot(const TransformComponent &transform) {
     EntityObject *bullet = _bulletPool.getEntity();
 
-    PhysicsComponent* physicsComponent = bullet->getPhysicsComponent();
-    physicsComponent->setEnabled(true);
+    PhysicsComponent *physicsComponent = bullet->getPhysicsComponent();
+    Game::getInstance()->addEventBodyHandler([physicsComponent] { physicsComponent->setEnabled(true); });
+
 
     Vector2 spawnPos = transform.getPosition() + (transform.right() * 100);
 
