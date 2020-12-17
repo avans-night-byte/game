@@ -16,7 +16,7 @@ std::string TransformComponent::name() const {
     return "TransformComponent";
 }
 
-Component *TransformComponent::clone(EntityId entityId, const Components::component *component) {
+Component *TransformComponent::build(EntityId entityId, const Components::component *component) {
     auto newTransformComponent = new TransformComponent(entityId);
 
     if (component != nullptr) {

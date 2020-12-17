@@ -24,7 +24,7 @@ void NextLevelComponent::fixedUpdate(const float &deltaTime) {
 
 }
 
-Component *NextLevelComponent::clone(EntityId entityId, const Components::component *component) {
+Component *NextLevelComponent::build(EntityId entityId, const Components::component *component) {
     const auto &nextLevelComponent = component->nextLevelComponent();
     auto *newInstance = new NextLevelComponent(entityId);
     newInstance->NextLevel = nextLevelComponent->levelName();

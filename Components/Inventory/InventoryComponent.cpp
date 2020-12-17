@@ -93,7 +93,7 @@ std::string InventoryComponent::name() const {
     return "InventoryComponent";
 }
 
-Component *InventoryComponent::clone(EntityId entityId, const Components::component *component) {
+Component *InventoryComponent::build(EntityId entityId, const Components::component *component) {
     return nullptr;
 }
 

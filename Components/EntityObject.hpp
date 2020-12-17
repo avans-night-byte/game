@@ -62,7 +62,7 @@ public:
 
     [[nodiscard]]std::string name() const override;
 
-    Component *clone(EntityId entityId, const Components::component *component) override;
+    Component *build(EntityId entityId, const Components::component *component) override;
 
     void initialize(EntityObject &entityParent) override;
 

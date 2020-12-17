@@ -23,7 +23,7 @@ std::string BulletComponent::name() const {
     return "BulletComponent";
 }
 
-Component *BulletComponent::clone(EntityId entityId, const Components::component *component) {
+Component *BulletComponent::build(EntityId entityId, const Components::component *component) {
     return new BulletComponent(entityId);
 }
 
