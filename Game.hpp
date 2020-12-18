@@ -62,7 +62,6 @@ private:
     bool _gameLoop = true;
 
     // API's
-    std::unique_ptr<Engine> _engine;
     std::unique_ptr<InputAPI> _inputAPI;
     std::unique_ptr<WindowAPI> _windowAPI;
     std::unique_ptr<AudioAPI> _audioAPI;

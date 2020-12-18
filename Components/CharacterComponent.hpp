@@ -26,7 +26,7 @@ class CharacterComponent : public Component, public ContactHandler {
 
 private:
     std::map<MovementDirection, bool> _currentMovementDirection;
-    Spritesheet *_pSpriteSheet{};
+    SpriteSheet *_pSpriteSheet{};
 
     std::unique_ptr<TransformComponent> _transform;
     std::unique_ptr<HealthComponent> _healthComponent;
@@ -73,7 +73,7 @@ public:
 
     void fixedUpdate(const float &deltaTime) override;
 
-    inline const Spritesheet &getSpriteSheet() {
+    inline const SpriteSheet &getSpriteSheet() {
         return *_pSpriteSheet;
     }
 

@@ -5,7 +5,7 @@
 #include <string>
 
 class RenderingAPI;
-class Spritesheet; // TODO: Remove
+class SpriteSheet; // TODO: Remove
 class PhysicsComponent;
 class TransformComponent;
 
@@ -13,7 +13,7 @@ class RenderComponent : public Component {
 private:
 
 
-    Spritesheet* spriteSheet; // TODO: Remove, store it in the backend in a map.
+    SpriteSheet* spriteSheet; // TODO: Remove, store it in the backend in a map.
 
     TransformComponent *transform = nullptr;
     PhysicsComponent *physics = nullptr;

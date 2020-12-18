@@ -12,12 +12,14 @@ typedef signed int int32;
 
 void Game::initialize() {
     GameTime::getInstance();
-    Engine::initWindow(1920, 1080);
+
+    _windowAPI = std::make_unique<EngineWindowAPI>();
+    _windowAPI->initWindow(1920, 1080);
+
     ResourceManager &resourceManager = *ResourceManager::instantiate("../../Resources/XML/Definition/Resources.xml");
 
     _renderingAPI = std::make_unique<EngineRenderingAPI>();
     _inputAPI = std::make_unique<EngineInputAPI>();
-    _windowAPI = std::make_unique<EngineWindowAPI>();
     _audioAPI = std::make_unique<EngineAudioAPI>();
     _physicsAPI = std::make_unique<EnginePhysicsAPI>();
     _menuParser = std::make_unique<MenuParserAPI>(*_renderingAPI, _inputAPI->getInputEvent());
@@ -78,7 +80,7 @@ void Game::gameLoop() {
 
         fpsCounter.render();
         if (isDebuggingPhysics)
-            _physicsAPI->DebugDraw(*_renderingAPI, *_windowAPI->getRenderer());
+            _physicsAPI->debugDraw(*_renderingAPI);
 
         _renderingAPI->render();
 
