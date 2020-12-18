@@ -45,8 +45,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
 void CharacterComponent::update(const Input &inputSystem) {
     bool stopped = false;
 
-    //TODO: Move naar _engine
-    if (inputSystem.keyMap.type == SDL_KEYUP) {
+    if (inputSystem.keyMap.type == KeyType::KeyUp) {
         stopped = true;
     }
 

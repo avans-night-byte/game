@@ -3,8 +3,6 @@
 #include "TransformComponent.hpp"
 #include "CharacterComponent.hpp"
 #include "NextLevelComponent.hpp"
-#include "RenderComponent.hpp"
-#include "EntityObject.hpp"
 #include "../ContactHandlers/ExplosionCrate.hpp"
 
 ComponentFactory::ComponentFactory() {
