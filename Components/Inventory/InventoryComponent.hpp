@@ -6,7 +6,7 @@
 #include <memory>
 #include "InventoryItem.hpp"
 
-#include "../RenderComponent.hpp"
+#include "../Rendering/RenderComponent.hpp"
 #include "../TransformComponent.hpp"
 #include "../../Engine/Input/Input.hpp"
 #include "../../../Engine/Rendering/TextWrapper.hpp"

@@ -13,6 +13,7 @@
 class Game;
 class HealthComponent;
 class WeaponComponent;
+class RenderComponent;
 class Input;
 
 class CharacterComponent : public Component, public ContactHandler {
@@ -32,6 +33,7 @@ private:
     std::unique_ptr<HealthComponent> _healthComponent;
     std::unique_ptr<PhysicsComponent> _physicsComponent;
     std::unique_ptr<InventoryComponent> _inventoryComponent;
+    std::unique_ptr<RenderComponent> _renderComponent;
 
     std::unique_ptr<WeaponComponent> _weapon;
 

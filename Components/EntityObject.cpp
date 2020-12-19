@@ -1,6 +1,6 @@
 #include "ComponentFactory.hpp"
 #include "EntityObject.hpp"
-#include "RenderComponent.hpp"
+#include "Rendering/RenderComponent.hpp"
 #include "TransformComponent.hpp"
 #include "PhysicsComponent.hpp"
 

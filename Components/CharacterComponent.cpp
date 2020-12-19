@@ -1,9 +1,12 @@
 #include "CharacterComponent.hpp"
 
-#include <memory>
+#include "./Rendering/RenderComponent.hpp"
+#include "./Rendering/Animation.hpp"
 #include "../../Engine/Managers/ResourceManager.hpp"
 #include "WeaponComponent.hpp"
 #include "Inventory/InventoryComponent.hpp"
+
+#include <memory>
 
 CharacterComponent::CharacterComponent(EntityId id) : Component(id), _pSpriteSheet(nullptr) {
 }
@@ -24,13 +27,33 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
     _physicsComponent->setFixedRotation(true);
     _physicsComponent->setVelocity(Vector2());
 
-    _pSpriteSheet = game->getRenderingApi().createSpriteSheet("../../Resources/Sprites/character.png",
-                                                              "spritesheet_char", 100, 105);
+    _pSpriteSheet = game->getRenderingApi().loadSpriteSheet("../../Resources/Sprites/character.png",
+                                                            "spritesheet_char", 96, 104);
+
 
     _transform = std::make_unique<TransformComponent>(id);
     _healthComponent = std::make_unique<HealthComponent>();
     _weapon = std::make_unique<WeaponComponent>(id);
     _inventoryComponent = std::make_unique<InventoryComponent>(id);
+
+    /* Rendering for the character */
+//    _renderComponent = std::make_unique<RenderComponent>(id, RenderComponent::RenderType::SPRITE_SHEET,
+//                                                         "../../Resources/Sprites/character.png",
+//                                                         "spritesheet_char", 96, 104);
+//    auto *animation = new Animation(*_renderComponent);
+//    animation->addAnimation("Walk Right", {{0, 7},
+//                                           {1, 7},
+//                                           {2, 7},
+//                                           {3, 7},
+//                                           {4, 7},
+//                                           {5, 7},
+//                                           {6, 7},
+//                                           {7, 7},
+//                                           {8, 7},
+//                                           {9, 7}});
+//    _renderComponent->setAnimation(animation);
+//    animation->activateAnimation("Walk Right");
+
 
     game->addComponent(id, _transform.get());
     game->addComponent(id, _physicsComponent.get());
@@ -39,13 +62,12 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
     _transform->refLocation(rPosition.X, rPosition.Y);
     _transform->setRotation(rPosition.rotation);
 
-    _pSpriteSheet->select_sprite(0, 0);
+    _pSpriteSheet->selectSprite(0, 0);
 }
 
 void CharacterComponent::update(const Input &inputSystem) {
     bool stopped = false;
 
-    //TODO: Move naar _engine
     if (inputSystem.keyMap.type == SDL_KEYUP) {
         stopped = true;
     }
@@ -171,8 +193,8 @@ Component *CharacterComponent::build(EntityId entityId, const Components::compon
 
 void CharacterComponent::render() {
     Vector2 v2 = _transform->getPosition();
-    _pSpriteSheet->draw_selected_sprite(v2.x - 42.5f, v2.y - 75.0f, 1,
-                                        _transform->rotation);
+    _pSpriteSheet->drawSelectedSprite(v2.x - 42.5f, v2.y - 75.0f, 1,
+                                      _transform->rotation);
 
     _inventoryComponent->render();
 }
