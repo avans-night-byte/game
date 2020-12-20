@@ -11,7 +11,7 @@ EntityObject *Pool::getEntity() {
 
     auto *entity = _pool.at(currentIndex).get();
 
-    if (amountSpawned < _pool.size() + 1)
+    if (amountSpawned < _pool.size())
         entitiesInUse.push_back(entity);
     else
         amountSpawned++;
@@ -23,7 +23,6 @@ void Pool::initialize(const std::string &loadList, const std::string &entityName
     this->_entityName = std::string(entityName);
     this->size = startAmount;
 
-    auto entity = GlobalObjects::getInstance()->loadEntity(loadList, entityName);
     GlobalObjects::getInstance()->loadEntities(_pool, loadList, entityName, startAmount);
 }
 

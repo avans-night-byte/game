@@ -16,7 +16,7 @@ CharacterComponent::CharacterComponent(EntityId id) : EntityObject(id) {
 void CharacterComponent::update(const Input &inputSystem) {
     bool stopped = false;
 
-    if (inputSystem.keyMap.type == SDL_KEYUP) {
+    if (inputSystem.keyMap.type == KeyType::KeyUp) {
         stopped = true;
     }
 
