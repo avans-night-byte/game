@@ -15,9 +15,9 @@ public:
 
     }
 
-    void onCollisionEnter(const EntityObject *entityObject) override;
+    void onCollisionEnter(EntityObject *entityObject) override;
 
-    void onCollisionExit(const EntityObject *entityObject) override;
+    void onCollisionExit(EntityObject *entityObject) override;
 
     void render() override;
 

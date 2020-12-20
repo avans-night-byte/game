@@ -48,6 +48,8 @@ void Game::initialize() {
     _characterComponent->addComponent(new RenderComponent(characterId, RenderComponent::RenderType::SPRITE_SHEET,
                                                           "../../Resources/Sprites/character.png",
                                                           "spritesheet_char", 96, 104, 0, 20));
+    _characterComponent->addComponent(new BuildComponent(characterId));
+
     _characterComponent->initializeComponents();
     _characterComponent->initialize(*_characterComponent);
 
