@@ -9,7 +9,7 @@ namespace Components {
     class component;
 }
 class EntityObject;
-class ContactHandler;
+class CollisionHandler;
 
 class ObjectLoader {
 public:
@@ -17,8 +17,8 @@ public:
                       std::vector<std::unique_ptr<EntityObject>> &entities);
 
 private:
-    static void getContactHandlers(std::vector<ContactHandler *> &contactHandlers, EntityObject *entityObject,
-                            const std::vector<std::string> &handlerNames);
+    static void getCollisionHandlers(std::vector<CollisionHandler *> &collisionHandlers, EntityObject *entityObject,
+                                     const std::vector<std::string> &handlerNames);
 
-    static void getContactHandlerNames(std::vector<std::string> &names, const Components::component &component);
+    static void getCollisionHandlerNames(std::vector<std::string> &names, const Components::component &component);
 };

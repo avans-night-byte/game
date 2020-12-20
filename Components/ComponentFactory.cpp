@@ -3,7 +3,8 @@
 #include "TransformComponent.hpp"
 #include "CharacterComponent.hpp"
 #include "NextLevelComponent.hpp"
-#include "../ContactHandlers/ExplosionCrate.hpp"
+#include "Rendering/RenderComponent.hpp"
+#include "EntityObject.hpp"
 
 ComponentFactory::ComponentFactory() {
 
@@ -18,7 +19,6 @@ ComponentFactory::ComponentFactory() {
     components["NextLevelComponent"] = std::make_unique<NextLevelComponent>(entityId);
     components["RenderComponent"] = std::make_unique<RenderComponent>(entityId);
     components["EntityObject"] = std::make_unique<EntityObject>(entityId);
-    components["ExplosionCrate"] = std::make_unique<ExplosionCrate>(entityId);
     components["BulletComponent"] = std::make_unique<BulletComponent>(entityId);
 }
 

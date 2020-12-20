@@ -3,10 +3,10 @@
 
 #include <string>
 #include "Component.hpp"
-#include "../../Engine/Physics/ContactHandler.hpp"
+#include "../Object/CollisionHandler.hpp"
 
 // TODO: Don't use ContactHandler of Engine but of API (which does not exist yet).
-class NextLevelComponent : public Component, public ContactHandler {
+class NextLevelComponent : public Component, public CollisionHandler {
 public:
     std::string NextLevel;
     bool hasContactWithPlayer = false;
@@ -15,9 +15,9 @@ public:
 
     }
 
-    void startContact(b2Contact *contact) override;
+    void onCollisionEnter(const EntityObject *entityObject) override;
 
-    void endContact(b2Contact *contact) override;
+    void onCollisionExit(const EntityObject *entityObject) override;
 
     void render() override;
 

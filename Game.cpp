@@ -37,7 +37,20 @@ void Game::initialize() {
 
 
     auto characterId = createEntity();
-    _characterComponent = std::make_unique<CharacterComponent>(characterId, Vector2(100, 100));
+    _characterComponent = std::make_unique<CharacterComponent>(characterId);
+    _characterComponent->addComponent(new TransformComponent(characterId));
+    _characterComponent->addComponent(new WeaponComponent(characterId));
+    _characterComponent->addComponent(new InventoryComponent(characterId));
+    _characterComponent->addComponent(new PhysicsComponent(characterId,
+                                                           BodyType::Dynamic,
+                                                           Vector2(100, 100),
+                                                           20.f));
+    _characterComponent->addComponent(new RenderComponent(characterId, RenderComponent::RenderType::SPRITE_SHEET,
+                                                          "../../Resources/Sprites/character.png",
+                                                          "spritesheet_char", 96, 104, 0, 20));
+    _characterComponent->initializeComponents();
+    _characterComponent->initialize(*_characterComponent);
+
     addComponent(characterId, _characterComponent.get());
 
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitLevel, this, std::placeholders::_1);
@@ -115,8 +128,8 @@ void Game::QuitGame(std::string command) {
 }
 
 /*
- * The following section managers components in the program, this is not a completed system but you could already use
- * it with your feature, just mage sure to check because some components are not completely done.
+ * The following section managers _components in the program, this is not a completed system but you could already use
+ * it with your feature, just mage sure to check because some _components are not completely done.
  */
 
 /**
@@ -161,7 +174,7 @@ T *Game::getComponent(EntityId id) {
 }
 
 /**
- * Gets components by entity id of all types.
+ * Gets _components by entity id of all types.
  * @param id
  * @return
  */
@@ -178,7 +191,7 @@ System<Component> Game::getComponents(EntityId id) {
 }
 
 /**
- * Gets components by entity id of a specified type.
+ * Gets _components by entity id of a specified type.
  * @tparam T
  * @param id
  * @return
