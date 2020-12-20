@@ -10,10 +10,14 @@ namespace Components {
 class TransformComponent;
 class EntityObject;
 
+#include "../Object/CollisionHandler.hpp"
+
+
 class PhysicsComponent : public Component, public ContactHandler {
 private:
     const PhysicsAPI &_physicsAPI;
     unsigned int _bodyId = 0;
+    EntityObject *_parent = nullptr;
 
     std::string contactHandlerName;
 
@@ -25,7 +29,7 @@ public:
     void destroyBody();
 
 public:
-    std::vector<ContactHandler*> contactHandlers{};
+    std::vector<CollisionHandler*> collisionHandlers{};
 
     explicit PhysicsComponent(EntityId id);
 
@@ -84,7 +88,7 @@ private:
         Box2DBoxData box2DBoxData;
         box2DBoxData.bodyType = bodyType;
         box2DBoxData.position = position;
-        box2DBoxData.userData = this;
+        box2DBoxData.contactHandler = this;
         box2DBoxData.size = size;
         return _physicsAPI.createBody(box2DBoxData);
     }
@@ -94,7 +98,7 @@ private:
         box2DCircleData.bodyType = bodyType;
         box2DCircleData.position = position;
         box2DCircleData.radius = radius;
-        box2DCircleData.userData = this;
+        box2DCircleData.contactHandler = this;
         return _physicsAPI.createBody(box2DCircleData);
     }
 
@@ -106,6 +110,10 @@ public:
     void addForce(Vector2 dir);
 
     void setEnabled(bool b);
+
+    const EntityObject* getParent() {
+        return _parent;
+    }
 };
 
 

@@ -2,23 +2,24 @@
 #include "NextLevelComponent.hpp"
 #include "../../Engine/Managers/ResourceManager.hpp"
 #include "Generated/components.hxx"
+#include "../Components/EntityObject.hpp"
 #include "../Game.hpp"
 
-void NextLevelComponent::startContact(b2Contact *contact) {
-    if (auto *characterComponent = static_cast<CharacterComponent *>((CharacterComponent *) contact->GetFixtureB()->GetBody()->GetUserData().pointer)) {
-        hasContactWithPlayer = true;
-    }
-}
+//void NextLevelComponent::startContact(b2Contact *contact) {
+//    if (auto *characterComponent = static_cast<CharacterComponent *>((CharacterComponent *) contact->GetFixtureB()->GetBody()->GetUserData().pointer)) {
+//        hasContactWithPlayer = true;
+//    }
+//}
 
 std::string NextLevelComponent::name() const {
     return "NextLevelComponent";
 }
 
-void NextLevelComponent::endContact(b2Contact *contact) {
-    if (auto *characterComponent = static_cast<CharacterComponent *>((CharacterComponent *) contact->GetFixtureB()->GetBody()->GetUserData().pointer)) {
-        hasContactWithPlayer = false;
-    }
-}
+//void NextLevelComponent::endContact(b2Contact *contact) {
+//    if (auto *characterComponent = static_cast<CharacterComponent *>((CharacterComponent *) contact->GetFixtureB()->GetBody()->GetUserData().pointer)) {
+//        hasContactWithPlayer = false;
+//    }
+//}
 
 void NextLevelComponent::fixedUpdate(const float &deltaTime) {
 
@@ -42,5 +43,13 @@ void NextLevelComponent::update(const Input &inputSystem) {
 }
 
 void NextLevelComponent::initialize(EntityObject &entityParent) {
+
+}
+
+void NextLevelComponent::onCollisionEnter(const EntityObject *entityObject) {
+
+}
+
+void NextLevelComponent::onCollisionExit(const EntityObject *entityObject) {
 
 }

@@ -1,10 +1,5 @@
 #include "CharacterComponent.hpp"
 
-#include "./Rendering/RenderComponent.hpp"
-#include "./Rendering/Animation.hpp"
-#include "../../Engine/Managers/ResourceManager.hpp"
-#include "WeaponComponent.hpp"
-#include "Inventory/InventoryComponent.hpp"
 #include "NextLevelComponent.hpp"
 
 #include <memory>
@@ -161,21 +156,22 @@ void CharacterComponent::render() {
     _inventoryComponent->render();
 }
 
-void CharacterComponent::startContact(b2Contact *contact) {
-    if (auto *characterComponent = (NextLevelComponent*)contact->GetFixtureB()->GetBody()->GetUserData().pointer) {
-        std::cout << "contact with nextlevel" << std::endl;
-    }
+void CharacterComponent::onCollisionEnter(const EntityObject *entityObject) {
+//    if (auto *characterComponent = (NextLevelComponent*)contact->GetFixtureB()->GetBody()->GetUserData().pointer) {
+//        std::cout << "contact with nextlevel" << std::endl;
+//    }
 }
 
-void CharacterComponent::endContact(b2Contact *contact) {
+void CharacterComponent::onCollisionExit(const EntityObject *entityObject) {
 
 }
+
 
 void CharacterComponent::initialize(EntityObject &entityParent) {
     _renderComponent = getComponent<RenderComponent>();
     _inventoryComponent = getComponent<InventoryComponent>();
     _physicsComponent = getComponent<PhysicsComponent>();
-    _physicsComponent->contactHandlers.push_back(this);
+    _physicsComponent->collisionHandlers.push_back(this);
     _transformComponent = getComponent<TransformComponent>();
 
     auto *animation = new Animation(*_renderComponent);
@@ -232,7 +228,7 @@ void CharacterComponent::initialize(EntityObject &entityParent) {
 
     animation->addAnimation("Walk Down Idle", {{0, 0}});
 
-    animation->speed = 100;
+    animation->speed = 1;
 
     _renderComponent->setAnimation(animation);
 
@@ -261,3 +257,4 @@ void CharacterComponent::isIdleAnimation(bool isHor, bool isVer) {
         }
     }
 }
+

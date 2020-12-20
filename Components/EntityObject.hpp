@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Component.hpp"
-
+#include "PhysicsComponent.hpp"
+#include "../Object/CollisionHandler.hpp"
 
 #include <memory>
 #include <utility>
 #include <vector>
 #include <string>
 
-class PhysicsComponent;
 class TransformComponent;
 
 class EntityObject : public Component {

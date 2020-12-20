@@ -9,6 +9,7 @@
 #include "BulletComponent.hpp"
 #include "WeaponComponent.hpp"
 #include "Inventory/InventoryComponent.hpp"
+#include "../Object/CollisionHandler.hpp"
 
 class Game;
 class HealthComponent;
@@ -16,7 +17,7 @@ class WeaponComponent;
 class RenderComponent;
 class Input;
 
-class CharacterComponent : public EntityObject, public ContactHandler {
+class CharacterComponent : public EntityObject, public CollisionHandler {
     enum MovementDirection {
         Left,
         Right,
@@ -78,9 +79,9 @@ public:
 
 
 public:
-    void startContact(b2Contact *contact) override;
+    void onCollisionEnter(const EntityObject *entityObject) override;
 
-    void endContact(b2Contact *contact) override;
+    void onCollisionExit(const EntityObject *entityObject) override;
 
     void render() override;
 

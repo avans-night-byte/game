@@ -4,6 +4,7 @@
 #include "../Components/PhysicsComponent.hpp"
 #include "../Components/TransformComponent.hpp"
 #include "../Components/ComponentFactory.hpp"
+#include "../Object/CollisionHandler.hpp"
 
 void ObjectLoader::loadEntities(const std::multimap<std::string, Components::component *> &loadedEntities,
                                 std::vector<std::unique_ptr<EntityObject>> &entities) {
@@ -25,7 +26,7 @@ void ObjectLoader::loadEntities(const std::multimap<std::string, Components::com
         const auto &componentName = component->componentName();
 
         if (ComponentFactory::IsPhysicsComponent(componentName)) {
-            /** ContactHandler **/
+            /** CollisionHandler **/
             entitiesPhysicsComponent[newEntity] = component;
         } else {
             auto *newComponent = componentFactory->getComponent(newEntity->getEntityId(),
@@ -36,10 +37,9 @@ void ObjectLoader::loadEntities(const std::multimap<std::string, Components::com
     }
 
 
-    /** Contact Handlers & TransformComponent **/
+    /** Collision Handlers & TransformComponent **/
     for (auto &entityPhysicsComponent : entitiesPhysicsComponent) {
         auto *resourceComponent = entityPhysicsComponent.second;
-        std::vector<std::string> foundHandlerName{};
 
         auto *entityObject = entityPhysicsComponent.first;
 
@@ -56,13 +56,14 @@ void ObjectLoader::loadEntities(const std::multimap<std::string, Components::com
 
         entityObject->addComponent(physicsComponent);
 
-        getContactHandlerNames(foundHandlerName, *resourceComponent);
+        std::vector<std::string> foundHandlerName{};
+        getCollisionHandlerNames(foundHandlerName, *resourceComponent);
         if (!foundHandlerName.empty()) {
-            std::vector<ContactHandler *> contactHandlers{};
-            getContactHandlers(contactHandlers, entityObject, foundHandlerName);
+            std::vector<CollisionHandler *> collisionHandlers{};
+            getCollisionHandlers(collisionHandlers, entityObject, foundHandlerName);
 
-            for (ContactHandler *handler : contactHandlers) {
-                physicsComponent->contactHandlers.push_back(handler);
+            for (CollisionHandler *handler : collisionHandlers) {
+                physicsComponent->collisionHandlers.push_back(handler);
             }
         }
     }
@@ -73,9 +74,9 @@ void ObjectLoader::loadEntities(const std::multimap<std::string, Components::com
     }
 }
 
-void ObjectLoader::getContactHandlers(std::vector<ContactHandler *> &contactHandlers,
-                                   EntityObject *entityObject,
-                                   const std::vector<std::string> &handlerNames) {
+void ObjectLoader::getCollisionHandlers(std::vector<CollisionHandler *> &collisionHandlers,
+                                        EntityObject *entityObject,
+                                        const std::vector<std::string> &handlerNames) {
     for (const std::string &handlerName : handlerNames) {
         for (auto &entityComponent : entityObject->getComponents()) {
             Component *foundHandler = nullptr;
@@ -87,24 +88,24 @@ void ObjectLoader::getContactHandlers(std::vector<ContactHandler *> &contactHand
             foundHandler = entityComponent.get();
 
             if (foundHandler == nullptr) {
-                throw std::runtime_error("ContactHandler: " + handlerName + " couldn't be found!");
+                throw std::runtime_error("CollisionHandler: " + handlerName + " couldn't be found!");
             }
-            auto contactHandler = dynamic_cast<ContactHandler *>( foundHandler);
+            auto contactHandler = dynamic_cast<CollisionHandler *>( foundHandler);
             if (contactHandler == nullptr) {
-                throw std::runtime_error(handlerName + " does not derive from ContactHandler");
+                throw std::runtime_error(handlerName + " does not derive from CollisionHandler");
             }
 
-            contactHandlers.push_back(contactHandler);
+            collisionHandlers.push_back(contactHandler);
             break;
         }
     }
 }
 
-void ObjectLoader::getContactHandlerNames(std::vector<std::string> &names,
-                                       const Components::component &component) {
+void ObjectLoader::getCollisionHandlerNames(std::vector<std::string> &names,
+                                            const Components::component &component) {
     auto &physicsComponent = component.physicsComponent().get();
 
-    for (auto &n : physicsComponent.contactHandler()) {
+    for (auto &n : physicsComponent.collisionHandler()) {
         names.push_back((std::string) n.c_str());
     }
 }

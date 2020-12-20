@@ -1,11 +1,11 @@
-#include <Generated/level-resources.hxx>
-#include <memory>
 #include "../Game.hpp"
 
-#include "PhysicsComponent.hpp"
 #include "TransformComponent.hpp"
-#include "../../Engine/Physics/PhysicsEngineAdapter.hpp"
+#include "../Object/CollisionHandler.hpp"
+#include "../Components/EntityObject.hpp"
+#include <b2_contact.h>
 
+#include <memory>
 
 void PhysicsComponent::fixedUpdate(const float &deltaTime) {
 
@@ -59,7 +59,7 @@ Component *PhysicsComponent::build(EntityId entityId,
 
     box2DData->isBullet = physicsComponent.isBullet().present() ? physicsComponent.isBullet().get()
                                                                 : Components::physicsComponent::isBullet_default_value();
-    box2DData->userData = newPhysicsComponent;
+    box2DData->contactHandler = newPhysicsComponent;
 
     /* Shape */
     if (shapeCircle != nullptr) {
@@ -80,14 +80,19 @@ Component *PhysicsComponent::build(EntityId entityId,
 }
 
 void PhysicsComponent::startContact(b2Contact *contact) {
-    for (auto &contactHandler : contactHandlers) {
-        contactHandler->startContact(contact);
+
+    if (auto *other = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureA()->GetBody()->GetUserData().contactHandler)) {
+        for (int i = 0; i < this->collisionHandlers.size(); i++) {
+            collisionHandlers[i]->onCollisionEnter(other->getParent());
+        }
     }
 }
 
 void PhysicsComponent::endContact(b2Contact *contact) {
-    for (auto &contactHandler : contactHandlers) {
-        contactHandler->endContact(contact);
+    if (auto *other = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureA()->GetBody()->GetUserData().contactHandler)) {
+        for (int i = 0; i < this->collisionHandlers.size(); i++) {
+            collisionHandlers[i]->onCollisionExit(other->getParent());
+        }
     }
 }
 
@@ -122,7 +127,7 @@ PhysicsComponent::setPositionPhysicsResource(EntityObject *pObject, Components::
 }
 
 void PhysicsComponent::initialize(EntityObject &entityParent) {
-
+    this->_parent = &entityParent;
 }
 
 void PhysicsComponent::setTransform(Vector2 pos, float angle) {
