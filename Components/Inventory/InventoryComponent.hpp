@@ -53,6 +53,8 @@ public:
 
     void update(const Input &inputSystem) override;
 
+    void addEntityToInventory(EntityObject &e);
+
     void addToInventory(InventoryItem *item);
 
     void removeFromInventory(const std::string &name, int count);
@@ -73,6 +75,4 @@ private:
     void onClick(const Input &input);
 
     bool checkItemIfEmpty(const std::string &name);
-
-
 };

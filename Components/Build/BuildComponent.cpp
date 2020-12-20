@@ -22,8 +22,8 @@ Component *BuildComponent::build(EntityId entityId, const Components::component 
     return nullptr;
 }
 
-void BuildComponent::pickUpObject() {
-
+void BuildComponent::pickUpObject(EntityObject &entity) {
+    _pickUpEntityEventHandler(entity);
 }
 
 void BuildComponent::placeObject(const TransformComponent &transform) {

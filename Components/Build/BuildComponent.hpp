@@ -23,7 +23,7 @@ public:
 
     void placeObject(const TransformComponent &transform);
 
-    void pickUpObject();
+    void pickUpObject(EntityObject &entity);
 
     void render() override;
 

@@ -36,6 +36,8 @@ private:
     std::unique_ptr<BuildComponent> _buildComponent;
     std::unique_ptr<WeaponComponent> _weapon;
 
+    EntityObject *_contactObject;
+
     void resetMovement();
 
 public:
@@ -93,6 +95,7 @@ public:
     void render() override;
 
     void update(const Input &inputSystem) override;
+
 
 
 };

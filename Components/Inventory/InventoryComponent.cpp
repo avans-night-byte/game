@@ -14,8 +14,8 @@ InventoryComponent::InventoryComponent(EntityId id) : Component(id), _renderingA
 
     _emptySlot = Vector2(1,1);
 
-    addToInventory(new InventoryItem{ 100, "crate", InventoryItem::object});
-    addToInventory(new InventoryItem{ 50, "crate", InventoryItem::object});
+    addToInventory(new InventoryItem{100, "crate", InventoryItem::object});
+    addToInventory(new InventoryItem{50, "crate", InventoryItem::object});
     addToInventory(new InventoryItem{1, "boar", InventoryItem::resource});
 }
 
@@ -47,7 +47,6 @@ void InventoryComponent::render() {
                 auto wrapper = TextWrapper::createText(_renderingAPI, std::to_string(item.getItemQuantity()), "../../Resources/Fonts/LiberationMono-Regular.ttf", 20, "ffffff", key);
                 _quantityText[key] = wrapper;
             }
-
             _quantityText[key]->render(item.getPosition().x, item.getPosition().y);
         }
     }
@@ -130,6 +129,28 @@ void InventoryComponent::addToInventory(InventoryItem *item) {
     item->setPosition(position);
 
     _inventory.push_back(item);
+
+}
+
+void InventoryComponent::addEntityToInventory(EntityObject &e) {
+    InventoryItem item { 1, e.entityName, InventoryItem::object };
+
+    if(_inventory.size() >= getInventorySize()) return;
+
+    auto foundItem = findInventoryItem(item.getName());
+    if(foundItem != nullptr){
+        foundItem->addItemQuantity(item.getItemQuantity());
+        return;
+    }
+
+    findEmptySlot();
+
+    item.setIndex(_emptySlot);
+
+    Vector2 position =  {_startX + (_offset * _emptySlot.x), _startY + (_offset * _emptySlot.y)};
+    item.setPosition(position);
+
+    _inventory.push_back(&item);
 
 }
 

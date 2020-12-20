@@ -35,6 +35,7 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
     _buildComponent = std::make_unique<BuildComponent>(id);
 
     _inventoryComponent->getOnInventoryClickEventManager() += std::bind(&BuildComponent::setBuildObject, _buildComponent.get(), std::placeholders::_1);
+    _buildComponent->getPickupEventHandler() += std::bind(&InventoryComponent::addEntityToInventory, _inventoryComponent.get(), std::placeholders::_1);
 
     game->addComponent(id, _transform.get());
     game->addComponent(id, _physicsComponent.get());
@@ -71,7 +72,9 @@ void CharacterComponent::update(const Input &inputSystem) {
         p.loadResource("Options");
     }
 
-
+    if(_contactObject && inputSystem.keyMap.action =="INTERACT"){
+        _buildComponent->pickUpObject(*_contactObject);
+    }
 
     if(!_inventoryComponent->isMenuOpen()){
         if (inputSystem.keyMap.action == "CLICK_LEFT") {
@@ -188,10 +191,16 @@ void CharacterComponent::render() {
 }
 
 void CharacterComponent::startContact(b2Contact *contact) {
+    if (auto *entityObject = static_cast<EntityObject *>((EntityObject *) contact->GetFixtureB()->GetBody()->GetUserData().pointer)) {
+        _contactObject = entityObject;
+    }
+
 }
 
 void CharacterComponent::endContact(b2Contact *contact) {
-
+    if (auto *entityObject = static_cast<EntityObject *>((EntityObject *) contact->GetFixtureB()->GetBody()->GetUserData().pointer)) {
+        _contactObject = nullptr;
+    }
 }
 
 void CharacterComponent::initialize(EntityObject &entityParent) {
