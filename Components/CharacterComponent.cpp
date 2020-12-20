@@ -5,64 +5,17 @@
 #include "../../Engine/Managers/ResourceManager.hpp"
 #include "WeaponComponent.hpp"
 #include "Inventory/InventoryComponent.hpp"
+#include "NextLevelComponent.hpp"
 
 #include <memory>
-
-CharacterComponent::CharacterComponent(EntityId id) : Component(id), _pSpriteSheet(nullptr) {
-}
 
 std::string CharacterComponent::name() const {
     return "CharacterComponent";
 }
 
-CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
-        : Component(id) {
-    Game *game = Game::getInstance();
-
+CharacterComponent::CharacterComponent(EntityId id) : EntityObject(id) {
     this->resetMovement();
-    _physicsComponent = std::make_unique<PhysicsComponent>(id,
-                                                           BodyType::Dynamic,
-                                                           Vector2(position.x, position.y),
-                                                           Vector2(20.0f, 20.0f));
-    _physicsComponent->setFixedRotation(true);
-    _physicsComponent->setVelocity(Vector2());
-
-    _pSpriteSheet = game->getRenderingApi().loadSpriteSheet("../../Resources/Sprites/character.png",
-                                                            "spritesheet_char", 96, 104);
-
-
-    _transform = std::make_unique<TransformComponent>(id);
     _healthComponent = std::make_unique<HealthComponent>();
-    _weapon = std::make_unique<WeaponComponent>(id);
-    _inventoryComponent = std::make_unique<InventoryComponent>(id);
-
-    /* Rendering for the character */
-//    _renderComponent = std::make_unique<RenderComponent>(id, RenderComponent::RenderType::SPRITE_SHEET,
-//                                                         "../../Resources/Sprites/character.png",
-//                                                         "spritesheet_char", 96, 104);
-//    auto *animation = new Animation(*_renderComponent);
-//    animation->addAnimation("Walk Right", {{0, 7},
-//                                           {1, 7},
-//                                           {2, 7},
-//                                           {3, 7},
-//                                           {4, 7},
-//                                           {5, 7},
-//                                           {6, 7},
-//                                           {7, 7},
-//                                           {8, 7},
-//                                           {9, 7}});
-//    _renderComponent->setAnimation(animation);
-//    animation->activateAnimation("Walk Right");
-
-
-    game->addComponent(id, _transform.get());
-    game->addComponent(id, _physicsComponent.get());
-
-    const RTransform &rPosition = _physicsComponent->getRTransform();
-    _transform->refLocation(rPosition.X, rPosition.Y);
-    _transform->setRotation(rPosition.rotation);
-
-    _pSpriteSheet->selectSprite(0, 0);
 }
 
 void CharacterComponent::update(const Input &inputSystem) {
@@ -91,7 +44,7 @@ void CharacterComponent::update(const Input &inputSystem) {
     }
 
     if (inputSystem.keyMap.action == "CLICK_LEFT" && !_inventoryComponent->isMenuOpen()) {
-        _weapon->shoot(*_transform);
+        _weapon->shoot(*_transformComponent);
     }
 
 
@@ -101,11 +54,11 @@ void CharacterComponent::update(const Input &inputSystem) {
     inputApi.getMousePosition(mx, my);
 
     auto mouseVector = Vector2(mx, my);
-    auto worldPos = _transform->getPosition();
+    auto worldPos = _transformComponent->getPosition();
     auto mouseAngle = atan2(mouseVector.y - worldPos.y, mouseVector.x - worldPos.x);
 
     const RTransform &rPosition = _physicsComponent->getRTransform();
-    _transform->setRotation(rPosition.rotation);
+    _transformComponent->setRotation(rPosition.rotation);
 
     _physicsComponent->setAngle(mouseAngle);
     _inventoryComponent->update(inputSystem);
@@ -119,6 +72,8 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
     bool movingHor = false;
     bool movingVer = false;
 
+    Animation &animation = *_renderComponent->getAnimation();
+
     for (it = _currentMovementDirection.begin(); it != _currentMovementDirection.end(); it++) {
         switch (it->first) {
             case Left:
@@ -131,6 +86,8 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
                 if (movingHor)
                     break;
 
+                animation.activateAnimation("Walk Left");
+                _latestMovementDirection = MovementDirection::Left;
                 velocity.x = -2000;
                 movingHor = true;
                 break;
@@ -143,6 +100,8 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
                 if (movingHor)
                     break;
 
+                animation.activateAnimation("Walk Right");
+                _latestMovementDirection = MovementDirection::Right;
                 velocity.x = 2000;
                 movingHor = true;
                 break;
@@ -155,6 +114,8 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
                 if (movingVer)
                     break;
 
+                animation.activateAnimation("Walk Up");
+                _latestMovementDirection = MovementDirection::Up;
                 velocity.y = -2000;
                 movingVer = true;
                 break;
@@ -167,12 +128,16 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
                 if (movingVer)
                     break;
 
+                animation.activateAnimation("Walk Down");
+                _latestMovementDirection = MovementDirection::Down;
                 velocity.y = 2000;
                 movingVer = true;
                 break;
             case None:
                 break;
         }
+
+        this->isIdleAnimation(movingHor, movingVer);
 
         setVelocity(velocity * deltaTime);
 
@@ -192,15 +157,14 @@ Component *CharacterComponent::build(EntityId entityId, const Components::compon
 
 
 void CharacterComponent::render() {
-    Vector2 v2 = _transform->getPosition();
-    _pSpriteSheet->drawSelectedSprite(v2.x - 42.5f, v2.y - 75.0f, 1,
-                                      _transform->rotation);
-
+    _renderComponent->render();
     _inventoryComponent->render();
 }
 
 void CharacterComponent::startContact(b2Contact *contact) {
-
+    if (auto *characterComponent = (NextLevelComponent*)contact->GetFixtureB()->GetBody()->GetUserData().pointer) {
+        std::cout << "contact with nextlevel" << std::endl;
+    }
 }
 
 void CharacterComponent::endContact(b2Contact *contact) {
@@ -208,5 +172,92 @@ void CharacterComponent::endContact(b2Contact *contact) {
 }
 
 void CharacterComponent::initialize(EntityObject &entityParent) {
+    _renderComponent = getComponent<RenderComponent>();
+    _inventoryComponent = getComponent<InventoryComponent>();
+    _physicsComponent = getComponent<PhysicsComponent>();
+    _physicsComponent->contactHandlers.push_back(this);
+    _transformComponent = getComponent<TransformComponent>();
 
+    auto *animation = new Animation(*_renderComponent);
+    animation->addAnimation("Walk Right", {{0, 7},
+                                           {1, 7},
+                                           {2, 7},
+                                           {3, 7},
+                                           {4, 7},
+                                           {5, 7},
+                                           {6, 7},
+                                           {7, 7},
+                                           {8, 7},
+                                           {9, 7}});
+
+    animation->addAnimation("Walk Right Idle", {{0, 3}});
+
+    animation->addAnimation("Walk Up", {{0, 6},
+                                        {1, 6},
+                                        {2, 6},
+                                        {3, 6},
+                                        {4, 6},
+                                        {5, 6},
+                                        {6, 6},
+                                        {7, 6},
+                                        {8, 6},
+                                        {9, 6}});
+
+    animation->addAnimation("Walk Up Idle", {{0, 2}});
+
+
+    animation->addAnimation("Walk Left", {{0, 5},
+                                          {1, 5},
+                                          {2, 5},
+                                          {3, 5},
+                                          {4, 5},
+                                          {5, 5},
+                                          {6, 5},
+                                          {7, 5},
+                                          {8, 5},
+                                          {9, 5}});
+
+    animation->addAnimation("Walk Left Idle", {{0, 1}});
+
+    animation->addAnimation("Walk Down", {{0, 4},
+                                          {1, 4},
+                                          {2, 4},
+                                          {3, 4},
+                                          {4, 4},
+                                          {5, 4},
+                                          {6, 4},
+                                          {7, 4},
+                                          {8, 4},
+                                          {9, 4}});
+
+    animation->addAnimation("Walk Down Idle", {{0, 0}});
+
+    animation->speed = 100;
+
+    _renderComponent->setAnimation(animation);
+
+    const RTransform &rPosition = _physicsComponent->getRTransform();
+    _transformComponent->refLocation(rPosition.X, rPosition.Y);
+    _transformComponent->setRotation(rPosition.rotation);
+}
+
+void CharacterComponent::isIdleAnimation(bool isHor, bool isVer) {
+    Animation &animation = *_renderComponent->getAnimation();
+    if (!isHor && !isVer) {
+        switch (_latestMovementDirection) {
+            case Left:
+                animation.activateAnimation("Walk Left Idle");
+                break;
+            case Right:
+                animation.activateAnimation("Walk Right Idle");
+                break;
+            case Up:
+                animation.activateAnimation("Walk Up Idle");
+                break;
+            case Down:
+            case None:
+                animation.activateAnimation("Walk Down Idle");
+                break;
+        }
+    }
 }

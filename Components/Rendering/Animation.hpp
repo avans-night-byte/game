@@ -9,18 +9,22 @@ class RenderComponent;
 
 class Animation {
 private:
-    // pair int = column, int row
+    // pair int = row, int column
     std::map<std::string, std::vector<std::pair<int, int>>> _animation;
-    RenderComponent& _renderComponent;
+    RenderComponent &_renderComponent;
+    std::string _currentAnimationName;
 
 public:
     std::vector<std::pair<int, int>> currentAnimation;
+    int speed = 4;
 
 public:
-    explicit Animation( RenderComponent& renderComponent);
+    explicit Animation(RenderComponent &renderComponent);
 
 public:
-    void addAnimation(const std::string& name, const std::vector<std::pair<int, int>>& animation);
+    void addAnimation(const std::string &name,
+                      const std::vector<std::pair<int, int>> &animation);
 
-    void activateAnimation(const std::string& name);
+    void activateAnimation(const std::string &name);
+
 };

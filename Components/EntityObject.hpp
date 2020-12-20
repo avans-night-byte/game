@@ -12,10 +12,10 @@ class PhysicsComponent;
 class TransformComponent;
 
 class EntityObject : public Component {
-private:
-    std::vector<std::unique_ptr<Component>> components;
-    TransformComponent* transformComponent = nullptr;
-    PhysicsComponent* physicsComponent = nullptr;
+protected:
+    std::vector<std::unique_ptr<Component>> _components;
+    TransformComponent* _transformComponent = nullptr;
+    PhysicsComponent* _physicsComponent = nullptr;
 
 public:
     std::string entityName;
@@ -31,14 +31,14 @@ public:
     PhysicsComponent *getPhysicsComponent();
 
     const std::vector<std::unique_ptr<Component>> &getComponents() {
-        return components;
+        return _components;
     }
 
     template<class T>
     T *getComponent() const {
         static_assert(std::is_base_of<Component, T>::value, "T should inherit from class Component");
 
-        for (auto &comp: components) {
+        for (auto &comp: _components) {
             if (T *c = dynamic_cast<T *>(comp.get()))
                 return c;
         }

@@ -84,16 +84,18 @@ private:
         Box2DBoxData box2DBoxData;
         box2DBoxData.bodyType = bodyType;
         box2DBoxData.position = position;
+        box2DBoxData.userData = this;
         box2DBoxData.size = size;
         return _physicsAPI.createBody(box2DBoxData);
     }
 
     inline BodyId initializeCircleBody(BodyType bodyType, Vector2 position, float radius) {
-        Box2DCircleData box2DBoxData;
-        box2DBoxData.bodyType = bodyType;
-        box2DBoxData.position = position;
-        box2DBoxData.radius = radius;
-        return _physicsAPI.createBody(box2DBoxData);
+        Box2DCircleData box2DCircleData;
+        box2DCircleData.bodyType = bodyType;
+        box2DCircleData.position = position;
+        box2DCircleData.radius = radius;
+        box2DCircleData.userData = this;
+        return _physicsAPI.createBody(box2DCircleData);
     }
 
 public:

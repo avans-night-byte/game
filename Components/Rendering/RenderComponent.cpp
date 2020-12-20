@@ -10,7 +10,7 @@
 
 RenderComponent::RenderComponent(EntityId id) : Component(id),
                                                 _engineRenderingApi(Game::getInstance()->getRenderingApi()),
-                                                _textureId(),
+                                                _spriteId(),
                                                 _texturePath(),
                                                 transform(nullptr) {
 
@@ -25,25 +25,27 @@ std::string RenderComponent::name() const {
  * @param id
  * @param transform
  * @param texturePath
- * @param textureId
+ * @param spriteId
  * @param engineRenderingApi
  */
 RenderComponent::RenderComponent(EntityId id, RenderType renderType, const std::string &texturePath,
-                                 const std::string &textureId, int width, int height)
+                                 const std::string &spriteId, int width, int height, int offsetX, int offsetY)
         : Component(id),
           _engineRenderingApi(Game::getInstance()->getRenderingApi()),
-          _textureId(textureId),
+          _spriteId(spriteId),
           _texturePath(texturePath),
           _renderType(renderType),
           _width(width),
-          _height(height) {
+          _height(height),
+          _offsetX(offsetX),
+          _offsetY(offsetY) {
     switch (renderType) {
         case TEXTURE: {
-            _engineRenderingApi.loadTexture(texturePath, textureId);
+            _engineRenderingApi.loadTexture(texturePath, spriteId);
             break;
         }
         case SPRITE_SHEET: {
-            _engineRenderingApi.loadSpriteSheet(texturePath, textureId, width, height);
+            _engineRenderingApi.loadSpriteSheet(texturePath, spriteId, width, height);
             break;
         }
     }
@@ -65,12 +67,17 @@ void RenderComponent::setColor(int red, int blue, int green) {
  */
 void RenderComponent::render() {
     //Render the texture
+    Vector2 v2 = transform->getPosition();
+    v2.x -= (float)_width * 0.5f + (float)_offsetX;
+    v2.y -= (float)_height * 0.5f + (float)_offsetY;
+
     if (!_isAnimating) {
-        Vector2 v2 = transform->getPosition();
-        _engineRenderingApi.drawTexture(_textureId, v2.x - (_width * 0.5f),
-                                        v2.y - (_height * 0.5f), _width, _height, 2, transform->rotation);
+        _engineRenderingApi.drawTexture(_spriteId, v2.x, v2.y, _width, _height, 2, transform->rotation);
     } else {
-         _animation->currentAnimation;
+        const auto &currentAnimation = _animation->currentAnimation;
+        const auto &animationSpeed = _animation->speed;
+
+        _engineRenderingApi.drawAnimation(_spriteId, v2, currentAnimation, animationSpeed);
     }
 }
 
@@ -87,13 +94,13 @@ Component *RenderComponent::build(EntityId entityId, const Components::component
 
     auto *newComponent = new RenderComponent(entityId);
     newComponent->_texturePath = resourceComponent->spritePath();
-    newComponent->_textureId = resourceComponent->spriteId();
+    newComponent->_spriteId = resourceComponent->spriteId();
     newComponent->_width = resourceComponent->width();
     newComponent->_height = resourceComponent->height();
 
 
     TextureManager::GetInstance()->load(newComponent->_texturePath,
-                                        newComponent->_textureId);
+                                        newComponent->_spriteId);
     return newComponent;
 }
 

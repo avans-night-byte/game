@@ -14,11 +14,15 @@ void Animation::addAnimation(const std::string &name, const std::vector<std::pai
 }
 
 void Animation::activateAnimation(const std::string &name) {
+    if(_currentAnimationName == name)
+        return;
+
     auto it = _animation.find(name);
     if (it == _animation.end())
         throw std::runtime_error("Animation '" + name + "' DOES NOT EXISTS");
 
     currentAnimation = it->second;
 
+    _currentAnimationName = name;
     _renderComponent.isAnimating();
 }
