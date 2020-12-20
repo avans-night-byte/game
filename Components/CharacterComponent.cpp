@@ -168,9 +168,11 @@ void CharacterComponent::onCollisionExit(const EntityObject *entityObject) {
 void CharacterComponent::initialize(EntityObject &entityParent) {
     _renderComponent = getComponent<RenderComponent>();
     _inventoryComponent = getComponent<InventoryComponent>();
+    _weapon = getComponent<WeaponComponent>();
     _physicsComponent = getComponent<PhysicsComponent>();
     _physicsComponent->collisionHandlers.push_back(this);
     _transformComponent = getComponent<TransformComponent>();
+
 
     auto *animation = new Animation(*_renderComponent);
     animation->addAnimation("Walk Right", {{0, 7},

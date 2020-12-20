@@ -26,10 +26,10 @@ private:
     PhysicsComponent *physics = nullptr;
 
     int r{}, g{}, b{};
-    int _width;
-    int _height;
-    int _offsetX;
-    int _offsetY;
+    int _width = 0;
+    int _height = 0;
+    int _offsetX = 0;
+    int _offsetY = 0;
 
     RenderType _renderType;
     std::string _texturePath;
