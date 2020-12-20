@@ -157,9 +157,7 @@ void CharacterComponent::render() {
 }
 
 void CharacterComponent::onCollisionEnter(const EntityObject *entityObject) {
-//    if (auto *characterComponent = (NextLevelComponent*)contact->GetFixtureB()->GetBody()->GetUserData().pointer) {
-//        std::cout << "contact with nextlevel" << std::endl;
-//    }
+
 }
 
 void CharacterComponent::onCollisionExit(const EntityObject *entityObject) {

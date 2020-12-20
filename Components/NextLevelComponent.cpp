@@ -1,7 +1,7 @@
-#include <b2_contact.h>
+
 #include "NextLevelComponent.hpp"
 #include "../../Engine/Managers/ResourceManager.hpp"
-#include "Generated/components.hxx"
+
 #include "../Components/EntityObject.hpp"
 #include "../Game.hpp"
 
