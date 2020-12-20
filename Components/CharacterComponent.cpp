@@ -4,6 +4,7 @@
 #include "../../Engine/Managers/ResourceManager.hpp"
 #include "WeaponComponent.hpp"
 #include "Inventory/InventoryComponent.hpp"
+#include "Build/BuildComponent.hpp"
 
 CharacterComponent::CharacterComponent(EntityId id) : Component(id), _pSpriteSheet(nullptr) {
 }
@@ -31,6 +32,9 @@ CharacterComponent::CharacterComponent(EntityId id, const Vector2 &position)
     _healthComponent = std::make_unique<HealthComponent>();
     _weapon = std::make_unique<WeaponComponent>(id);
     _inventoryComponent = std::make_unique<InventoryComponent>(id);
+    _buildComponent = std::make_unique<BuildComponent>(id);
+
+    _inventoryComponent->getOnInventoryClickEventManager() += std::bind(&BuildComponent::setBuildObject, _buildComponent.get(), std::placeholders::_1);
 
     game->addComponent(id, _transform.get());
     game->addComponent(id, _physicsComponent.get());
@@ -67,10 +71,17 @@ void CharacterComponent::update(const Input &inputSystem) {
         p.loadResource("Options");
     }
 
-    if (inputSystem.keyMap.action == "CLICK_LEFT" && !_inventoryComponent->isMenuOpen()) {
-        _weapon->shoot(*_transform);
-    }
 
+
+    if(!_inventoryComponent->isMenuOpen()){
+        if (inputSystem.keyMap.action == "CLICK_LEFT") {
+            _weapon->shoot(*_transform);
+        }
+
+        if (inputSystem.keyMap.action == "CLICK_RIGHT") {
+            _buildComponent->placeObject(*_transform);
+        }
+    }
 
     auto &inputApi = Game::getInstance()->getInputAPI();
 
@@ -177,7 +188,6 @@ void CharacterComponent::render() {
 }
 
 void CharacterComponent::startContact(b2Contact *contact) {
-
 }
 
 void CharacterComponent::endContact(b2Contact *contact) {

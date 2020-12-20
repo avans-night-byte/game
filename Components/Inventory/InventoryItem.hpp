@@ -33,6 +33,8 @@ public:
     void setIndex(Vector2 &value);
 
     void setPosition(Vector2 &value);
+
+    int removeItemQuantity(int quantity);
 };
 
 

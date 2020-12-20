@@ -31,7 +31,7 @@ public:
 
 
 private:
-    std::vector<std::unique_ptr<EntityObject>> entities{};
+    std::vector<std::unique_ptr<EntityObject>> _entities{};
 
 public:
     virtual void initialize(const std::string& name, const LevelData &data);
@@ -43,4 +43,6 @@ public:
     virtual void fixedUpdate(float deltaTime);
 
     virtual void clearEntities();
+
+    void addObject(const std::string &fromList, const std::string &entityName);
 };

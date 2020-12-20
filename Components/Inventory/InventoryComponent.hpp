@@ -61,7 +61,7 @@ public:
 
     [[nodiscard]] bool isMenuOpen() const;
 
-    Event<InventoryItem&> &getEventManager();
+    Event<InventoryItem&> &getOnInventoryClickEventManager();
 
 private:
     InventoryItem *findInventoryItem(const std::string &name);
@@ -72,6 +72,7 @@ private:
 
     void onClick(const Input &input);
 
-    void checkItemIfEmpty(const std::string &name);
+    bool checkItemIfEmpty(const std::string &name);
+
 
 };

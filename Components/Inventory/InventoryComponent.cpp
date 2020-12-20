@@ -36,6 +36,9 @@ void InventoryComponent::render() {
 
         for (auto & it : _inventory) {
             InventoryItem item = *it;
+
+            if(checkItemIfEmpty(item.getName())) continue;
+
             _renderingAPI.drawTexture(item.getName(), item.getPosition().x, item.getPosition().y, 125, 125, 1, 0);
             std::string key = item.getName() + "_quantity_" + std::to_string(item.getItemQuantity());
 
@@ -57,7 +60,6 @@ void InventoryComponent::update(const Input &inputSystem) {
     }
 
     if(inputSystem.keyMap.code == "MOUSE_BUTTON_LEFT"){
-
         _isOpen = false;
         onClick(inputSystem);
     }
@@ -99,13 +101,16 @@ void InventoryComponent::removeFromInventory(const std::string &name, int count)
     findEmptySlot();
 }
 
-void InventoryComponent::checkItemIfEmpty(const std::string &name) {
+bool InventoryComponent::checkItemIfEmpty(const std::string &name) {
     auto foundItem = findInventoryItem(name);
-    if(foundItem == nullptr) return;
+    if(foundItem == nullptr) return true;
 
-    if(foundItem->getItemQuantity() < 1) _inventory.erase(_inventory.begin() + (foundItem->getIndex().x -1 + foundItem->getIndex().y -1));
-
-    findEmptySlot();
+    if(foundItem->getItemQuantity() < 1) {
+        _inventory.erase(_inventory.begin() + (foundItem->getIndex().x -1 + foundItem->getIndex().y -1));
+        findEmptySlot();
+        return true;
+    }
+    return false;
 }
 
 void InventoryComponent::addToInventory(InventoryItem *item) {
@@ -167,7 +172,7 @@ bool InventoryComponent::isMenuOpen() const {
     return _isOpen;
 }
 
-Event<InventoryItem&> &InventoryComponent::getEventManager() {
+Event<InventoryItem&> &InventoryComponent::getOnInventoryClickEventManager() {
     return _onInventoryClickEvent;
 }
 

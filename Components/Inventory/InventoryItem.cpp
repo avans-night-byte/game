@@ -34,5 +34,10 @@ int InventoryItem::addItemQuantity(int quantity) {
     return _quantity;
 }
 
+int InventoryItem::removeItemQuantity(int quantity) {
+    _quantity -= quantity;
+    return _quantity;
+}
+
 
 

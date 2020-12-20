@@ -32,6 +32,8 @@ void Game::initialize() {
     _poolLevelBase = std::make_unique<PoolLevel>();
 
     _poolLevelBase->addPool("MainPool", "bullet1", 100);
+    _poolLevelBase->addPool("InventoryPool", "crate", 10);
+    _poolLevelBase->addPool("MainPool", "boar", 10);
 
 
     auto characterId = createEntity();
@@ -82,14 +84,12 @@ void Game::gameLoop() {
         if (isDebuggingPhysics)
             _physicsAPI->debugDraw(*_renderingAPI);
 
-        _renderingAPI->render();
-
         if (i.keyMap.code == "]") {
             isDebuggingPhysics = true;
         } else if (i.keyMap.code == "\\") {
             isDebuggingPhysics = false;
         }
-
+        _renderingAPI->render();
         _bodyHandlerAPI->update();
     }
 }

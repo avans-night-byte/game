@@ -3,15 +3,27 @@
 #include "../Inventory/InventoryItem.hpp"
 #include "../EntityObject.hpp"
 #include "../../API/Helpers/Event.h"
+#include "../../Object/Pool.hpp"
+#include "../../Scenes/PoolLevel.hpp"
+#include "../Component.hpp"
+#include "../TransformComponent.hpp"
+#include "../../Game.hpp"
 
 class BuildComponent : public Component {
 
 private:
     Event<EntityObject&> _pickUpEntityEventHandler;
+
+    PoolLevel &_poolLevel;
+
+    InventoryItem *_selectedObject;
+
 public:
-    BuildComponent();
-    void placeObject(EntityObject& entity);
-    void createEntityObject(InventoryItem &item);
+    explicit BuildComponent(EntityId id);
+
+    void placeObject(const TransformComponent &transform);
+
+    void pickUpObject();
 
     void render() override;
 
@@ -25,7 +37,10 @@ public:
 
     void initialize(EntityObject &entityParent) override;
 
-    Event<EntityObject&> getPickupEventHanlder();
+    Event<EntityObject&> getPickupEventHandler();
+
+    void setBuildObject(InventoryItem &item);
+
 
 };
 

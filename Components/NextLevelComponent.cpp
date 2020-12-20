@@ -1,7 +1,6 @@
 #include <b2_contact.h>
 #include "NextLevelComponent.hpp"
 #include "../../Engine/Managers/ResourceManager.hpp"
-#include "Generated/components.hxx"
 #include "../Game.hpp"
 
 void NextLevelComponent::startContact(b2Contact *contact) {

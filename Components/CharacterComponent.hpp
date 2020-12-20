@@ -9,6 +9,7 @@
 #include "BulletComponent.hpp"
 #include "WeaponComponent.hpp"
 #include "Inventory/InventoryComponent.hpp"
+#include "Build/BuildComponent.hpp"
 
 class Game;
 class HealthComponent;
@@ -32,7 +33,7 @@ private:
     std::unique_ptr<HealthComponent> _healthComponent;
     std::unique_ptr<PhysicsComponent> _physicsComponent;
     std::unique_ptr<InventoryComponent> _inventoryComponent;
-
+    std::unique_ptr<BuildComponent> _buildComponent;
     std::unique_ptr<WeaponComponent> _weapon;
 
     void resetMovement();
@@ -92,4 +93,6 @@ public:
     void render() override;
 
     void update(const Input &inputSystem) override;
+
+
 };
