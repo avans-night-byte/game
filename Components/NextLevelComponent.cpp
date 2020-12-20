@@ -1,4 +1,3 @@
-#include <b2_contact.h>
 #include "NextLevelComponent.hpp"
 #include "../../Engine/Managers/ResourceManager.hpp"
 

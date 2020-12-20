@@ -1,5 +1,6 @@
 #include "ComponentFactory.hpp"
 #include "EntityObject.hpp"
+#include "../Object/CollisionHandler.hpp"
 #include "Rendering/RenderComponent.hpp"
 #include "TransformComponent.hpp"
 #include "PhysicsComponent.hpp"
@@ -81,4 +82,13 @@ Component *EntityObject::getComponent(std::string componentName) {
     }
 
     return nullptr;
+}
+
+void EntityObject::setPool(Pool &pool) {
+    _pool = &pool;
+}
+
+void EntityObject::destroy(){
+    if(_pool == nullptr) return;
+    _pool->disableEntity(*this);
 }

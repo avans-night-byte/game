@@ -41,6 +41,8 @@ public:
 
     explicit InventoryComponent(EntityId id);
 
+    ~InventoryComponent() override;
+
     void render() override;
 
     void fixedUpdate(const float &deltaTime) override;

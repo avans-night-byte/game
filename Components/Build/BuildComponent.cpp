@@ -53,7 +53,7 @@ void BuildComponent::render() {
 
 }
 
-Event<EntityObject &> BuildComponent::getPickupEventHandler() {
+Event<EntityObject &> &BuildComponent::getPickupEventHandler() {
     return _pickUpEntityEventHandler;
 }
 

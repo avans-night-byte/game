@@ -41,6 +41,8 @@ void CharacterComponent::update(const Input &inputSystem) {
 
     if(_contactObject && inputSystem.keyMap.action =="INTERACT"){
         _buildComponent->pickUpObject(*_contactObject);
+        _contactObject->destroy();
+        _contactObject = nullptr;
     }
 
     if(!_inventoryComponent->isMenuOpen()) {

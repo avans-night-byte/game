@@ -16,7 +16,7 @@ InventoryComponent::InventoryComponent(EntityId id) : Component(id), _renderingA
 
     addToInventory(new InventoryItem{100, "crate", InventoryItem::object});
     addToInventory(new InventoryItem{50, "crate", InventoryItem::object});
-    addToInventory(new InventoryItem{1, "boar", InventoryItem::resource});
+    addToInventory(new InventoryItem{2, "boar", InventoryItem::resource});
 }
 
 void InventoryComponent::initialize(EntityObject &entityParent) {
@@ -133,24 +133,24 @@ void InventoryComponent::addToInventory(InventoryItem *item) {
 }
 
 void InventoryComponent::addEntityToInventory(EntityObject &e) {
-    InventoryItem item { 1, e.entityName, InventoryItem::object };
+    InventoryItem *item = new InventoryItem { 1, e.entityName, InventoryItem::object };
 
-    if(_inventory.size() >= getInventorySize()) return;
+    if(_inventory.size() >= getInventorySize() || e.entityName == "") return;
 
-    auto foundItem = findInventoryItem(item.getName());
+    auto foundItem = findInventoryItem(item->getName());
     if(foundItem != nullptr){
-        foundItem->addItemQuantity(item.getItemQuantity());
+        foundItem->addItemQuantity(item->getItemQuantity());
         return;
     }
 
     findEmptySlot();
 
-    item.setIndex(_emptySlot);
+    item->setIndex(_emptySlot);
 
     Vector2 position =  {_startX + (_offset * _emptySlot.x), _startY + (_offset * _emptySlot.y)};
-    item.setPosition(position);
+    item->setPosition(position);
 
-    _inventory.push_back(&item);
+    _inventory.push_back(item);
 
 }
 
@@ -195,6 +195,10 @@ bool InventoryComponent::isMenuOpen() const {
 
 Event<InventoryItem&> &InventoryComponent::getOnInventoryClickEventManager() {
     return _onInventoryClickEvent;
+}
+
+InventoryComponent::~InventoryComponent() {
+    _inventory.clear();
 }
 
 

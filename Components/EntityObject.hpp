@@ -11,11 +11,15 @@
 
 class TransformComponent;
 
+class Pool;
+
 class EntityObject : public Component {
 protected:
     std::vector<std::unique_ptr<Component>> _components;
     TransformComponent* _transformComponent = nullptr;
     PhysicsComponent* _physicsComponent = nullptr;
+
+    Pool *_pool = nullptr;
 
 public:
     std::string entityName;
@@ -66,4 +70,7 @@ public:
 
     void initialize(EntityObject &entityParent) override;
 
+    void setPool(Pool &pool);
+
+    void destroy();
 };
