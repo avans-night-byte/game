@@ -1,5 +1,6 @@
 #include "ComponentFactory.hpp"
 #include "EntityObject.hpp"
+#include "../Object/CollisionHandler.hpp"
 #include "Rendering/RenderComponent.hpp"
 #include "TransformComponent.hpp"
 #include "PhysicsComponent.hpp"
@@ -19,7 +20,7 @@ void EntityObject::addComponent(Component *component) {
 }
 
 Component *EntityObject::build(EntityId entityId, const Components::component *component) {
-    return new EntityObject(entityId);
+    return new EntityObject(entityId, EntityType::object);
 }
 
 void EntityObject::render() {
@@ -81,4 +82,17 @@ Component *EntityObject::getComponent(std::string componentName) {
     }
 
     return nullptr;
+}
+
+void EntityObject::setPool(Pool &pool) {
+    _pool = &pool;
+}
+
+void EntityObject::destroy(){
+    if(_pool == nullptr) return;
+    _pool->disableEntity(*this);
+}
+
+EntityObject::EntityType EntityObject::getType() {
+    return _type;
 }
