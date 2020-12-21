@@ -38,6 +38,7 @@ void LevelBase::initialize(const std::string &name, const LevelData &data) {
 
 
     ObjectLoader::loadEntities(outEntities, this->entities);
+    std::cout << "KLAAR" << std::endl;
 }
 
 void LevelBase::clearEntities() {
