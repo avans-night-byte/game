@@ -26,6 +26,10 @@ void Game::initialize() {
     _componentFactory = std::make_unique<ComponentFactory>();
     _bodyHandlerAPI = std::make_unique<BodyHandlerAPI>(*_physicsAPI);
 
+    resourceManager.loadResource("Loading");
+    _menuParser->render();
+    _renderingAPI->render();
+
     resourceManager.loadResource("MainMenu");
     resourceManager.loadResource("MainObjects");
 
@@ -69,7 +73,7 @@ void Game::gameLoop() {
     FrameCounter fpsCounter{*_renderingAPI};
 
     GameTime &time = GameTime::getInstance();
-    time.getFixedUpdateEvent() += std::bind(&Game::FixedUpdate, this, std::placeholders::_1);
+    time.getFixedUpdateEvent() += std::bind(&Game::fixedUpdate, this, std::placeholders::_1);
 
     // Create texture once
     _renderingAPI->createText("../../Resources/Fonts/LiberationMono-Regular.ttf", "0", 25,
@@ -109,7 +113,7 @@ void Game::gameLoop() {
     }
 }
 
-void Game::FixedUpdate(float deltaTime) {
+void Game::fixedUpdate(float deltaTime) {
     if (!ResourceManager::getInstance()->inMenu) {
         _physicsAPI->update(deltaTime);
         if (_levelBase)
@@ -249,7 +253,12 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
         unloadLevel();
     }
 
+    ResourceManager::getInstance()->loadResource("Loading");
+    ResourceManager::getInstance()->inMenu = true;
+    renderMenu();
+
     (*_bodyHandlerAPI).eventOnBodiesHandled([this, levelName, data] {
+        ResourceManager::getInstance()->inMenu = false;
         _levelBase = std::make_unique<LevelBase>();
         _levelBase->_characterComponent = this->_characterComponent.get(); // TODO: Character data should be stored in a static class
         _levelBase->initialize(levelName, data);
@@ -276,4 +285,9 @@ void Game::unloadLevel() {
 
 InputAPI &Game::getInputAPI() {
     return *_inputAPI;
+}
+
+void Game::renderMenu() {
+    _menuParser->render();
+    _renderingAPI->render();
 }

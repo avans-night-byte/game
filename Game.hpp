@@ -123,5 +123,7 @@ public:
 
     void unloadLevel();
 
-    void FixedUpdate(float deltaTime);
+    void fixedUpdate(float deltaTime);
+
+    void renderMenu();
 };
