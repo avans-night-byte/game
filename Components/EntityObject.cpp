@@ -20,7 +20,7 @@ void EntityObject::addComponent(Component *component) {
 }
 
 Component *EntityObject::build(EntityId entityId, const Components::component *component) {
-    return new EntityObject(entityId);
+    return new EntityObject(entityId, EntityType::object);
 }
 
 void EntityObject::render() {

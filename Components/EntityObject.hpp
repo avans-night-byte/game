@@ -19,21 +19,47 @@ public:
     //Resource = Water, Cookie, etc,
     //Object = Wall, Turret, Box, etc
     //Level_chagne = go to diffrent level
-    enum EntityType { weapon, resource, object, level_change };
+    enum EntityType {
+        weapon, resource, object, level_change, character
+    };
 protected:
     std::vector<std::unique_ptr<Component>> _components;
-    TransformComponent* _transformComponent = nullptr;
-    PhysicsComponent* _physicsComponent = nullptr;
+    TransformComponent *_transformComponent = nullptr;
+    PhysicsComponent *_physicsComponent = nullptr;
 
     Pool *_pool = nullptr;
     EntityType _type;
 public:
     std::string entityName;
 public:
-    explicit EntityObject(EntityId id, std::string name = "", EntityType type = EntityType::object) : Component(id), entityName(std::move(name)), _type(type) {}
-    explicit EntityObject(EntityId id, EntityType type = EntityType::object) : Component(id), entityName(std::move("")), _type(type) {}
+    explicit EntityObject(EntityId id, const std::string name, const std::string &type) : Component(id),
+                                                                              entityName(std::move(name)) {
+        if (type == "object") {
+            _type = EntityType::object;
+        }
 
-    TransformComponent* getTransform();
+        if (type == "character") {
+            _type = EntityType::character;
+        }
+
+        if (type == "level_change") {
+            _type = EntityType::level_change;
+        }
+
+        if (type == "weapon") {
+            _type = EntityType::weapon;
+        }
+
+        if (type == "resource") {
+            _type = EntityType::resource;
+        }
+    }
+
+    explicit EntityObject(EntityId id, EntityType type = EntityType::object) : Component(id), entityName(std::move("")),
+                                                                               _type(type) {}
+
+    TransformComponent *getTransform();
+
     PhysicsComponent *getPhysicsComponent();
 
     const std::vector<std::unique_ptr<Component>> &getComponents() {
@@ -52,7 +78,7 @@ public:
         return nullptr;
     }
 
-    Component* getComponent(std::string componentName);
+    Component *getComponent(std::string componentName);
 
     EntityType getType();
 

@@ -127,7 +127,7 @@ void InventoryComponent::addToInventory(InventoryItem *item) {
 }
 
 void InventoryComponent::addEntityToInventory(EntityObject &e) {
-    if(e.getType() == EntityObject::EntityType::level_change) return;
+    if(e.getType() == EntityObject::EntityType::level_change || e.getType() == EntityObject::EntityType::character) return;
 
     auto &id = e.getComponent<RenderComponent>()->getSpriteID();
     auto *item = new InventoryItem { 1, id, e.getType() };

@@ -9,7 +9,7 @@ std::string CharacterComponent::name() const {
     return "CharacterComponent";
 }
 
-CharacterComponent::CharacterComponent(EntityId id) : EntityObject(id) {
+CharacterComponent::CharacterComponent(EntityId id) : EntityObject(id, EntityType::character) {
     this->resetMovement();
     _healthComponent = std::make_unique<HealthComponent>();
 }
