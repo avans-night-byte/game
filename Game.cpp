@@ -32,6 +32,8 @@ void Game::initialize() {
     _poolLevelBase = std::make_unique<PoolLevel>();
 
     _poolLevelBase->addPool("MainPool", "bullet1", 100);
+    _poolLevelBase->addPool("MainPool", "crate", 100);
+    _poolLevelBase->addPool("MainPool", "boar", 100);
 
 
     auto characterId = createEntity();
@@ -46,6 +48,8 @@ void Game::initialize() {
     _characterComponent->addComponent(new RenderComponent(characterId, RenderComponent::RenderType::SPRITE_SHEET,
                                                           "../../Resources/Sprites/character.png",
                                                           "spritesheet_char", 96, 104, 0, 20));
+    _characterComponent->addComponent(new BuildComponent(characterId));
+
     _characterComponent->initializeComponents();
     _characterComponent->initialize(*_characterComponent);
 
@@ -95,14 +99,12 @@ void Game::gameLoop() {
         if (isDebuggingPhysics)
             _physicsAPI->debugDraw(*_renderingAPI);
 
-        _renderingAPI->render();
-
         if (i.keyMap.code == "]") {
             isDebuggingPhysics = true;
         } else if (i.keyMap.code == "\\") {
             isDebuggingPhysics = false;
         }
-
+        _renderingAPI->render();
         _bodyHandlerAPI->update();
     }
 }

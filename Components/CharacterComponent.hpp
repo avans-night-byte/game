@@ -9,6 +9,7 @@
 #include "BulletComponent.hpp"
 #include "WeaponComponent.hpp"
 #include "Inventory/InventoryComponent.hpp"
+#include "Build/BuildComponent.hpp"
 #include "../Object/CollisionHandler.hpp"
 
 class Game;
@@ -33,7 +34,11 @@ private:
     std::unique_ptr<HealthComponent> _healthComponent;
     InventoryComponent* _inventoryComponent = nullptr;
     RenderComponent* _renderComponent = nullptr;
+    BuildComponent* _buildComponent = nullptr;
     WeaponComponent* _weapon = nullptr;
+
+
+    EntityObject *_contactObject;
 
     void resetMovement();
 
@@ -79,9 +84,9 @@ public:
 
 
 public:
-    void onCollisionEnter(const EntityObject *entityObject) override;
+    void onCollisionEnter(EntityObject *entityObject) override;
 
-    void onCollisionExit(const EntityObject *entityObject) override;
+    void onCollisionExit(EntityObject *entityObject) override;
 
     void render() override;
 

@@ -1,27 +1,13 @@
 #include "BuildComponent.hpp"
+#include "../PhysicsComponent.hpp"
 
-BuildComponent::BuildComponent() {
-
-}
+BuildComponent::BuildComponent(EntityId id) : Component(id), _poolLevel(*Game::getInstance()->getPoolLevel()) {}
 
 void BuildComponent::initialize(EntityObject &entityParent) {
 
 }
 
-void BuildComponent::placeObject(EntityObject &entity) {
-
-}
-
-void BuildComponent::createEntityObject(InventoryItem &item) {
-
-}
-
-void BuildComponent::render() {
-
-}
-
 void BuildComponent::update(const Input &inputSystem) {
-
 }
 
 void BuildComponent::fixedUpdate(const float &deltaTime) {
@@ -36,7 +22,40 @@ Component *BuildComponent::build(EntityId entityId, const Components::component 
     return nullptr;
 }
 
+void BuildComponent::pickUpObject(EntityObject &entity) {
+    _pickUpEntityEventHandler(entity);
+}
 
-Event<EntityObject &> BuildComponent::getPickupEventHanlder() {
+void BuildComponent::placeObject(const TransformComponent &transform) {
+    //TODO: Pool should not crash if null
+    if(_selectedObject == nullptr || _selectedObject->getItemQuantity() < 1) return;
+
+    EntityObject *placeable = _poolLevel.getPool(_selectedObject->getName()).getEntity();
+
+    PhysicsComponent *physicsComponent = placeable->getPhysicsComponent();
+    Game::getInstance()->addEventBodyHandler([physicsComponent] { physicsComponent->setEnabled(true); });
+
+    Vector2 spawnPos = transform.getPosition() + (transform.right() * 100);
+
+    physicsComponent->setFixedRotation(true);
+    physicsComponent->setTransform(spawnPos, transform.rotation);
+    physicsComponent->setFixedRotation(false);
+
+    _selectedObject->removeItemQuantity(1);
+}
+
+
+void BuildComponent::setBuildObject(InventoryItem &item){
+    _selectedObject = &item;
+}
+
+void BuildComponent::render() {
+
+}
+
+Event<EntityObject &> &BuildComponent::getPickupEventHandler() {
     return _pickUpEntityEventHandler;
 }
+
+
+

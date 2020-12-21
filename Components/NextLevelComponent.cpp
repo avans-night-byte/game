@@ -1,4 +1,3 @@
-
 #include "NextLevelComponent.hpp"
 #include "../../Engine/Managers/ResourceManager.hpp"
 
@@ -46,10 +45,10 @@ void NextLevelComponent::initialize(EntityObject &entityParent) {
 
 }
 
-void NextLevelComponent::onCollisionEnter(const EntityObject *entityObject) {
+void NextLevelComponent::onCollisionEnter(EntityObject *entityObject) {
 
 }
 
-void NextLevelComponent::onCollisionExit(const EntityObject *entityObject) {
+void NextLevelComponent::onCollisionExit(EntityObject *entityObject) {
 
 }

@@ -41,6 +41,8 @@ public:
 
     explicit InventoryComponent(EntityId id);
 
+    ~InventoryComponent() override;
+
     void render() override;
 
     void fixedUpdate(const float &deltaTime) override;
@@ -53,6 +55,8 @@ public:
 
     void update(const Input &inputSystem) override;
 
+    void addEntityToInventory(EntityObject &e);
+
     void addToInventory(InventoryItem *item);
 
     void removeFromInventory(const std::string &name, int count);
@@ -61,7 +65,7 @@ public:
 
     [[nodiscard]] bool isMenuOpen() const;
 
-    Event<InventoryItem&> &getEventManager();
+    Event<InventoryItem&> &getOnInventoryClickEventManager();
 
 private:
     InventoryItem *findInventoryItem(const std::string &name);
@@ -72,6 +76,5 @@ private:
 
     void onClick(const Input &input);
 
-    void checkItemIfEmpty(const std::string &name);
-
+    bool checkItemIfEmpty(const std::string &name);
 };
