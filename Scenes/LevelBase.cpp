@@ -70,6 +70,9 @@ void LevelBase::loadEntities(const std::multimap<std::string, Components::compon
     for(auto &entity : entities) {
         entity->initializeComponents();
     }
+
+
+
 }
 
 void LevelBase::getContactHandlers(std::vector<ContactHandler *> &contactHandlers,
@@ -114,6 +117,12 @@ void LevelBase::render() {
     for (auto &entity : entities) {
         entity->render();
     }
+//    float unit = (16 * 4);
+//    for(const auto &item : _path){
+//        auto vector = Vector2{item.x * unit, item.y * unit};
+//        std::string color = "ffffff";
+//        Game::getInstance()->getRenderingApi()->drawRectangle(vector,16 * 4 *0.9,16 * 4*0.9,color, 255);
+//    }
     characterComponent->render();
 }
 
@@ -138,6 +147,27 @@ void LevelBase::initialize(const std::string &name, const LevelData &data) {
     this->tmxLevel = std::unique_ptr<TMXLevel>(tmx);
     this->loadEntities(outEntities);
     this->levelName = name;
+
+
+    GridLocation start{6, 2}, goal{15   , 9};
+    int **items = new int*[30];
+
+    tmxLevel->GetGrid(items);
+    GridWithWeights grid = GridWithWeights::fromArray(items);
+
+
+    std::unordered_map<GridLocation, GridLocation> came_from;
+    std::unordered_map<GridLocation, double> cost_so_far;
+
+    Astar::search(grid, start, goal, came_from, cost_so_far);
+
+    std::vector<GridLocation> path;
+    Astar::reconstruct_path(path, start, goal, came_from);
+    _path = path;
+
+
+    delete *items;
+    delete[] items;
 }
 
 TransformComponent *LevelBase::setPositionForComponent(EntityObject *pObject, Components::component *component) {
