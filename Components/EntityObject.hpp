@@ -14,22 +14,24 @@ class TransformComponent;
 class Pool;
 
 class EntityObject : public Component {
+public:
+    //Weapons = Pistol, RPG etc
+    //Resource = Water, Cookie, etc,
+    //Object = Wall, Turret, Box, etc
+    //Level_chagne = go to diffrent level
+    enum EntityType { weapon, resource, object, level_change };
 protected:
     std::vector<std::unique_ptr<Component>> _components;
     TransformComponent* _transformComponent = nullptr;
     PhysicsComponent* _physicsComponent = nullptr;
 
     Pool *_pool = nullptr;
-
+    EntityType _type;
 public:
     std::string entityName;
-
-
 public:
-    explicit EntityObject(EntityId id, std::string name = "") : Component(id),
-                                                                entityName(std::move(name)) {
-
-    }
+    explicit EntityObject(EntityId id, std::string name = "", EntityType type = EntityType::object) : Component(id), entityName(std::move(name)), _type(type) {}
+    explicit EntityObject(EntityId id, EntityType type = EntityType::object) : Component(id), entityName(std::move("")), _type(type) {}
 
     TransformComponent* getTransform();
     PhysicsComponent *getPhysicsComponent();
@@ -51,6 +53,8 @@ public:
     }
 
     Component* getComponent(std::string componentName);
+
+    EntityType getType();
 
     ~EntityObject() override = default;
 

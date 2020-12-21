@@ -2,13 +2,11 @@
 
 #include <string>
 #include "../../../API//Helpers/Vector2.hpp"
+#include "../EntityObject.hpp"
 
 class InventoryItem {
 public:
-    //Weapons = Pistol, RPG etc
-    //Resource = Water, Cookie, etc,
-    //Object = Wall, Turret, Box, etc
-    enum itemType { weapon, resource, object };
+
 private:
     Vector2 _position;
     Vector2 _index;
@@ -16,12 +14,10 @@ private:
     int _quantity;
 
     std::string _name;
-    itemType _type;
+    EntityObject::EntityType _type;
 
 public:
-    InventoryItem(int quantity, std::string name, itemType type);
-
-    void onClick();
+    InventoryItem(int quantity, std::string name, EntityObject::EntityType type);
 
     std::string getName();
     Vector2 &getPosition();

@@ -3,7 +3,7 @@
 #include <utility>
 
 
-InventoryItem::InventoryItem(int count, std::string name, itemType type) : _quantity(count), _name(std::move(name)), _type(type) {}
+InventoryItem::InventoryItem(int count, std::string name, EntityObject::EntityType type) : _quantity(count), _name(std::move(name)), _type(type) {}
 
 void InventoryItem::setIndex(Vector2 &value){
     _index = value;

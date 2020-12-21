@@ -5,18 +5,12 @@
 
 InventoryComponent::InventoryComponent(EntityId id) : Component(id), _renderingAPI(Game::getInstance()->getRenderingApi()) {
     _transformComponent = std::make_unique<TransformComponent>(id);
-
-    _renderingAPI.loadTexture("../../Resources/Sprites/inventory_slot.png", "InventorySlot");
-    _renderingAPI.loadTexture("../../Resources/Sprites/Wooden_Crate.png", "crate");
-    _renderingAPI.loadTexture("../../Resources/Sprites/boar.png", "boar");
-
     _quantityText = std::map<std::string, TextWrapper*>();
-
     _emptySlot = Vector2(1,1);
 
-    addToInventory(new InventoryItem{100, "crate", InventoryItem::object});
-    addToInventory(new InventoryItem{50, "crate", InventoryItem::object});
-    addToInventory(new InventoryItem{2, "boar", InventoryItem::resource});
+    addToInventory(new InventoryItem{100, "crate", EntityObject::EntityType::object});
+    addToInventory(new InventoryItem{50, "crate", EntityObject::EntityType::object});
+    addToInventory(new InventoryItem{2, "boar", EntityObject::EntityType::resource});
 }
 
 void InventoryComponent::initialize(EntityObject &entityParent) {
@@ -30,7 +24,7 @@ void InventoryComponent::render() {
 
         for (int x = 1; x < _rows; ++x) {
             for (int y = 1; y < _columns; ++y) {
-                _renderingAPI.drawTexture("InventorySlot", _startX + (_offset * x), _startY + (_offset * y), 125, 125, 1, 0);
+                _renderingAPI.drawTexture("inventory_slot", _startX + (_offset * x), _startY + (_offset * y), 125, 125, 1, 0);
             }
         }
 
@@ -133,11 +127,15 @@ void InventoryComponent::addToInventory(InventoryItem *item) {
 }
 
 void InventoryComponent::addEntityToInventory(EntityObject &e) {
-    InventoryItem *item = new InventoryItem { 1, e.entityName, InventoryItem::object };
+    if(e.getType() == EntityObject::EntityType::level_change) return;
 
-    if(_inventory.size() >= getInventorySize() || e.entityName == "") return;
+    auto &id = e.getComponent<RenderComponent>()->getSpriteID();
+    auto *item = new InventoryItem { 1, id, e.getType() };
 
-    auto foundItem = findInventoryItem(item->getName());
+
+    if(_inventory.size() >= getInventorySize() || item->getName() == "") return;
+
+    auto foundItem = findInventoryItem(id);
     if(foundItem != nullptr){
         foundItem->addItemQuantity(item->getItemQuantity());
         return;
@@ -151,7 +149,6 @@ void InventoryComponent::addEntityToInventory(EntityObject &e) {
     item->setPosition(position);
 
     _inventory.push_back(item);
-
 }
 
 

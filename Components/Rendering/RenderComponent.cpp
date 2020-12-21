@@ -125,3 +125,7 @@ void RenderComponent::setAnimation(Animation *animation) {
 void RenderComponent::isAnimating() {
     _isAnimating = true;
 }
+
+std::string &RenderComponent::getSpriteID() {
+    return _spriteId;
+}

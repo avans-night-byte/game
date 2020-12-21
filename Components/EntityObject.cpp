@@ -92,3 +92,7 @@ void EntityObject::destroy(){
     if(_pool == nullptr) return;
     _pool->disableEntity(*this);
 }
+
+EntityObject::EntityType EntityObject::getType() {
+    return _type;
+}
