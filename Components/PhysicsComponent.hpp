@@ -1,17 +1,23 @@
 #pragma once
 
 #include "../../API/Physics/EnginePhysicsAPI.hpp"
-#include "../../API/RPosition.hpp"
+#include "../../API/RTransform.hpp"
 #include "Component.hpp"
 
-namespace LevelResources {
+namespace Components {
     class physicsComponent;
 }
+class TransformComponent;
+class EntityObject;
+
+#include "../Object/CollisionHandler.hpp"
+
 
 class PhysicsComponent : public Component, public ContactHandler {
 private:
-    const PhysicsAPI *physicsAPI;
-    unsigned int bodyId = 0;
+    const PhysicsAPI &_physicsAPI;
+    unsigned int _bodyId = 0;
+    EntityObject *_parent = nullptr;
 
     std::string contactHandlerName;
 
@@ -23,7 +29,7 @@ public:
     void destroyBody();
 
 public:
-    std::vector<ContactHandler*> contactHandlers{};
+    std::vector<CollisionHandler*> collisionHandlers{};
 
     explicit PhysicsComponent(EntityId id);
 
@@ -33,20 +39,20 @@ public:
 
     ~PhysicsComponent() override = default;
 
-    inline RPosition getRPosition() {
-        return physicsAPI->getRPosition(bodyId);
+    inline RTransform getRTransform() {
+        return _physicsAPI.getRPosition(_bodyId);
     }
 
     inline void getVelocity(Vector2 &velocity) {
-        physicsAPI->GetVelocity(velocity, bodyId);
+        _physicsAPI.GetVelocity(velocity, _bodyId);
     }
 
     inline void setVelocity(const Vector2 &velocity) {
-        physicsAPI->setLinearVelocity(bodyId, velocity);
+        _physicsAPI.setLinearVelocity(_bodyId, velocity);
     }
 
     inline void setFixedRotation(bool value) {
-        physicsAPI->setFixedRotation(bodyId, value);
+        _physicsAPI.setFixedRotation(_bodyId, value);
     }
 
     static inline BodyType StringToBodyType(const std::string& value)
@@ -61,7 +67,9 @@ public:
 public:
     [[nodiscard]] std::string name() const override;
 
-    Component *clone(EntityId entityId, const Components::component *component) override;
+    Component *build(EntityId entityId, const Components::component *component) override;
+
+    void initialize(EntityObject &entityParent) override;
 
     void fixedUpdate(const float &deltaTime) override;
 
@@ -80,16 +88,31 @@ private:
         Box2DBoxData box2DBoxData;
         box2DBoxData.bodyType = bodyType;
         box2DBoxData.position = position;
+        box2DBoxData.contactHandler = this;
         box2DBoxData.size = size;
-        return physicsAPI->createBody(box2DBoxData);
+        return _physicsAPI.createBody(box2DBoxData);
     }
 
     inline BodyId initializeCircleBody(BodyType bodyType, Vector2 position, float radius) {
-        Box2DCircleData box2DBoxData;
-        box2DBoxData.bodyType = bodyType;
-        box2DBoxData.position = position;
-        box2DBoxData.radius = radius;
-        return physicsAPI->createBody(box2DBoxData);
+        Box2DCircleData box2DCircleData;
+        box2DCircleData.bodyType = bodyType;
+        box2DCircleData.position = position;
+        box2DCircleData.radius = radius;
+        box2DCircleData.contactHandler = this;
+        return _physicsAPI.createBody(box2DCircleData);
+    }
+
+public:
+    static TransformComponent *setPositionPhysicsResource(EntityObject *pObject, Components::physicsComponent &component);
+
+    void setTransform(Vector2 pos, float angle);
+
+    void addForce(Vector2 dir);
+
+    void setEnabled(bool b);
+
+    const EntityObject* getParent() {
+        return _parent;
     }
 };
 

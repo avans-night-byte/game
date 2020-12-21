@@ -1,41 +1,40 @@
-#include <Generated/level-resources.hxx>
 #include "../Game.hpp"
-#include "../../API/RPosition.hpp"
 
+#include "TransformComponent.hpp"
+#include "../Object/CollisionHandler.hpp"
+#include "../Components/EntityObject.hpp"
+#include <b2_contact.h>
 
-#include "PhysicsComponent.hpp"
-
+#include <memory>
 
 void PhysicsComponent::fixedUpdate(const float &deltaTime) {
 
 }
 
 PhysicsComponent::PhysicsComponent(EntityId id)
-        : Component(id), physicsAPI(Game::getInstance()->getPhysicsAPI()) {
+        : Component(id), _physicsAPI(Game::getInstance()->getPhysicsAPI()) {
 
 }
 
 PhysicsComponent::PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, Vector2 size)
         : Component(id),
-          physicsAPI(Game::getInstance()->getPhysicsAPI()),
-          bodyId{this->initializeBoxBody(bodyType, position, size)} {
+          _physicsAPI(Game::getInstance()->getPhysicsAPI()),
+          _bodyId{this->initializeBoxBody(bodyType, position, size)} {
 
 
 }
 
 PhysicsComponent::PhysicsComponent(EntityId id, BodyType bodyType, Vector2 position, float radius)
         : Component(id),
-          physicsAPI(Game::getInstance()->getPhysicsAPI()),
-          bodyId(this->initializeCircleBody(bodyType, position, radius)) {
-
-
+          _physicsAPI(Game::getInstance()->getPhysicsAPI()),
+          _bodyId(this->initializeCircleBody(bodyType, position, radius)) {
 }
 
-string PhysicsComponent::name() const {
+std::string PhysicsComponent::name() const {
     return "PhysicsComponent";
 }
 
-Component *PhysicsComponent::clone(EntityId entityId,
+Component *PhysicsComponent::build(EntityId entityId,
                                    const Components::component *component) {
 
     auto newPhysicsComponent = new PhysicsComponent(entityId);
@@ -48,41 +47,52 @@ Component *PhysicsComponent::clone(EntityId entityId,
 
     BodyType bodyType = StringToBodyType(bodyTypeString);
     Vector2 position = Vector2(physicsComponent.position().x(), physicsComponent.position().y());
+    bool isEnabled = physicsComponent.isEnabled().present() ? physicsComponent.isSensor().get()
+                                                            : Components::physicsComponent::isEnabled_default_value();
+
+    std::unique_ptr<Box2DData> box2DData = std::make_unique<Box2DData>();
+    box2DData->position = position;
+    box2DData->bodyType = bodyType;
+    box2DData->isEnabled = isEnabled;
+    box2DData->isSensor = physicsComponent.isSensor().present() ? physicsComponent.isSensor().get()
+                                                                : Components::physicsComponent::isSensor_default_value();
+
+    box2DData->isBullet = physicsComponent.isBullet().present() ? physicsComponent.isBullet().get()
+                                                                : Components::physicsComponent::isBullet_default_value();
+    box2DData->contactHandler = newPhysicsComponent;
 
     /* Shape */
     if (shapeCircle != nullptr) {
-        Box2DCircleData circleData{};
-        circleData.radius = shapeCircle->radius();
-        circleData.position = position;
-        circleData.bodyType = bodyType;
-        circleData.isSensor = physicsComponent.isSensor();
-        circleData.userData = newPhysicsComponent;
+        std::unique_ptr<Box2DCircleData> circleData((Box2DCircleData *) box2DData.release());
 
-        newPhysicsComponent->bodyId = physicsAPI->createBody(circleData);
+        circleData->radius = shapeCircle->radius();
+        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*circleData.release());
     } else {
         // BOX
-        Box2DBoxData boxData{};
-        boxData.size = Vector2(shapeBox->width(), shapeBox->height());
-        boxData.position = position;
-        boxData.bodyType = bodyType;
-        boxData.isSensor = physicsComponent.isSensor();
-        boxData.userData = newPhysicsComponent;
+        std::unique_ptr<Box2DBoxData> boxData((Box2DBoxData *) box2DData.release());
 
-        newPhysicsComponent->bodyId = physicsAPI->createBody(boxData);
+        boxData->size = Vector2(shapeBox->width(), shapeBox->height());
+
+        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*boxData.release());
     }
 
     return newPhysicsComponent;
 }
 
 void PhysicsComponent::startContact(b2Contact *contact) {
-    for (auto &contactHandler : contactHandlers) {
-        contactHandler->startContact(contact);
+
+    if (auto *other = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureA()->GetBody()->GetUserData().contactHandler)) {
+        for (int i = 0; i < this->collisionHandlers.size(); i++) {
+            collisionHandlers[i]->onCollisionEnter(other->getParent());
+        }
     }
 }
 
 void PhysicsComponent::endContact(b2Contact *contact) {
-    for (auto &contactHandler : contactHandlers) {
-        contactHandler->endContact(contact);
+    if (auto *other = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureA()->GetBody()->GetUserData().contactHandler)) {
+        for (int i = 0; i < this->collisionHandlers.size(); i++) {
+            collisionHandlers[i]->onCollisionExit(other->getParent());
+        }
     }
 }
 
@@ -95,9 +105,40 @@ void PhysicsComponent::update(const Input &inputSystem) {
 }
 
 void PhysicsComponent::setAngle(float angle) {
-    physicsAPI->setAngle(bodyId, angle );
+    _physicsAPI.setAngle(_bodyId, angle);
 }
 
 void PhysicsComponent::destroyBody() {
-    physicsAPI->destroyBody(bodyId);
+    _physicsAPI.destroyBody(_bodyId);
 }
+
+TransformComponent *
+PhysicsComponent::setPositionPhysicsResource(EntityObject *pObject, Components::physicsComponent &component) {
+    for (auto &c : pObject->getComponents()) {
+        auto *worldPositionComponent = dynamic_cast<TransformComponent *>(c.get());
+        if (worldPositionComponent != nullptr) {
+            component.position().x() = float(worldPositionComponent->getPosition().x);
+            component.position().y() = float(worldPositionComponent->getPosition().y);
+            return worldPositionComponent;
+        }
+    }
+
+    return nullptr;
+}
+
+void PhysicsComponent::initialize(EntityObject &entityParent) {
+    this->_parent = &entityParent;
+}
+
+void PhysicsComponent::setTransform(Vector2 pos, float angle) {
+    _physicsAPI.setTransform(_bodyId, pos, angle / 180.f * M_PI);
+}
+
+void PhysicsComponent::addForce(Vector2 dir) {
+    _physicsAPI.addForce(_bodyId, dir);
+}
+
+void PhysicsComponent::setEnabled(bool b) {
+    _physicsAPI.setEnabled(_bodyId, b);
+}
+

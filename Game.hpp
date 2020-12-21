@@ -4,14 +4,22 @@
 #include "../Engine/Input/Input.hpp"
 #include "../Engine/Audio/AudioType.h"
 
+#include "../API/Input/EngineInputAPI.hpp"
+#include "../Engine/Engine.hpp"
+#include "../API/Engine/EngineWindowAPI.hpp"
+#include "../API/Audio/EngineAudioAPI.hpp"
+#include "../API/XMLParser/MenuParserAPI.hpp"
+
+#include "../API/Input/EngineInputAPI.hpp"
+#include "../API/Physics/BodyHandlerAPI.hpp"
+
+#include "./Object/Pool.hpp"
+#include "./Components/BulletComponent.hpp"
+
 #include <list>
 #include <map>
 #include "memory"
 #include <mutex>
-
-#include "Components/Component.hpp"
-#include "Game.hpp"
-
 
 class PhysicsAPI;
 
@@ -19,35 +27,53 @@ class ComponentFactory;
 
 class LevelParserAPI;
 
+class InputAPI;
+
 class RenderingAPI;
 
 class CharacterComponent;
 
 class LevelBase;
-#include "../API/Input/EngineInputAPI.hpp"
+
+class PoolLevel;
+
+class Component;
 
 struct LevelData;
 
 
 class Game {
 private:
-    std::unique_ptr<CharacterComponent> characterComponent;
+    std::unique_ptr<CharacterComponent> _characterComponent;
 
-    static Game *instance;
+    static Game *_instance;
     static std::mutex mutex;
 
-    std::string _levelToLoad;
+private:
+    System<Component> _components;
+
+    std::list<EntityId> _entities;
+
+    std::unique_ptr<LevelBase> _levelBase; // TODO: Make a list out of this so we can switch from levels without destroying the other one.
+    std::unique_ptr<PoolLevel> _poolLevelBase;
+
+    std::unique_ptr<ComponentFactory> _componentFactory;
+
+    bool _gameLoop = true;
+
+    // API's
+    std::unique_ptr<InputAPI> _inputAPI;
+    std::unique_ptr<WindowAPI> _windowAPI;
+    std::unique_ptr<AudioAPI> _audioAPI;
+    std::unique_ptr<RenderingAPI> _renderingAPI;
+    std::unique_ptr<BodyHandlerAPI> _bodyHandlerAPI;
+    std::unique_ptr<PhysicsAPI> _physicsAPI;
+    std::unique_ptr<MenuParserAPI> _menuParser;
 
 private:
-    System<Component> components;
-    std::list<EntityId> entities;
-    std::map<PlayerId, EntityId> players;
+    void QuitLevel(std::string command);
 
-    std::unique_ptr<LevelBase> levelBase;
-
-    std::unique_ptr<ComponentFactory> componentFactory;
-
-    bool unLoadingLevel = false;
+    void QuitGame(std::string command);
 
 protected:
     Game() = default;
@@ -62,17 +88,15 @@ public:
     static Game *getInstance();
 
 public:
-    static void initialize();
+    void initialize();
 
-    static void gameLoop();
-
-    static void debugLog(Input i);
-
-    inline LevelBase *getLevelBase() {
-        return levelBase.get();
-    }
+    void gameLoop();
 
 public:
+    inline PoolLevel* getPoolLevel() {
+        return _poolLevelBase.get();
+    }
+
     EntityId createEntity();
 
     void addComponent(EntityId id, Component *comp);
@@ -85,14 +109,19 @@ public:
     template<typename T>
     System<T> getComponents(EntityId id);
 
-    const EngineInputAPI *getInputAPI();
-    PhysicsAPI *getPhysicsAPI();
+    InputAPI &getInputAPI();
 
-    RenderingAPI *getRenderingApi();
+    PhysicsAPI &getPhysicsAPI();
+
+    RenderingAPI &getRenderingApi();
 
     ComponentFactory *getComponentFactory();
 
     void initializeLeveL(const std::string &levelName, const LevelData &data);
 
-    void unloadLevel(const std::string& levelToLoad);
+    void addEventBodyHandler(const std::function<void()> &function);
+
+    void unloadLevel();
+
+    void FixedUpdate(float deltaTime);
 };
