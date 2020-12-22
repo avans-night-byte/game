@@ -28,13 +28,23 @@ void HealthComponent::die() {
 }
 
 void HealthComponent::render() {
-    Vector2 vec1(10, 10);
-    Vector2 vec2(100, 10);
-    _renderingApi.drawLine(vec1, vec2);
+    Vector2 vec1(10, 50);
+    Vector2 vec2(20, 60);
+    std::string color("000000");
+    std::string colo2("ff1100");
+    _renderingApi.drawRectangle(vec1, 500, 50, color, 255);
+    _renderingApi.drawRectangle(vec2, (int) (480 / 100 * _healthPoints), 30, colo2, 255);
 }
-
+bool damageIsDone = false;
 void HealthComponent::update(const Input &inputSystem) {
+    if (inputSystem.keyMap.type == KeyType::KeyUp) {
+        damageIsDone = false;
+    }
 
+    if (!damageIsDone && inputSystem.keyMap.code == "G") {
+        doDamage(10);
+        damageIsDone = true;
+    }
 }
 
 void HealthComponent::fixedUpdate(const float &deltaTime) {
