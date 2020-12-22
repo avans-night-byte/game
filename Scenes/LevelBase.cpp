@@ -12,18 +12,18 @@ void LevelBase::render() {
         entity->render();
     }
 
-    _characterComponent->render();
+    _character->render();
 }
 
 void LevelBase::update(const Input &inputSystem) {
-    _characterComponent->update(inputSystem);
+    _character->update(inputSystem);
     for (auto &entity : _entities) {
         entity->update(inputSystem);
     }
 }
 
 void LevelBase::fixedUpdate(float deltaTime) {
-    _characterComponent->fixedUpdate(deltaTime);
+    _character->fixedUpdate(deltaTime);
     for (auto &entity : _entities) {
         entity->fixedUpdate(deltaTime);
     }

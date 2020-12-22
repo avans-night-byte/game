@@ -33,7 +33,7 @@ public:
     std::string entityName;
 public:
     explicit EntityObject(EntityId id, const std::string name, const std::string &type) : Component(id),
-                                                                              entityName(std::move(name)) {
+                                                                                          entityName(std::move(name)) {
         if (type == "object") {
             _type = EntityType::object;
         }
@@ -55,7 +55,8 @@ public:
         }
     }
 
-    explicit EntityObject(EntityId id, EntityType type = EntityType::object) : Component(id), entityName(std::move("")),
+    explicit EntityObject(EntityId id, const std::string name, EntityType type = EntityType::object) : Component(id),
+                                                                               entityName(name),
                                                                                _type(type) {}
 
     TransformComponent *getTransform();
