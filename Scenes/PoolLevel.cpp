@@ -33,7 +33,7 @@ void PoolLevel::fixedUpdate(float deltaTime) {
 
 void PoolLevel::clearEntities() {
     for (auto &pool : _poolList) {
-        pool->resetEntities();
+//        pool->resetEntities();
     }
 }
 

@@ -24,7 +24,7 @@ void ObjectLoader::loadEntities(const std::multimap<EntityXMLParser::ObjectData,
 
         if (ComponentFactory::IsPhysicsComponent(componentName)) {
             /** CollisionHandler **/
-            entitiesPhysicsComponent[newEntity] = component;
+            entitiesPhysicsComponent[newEntity] = component->_clone();
         } else {
             auto *newComponent = componentFactory->getComponent(newEntity->getEntityId(),
                                                                 componentName,
