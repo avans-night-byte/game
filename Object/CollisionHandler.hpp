@@ -4,9 +4,9 @@ class EntityObject;
 
 class CollisionHandler {
 public:
-    virtual void onCollisionEnter(EntityObject *entityObject) = 0;
+    virtual void onCollisionEnter(EntityObject *self, EntityObject *other) = 0;
 
-    virtual void onCollisionExit(EntityObject *entityObject) = 0;
+    virtual void onCollisionExit(EntityObject *self, EntityObject *other) = 0;
 };
 
 

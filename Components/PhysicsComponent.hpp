@@ -78,9 +78,9 @@ public:
 
     void update(const Input &inputSystem) override;
 
-    void startContact(b2Contact *contact) override;
+    void startContact(b2Contact *contact, bool isA) override;
 
-    void endContact(b2Contact *contact) override;
+    void endContact(b2Contact *contact, bool isA) override;
 
     void setAngle(float angle);
 

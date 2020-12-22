@@ -9,7 +9,7 @@ std::string CharacterComponent::name() const {
     return "CharacterComponent";
 }
 
-CharacterComponent::CharacterComponent(EntityId id) : EntityObject(id, EntityType::character) {
+CharacterComponent::CharacterComponent(EntityId id) : Component(id) {
     this->resetMovement();
     _healthComponent = std::make_unique<HealthComponent>();
 }
@@ -39,13 +39,13 @@ void CharacterComponent::update(const Input &inputSystem) {
         p.loadResource("Options");
     }
 
-    if(_contactObject && inputSystem.keyMap.action =="INTERACT"){
+    if (_contactObject && inputSystem.keyMap.action == "INTERACT") {
         _buildComponent->pickUpObject(*_contactObject);
         _contactObject->destroy();
         _contactObject = nullptr;
     }
 
-    if(!_inventoryComponent->isMenuOpen()) {
+    if (!_inventoryComponent->isMenuOpen()) {
         if (inputSystem.keyMap.action == "CLICK_LEFT") {
             _weapon->shoot(*_transformComponent);
 
@@ -69,7 +69,6 @@ void CharacterComponent::update(const Input &inputSystem) {
     _transformComponent->setRotation(rPosition.rotation);
 
     _physicsComponent->setAngle(mouseAngle);
-    _inventoryComponent->update(inputSystem);
 }
 
 void CharacterComponent::fixedUpdate(const float &deltaTime) {
@@ -165,33 +164,34 @@ Component *CharacterComponent::build(EntityId entityId, const Components::compon
 
 
 void CharacterComponent::render() {
-    _renderComponent->render();
-    _inventoryComponent->render();
 }
 
-void CharacterComponent::onCollisionEnter(EntityObject *entityObject) {
-    _contactObject = entityObject;
+void CharacterComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
+    _contactObject = other;
 }
 
-void CharacterComponent::onCollisionExit(EntityObject *entityObject) {
-    _contactObject = nullptr;
+void CharacterComponent::onCollisionExit(EntityObject *self, EntityObject *other) {
+    if (_contactObject == other)
+        _contactObject = nullptr;
 }
 
 
 void CharacterComponent::initialize(EntityObject &entityParent) {
-    _renderComponent = getComponent<RenderComponent>();
-    _weapon = getComponent<WeaponComponent>();
+    _renderComponent = entityParent.getComponent<RenderComponent>();
+    _weapon = entityParent.getComponent<WeaponComponent>();
 
-    _physicsComponent = getComponent<PhysicsComponent>();
+    _physicsComponent = entityParent.getComponent<PhysicsComponent>();
     _physicsComponent->collisionHandlers.push_back(this);
 
-    _transformComponent = getComponent<TransformComponent>();
+    _transformComponent = entityParent.getComponent<TransformComponent>();
 
-    _inventoryComponent = getComponent<InventoryComponent>();
-    _buildComponent = getComponent<BuildComponent>();
+    _inventoryComponent = entityParent.getComponent<InventoryComponent>();
+    _buildComponent = entityParent.getComponent<BuildComponent>();
 
-    _inventoryComponent->getOnInventoryClickEventManager() += std::bind(&BuildComponent::setBuildObject, _buildComponent, std::placeholders::_1);
-    _buildComponent->getPickupEventHandler() += std::bind(&InventoryComponent::addEntityToInventory, _inventoryComponent, std::placeholders::_1);
+    _inventoryComponent->getOnInventoryClickEventManager() += std::bind(&BuildComponent::setBuildObject,
+                                                                        _buildComponent, std::placeholders::_1);
+    _buildComponent->getPickupEventHandler() += std::bind(&InventoryComponent::addEntityToInventory,
+                                                          _inventoryComponent, std::placeholders::_1);
 
     auto *animation = new Animation(*_renderComponent);
     animation->addAnimation("Walk Right", {{0, 7},
