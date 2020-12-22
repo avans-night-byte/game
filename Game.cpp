@@ -36,7 +36,7 @@ void Game::initialize() {
 
     _poolLevelBase = std::make_unique<PoolLevel>();
 
-    _poolLevelBase->addPool("MainPool", "bullet", 1);
+    _poolLevelBase->addPool("MainPool", "bullet", 5);
 //    _poolLevelBase->addPool("MainPool", "crate", 10);
 //    _poolLevelBase->addPool("MainPool", "boar", 11);
 
