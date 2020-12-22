@@ -8,7 +8,7 @@ void ObjectLoader::loadEntities(const std::vector<EntityXMLParser::ObjectData> &
     auto componentFactory = Game::getInstance()->getComponentFactory();
 
     auto instantiatedEntities = std::map<std::string, EntityObject *>();
-    auto entitiesPhysicsComponent = std::map<EntityObject *, Components::component *>();
+    auto entitiesPhysicsXml = std::map<EntityObject *, Components::component *>();
 
     for (auto &loadedEntity : loadedEntities) {
         for (auto &comp : loadedEntity.xmlComponents) {
@@ -24,7 +24,7 @@ void ObjectLoader::loadEntities(const std::vector<EntityXMLParser::ObjectData> &
 
             if (ComponentFactory::IsPhysicsComponent(componentName)) {
                 /** CollisionHandler **/
-                entitiesPhysicsComponent[newEntity] = comp->_clone();
+                entitiesPhysicsXml[newEntity] = comp;
             } else {
                 auto *newComponent = componentFactory->getComponent(newEntity->getEntityId(),
                                                                     componentName,
@@ -36,8 +36,8 @@ void ObjectLoader::loadEntities(const std::vector<EntityXMLParser::ObjectData> &
 
 
     /** Collision Handlers & TransformComponent **/
-    for (auto &entityPhysicsComponent : entitiesPhysicsComponent) {
-        auto *resourceComponent = entityPhysicsComponent.second;
+    for (auto &entityPhysicsComponent : entitiesPhysicsXml) {
+        auto *resourceComponent = entityPhysicsComponent.second->_clone();
 
         auto *entityObject = entityPhysicsComponent.first;
 
