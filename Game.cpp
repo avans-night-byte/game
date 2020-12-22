@@ -36,9 +36,9 @@ void Game::initialize() {
 
     _poolLevelBase = std::make_unique<PoolLevel>();
 
-    _poolLevelBase->addPool("MainPool", "bullet", 5);
-//    _poolLevelBase->addPool("MainPool", "crate", 10);
-//    _poolLevelBase->addPool("MainPool", "boar", 11);
+    _poolLevelBase->addPool("MainPool", "bullet", 50);
+    _poolLevelBase->addPool("MainPool", "crate", 50);
+    _poolLevelBase->addPool("MainPool", "boar", 50);
 
 
     auto characterId = createEntity();
