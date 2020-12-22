@@ -1,6 +1,7 @@
 #pragma once
+#include "../Component.hpp"
 
-class WalletComponent {
+class WalletComponent : public Component {
 
 };
 
