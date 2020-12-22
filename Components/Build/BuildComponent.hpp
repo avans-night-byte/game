@@ -16,7 +16,7 @@ private:
 
     PoolLevel &_poolLevel;
 
-    InventoryItem *_selectedObject;
+    InventoryItem *_selectedObject = nullptr;
 
 public:
     explicit BuildComponent(EntityId id);

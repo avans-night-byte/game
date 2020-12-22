@@ -57,6 +57,7 @@ void Pool::disableEntity(EntityObject &pObject) {
        if(it2 != _pool.end()){
            _pool.push_back(std::move(*it2));
            _pool.erase(it2);
+           amountSpawned--;
        }
    }
 }

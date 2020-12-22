@@ -34,25 +34,27 @@ public:
 public:
     explicit EntityObject(EntityId id, const std::string name, const std::string &type) : Component(id),
                                                                               entityName(std::move(name)) {
-        if (type == "object") {
-            _type = EntityType::object;
-        }
-
         if (type == "character") {
             _type = EntityType::character;
+            return;
         }
 
         if (type == "level_change") {
             _type = EntityType::level_change;
+            return;
         }
 
         if (type == "weapon") {
             _type = EntityType::weapon;
+            return;
         }
 
         if (type == "resource") {
             _type = EntityType::resource;
+            return;
         }
+
+        _type = EntityType::object;
     }
 
     explicit EntityObject(EntityId id, EntityType type = EntityType::object) : Component(id), entityName(std::move("")),

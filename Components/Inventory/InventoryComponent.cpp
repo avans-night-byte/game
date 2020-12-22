@@ -179,12 +179,10 @@ InventoryItem *InventoryComponent::findInventoryItem(const std::string &name){
 
 InventoryItem *InventoryComponent::findInventoryItem(Vector2 &index){
     for (auto &it : _inventory) {
-        auto i = it->getIndex();
         if(it->getIndex() == index) return it;
     }
     return nullptr;
 }
-
 
 bool InventoryComponent::isMenuOpen() const {
     return _isOpen;
