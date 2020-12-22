@@ -36,13 +36,13 @@ void Game::initialize() {
 
     _poolLevelBase = std::make_unique<PoolLevel>();
 
-    _poolLevelBase->addPool("MainPool", "bullet1", 100);
-    _poolLevelBase->addPool("MainPool", "crate", 100);
-    _poolLevelBase->addPool("MainPool", "boar", 100);
+    _poolLevelBase->addPool("MainPool", "bullet", 5);
+//    _poolLevelBase->addPool("MainPool", "crate", 10);
+//    _poolLevelBase->addPool("MainPool", "boar", 11);
 
 
     auto characterId = createEntity();
-    _character = std::make_unique<EntityObject>(characterId, "Character", EntityObject::EntityType::character);
+    _character = std::make_unique<EntityObject>(characterId, "Character", "character");
     _character->addComponent(new CharacterComponent(characterId));
     _character->addComponent(new TransformComponent(characterId));
     _character->addComponent(new WeaponComponent(characterId));

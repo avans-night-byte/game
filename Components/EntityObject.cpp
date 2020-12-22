@@ -20,7 +20,7 @@ void EntityObject::addComponent(Component *component) {
 }
 
 Component *EntityObject::build(EntityId entityId, const Components::component *component) {
-    return new EntityObject(entityId, "New Entity Object", EntityType::object);
+    return new EntityObject(entityId, "New Entity Object");
 }
 
 void EntityObject::render() {
@@ -95,4 +95,29 @@ void EntityObject::destroy(){
 
 EntityObject::EntityType EntityObject::getType() {
     return _type;
+}
+
+void EntityObject::setType(const std::string &type) {
+    if (type == "character") {
+        _type = EntityType::character;
+        return;
+    }
+
+    if (type == "level_change") {
+        _type = EntityType::level_change;
+        return;
+    }
+
+    if (type == "weapon") {
+        _type = EntityType::weapon;
+        return;
+    }
+
+    if (type == "resource") {
+        _type = EntityType::resource;
+        return;
+    }
+
+    _type = EntityType::object;
+
 }

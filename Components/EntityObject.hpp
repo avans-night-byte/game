@@ -33,32 +33,14 @@ public:
     std::string entityName;
 public:
     explicit EntityObject(EntityId id, const std::string name, const std::string &type) : Component(id),
-                                                                                          entityName(std::move(name)) {
-        if (type == "object") {
-            _type = EntityType::object;
-        }
-
-        if (type == "character") {
-            _type = EntityType::character;
-        }
-
-        if (type == "level_change") {
-            _type = EntityType::level_change;
-        }
-
-        if (type == "weapon") {
-            _type = EntityType::weapon;
-        }
-
-        if (type == "resource") {
-            _type = EntityType::resource;
-        }
+                                                                              entityName(std::move(name)) {
+        setType(type);
     }
 
-    explicit EntityObject(EntityId id, const std::string name, EntityType type = EntityType::object) : Component(id),
-                                                                               entityName(name),
-                                                                               _type(type) {}
-
+    explicit EntityObject(EntityId id, const std::string &type) : Component(id),
+                                                                               entityName("") {
+        setType(type);
+    }
     TransformComponent *getTransform();
 
     PhysicsComponent *getPhysicsComponent();
@@ -66,6 +48,8 @@ public:
     const std::vector<std::unique_ptr<Component>> &getComponents() {
         return _components;
     }
+
+    void setType(const std::string &type);
 
     template<class T>
     T *getComponent() const {

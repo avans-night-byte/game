@@ -11,12 +11,13 @@ class Pool {
 private:
     EntityId _id{};
     std::string _entityName;
+    std::string _loadedFromList;
+    int _size = 0;
 
-    std::vector<std::unique_ptr<EntityObject>> _pool;
 
-    int currentIndex = 0;
-    int amountSpawned = 0;
-    int size = 0;
+    std::vector<std::unique_ptr<EntityObject>> _objects;
+    std::vector<EntityObject*> _pool;
+
 
 public:
     Pool() = default;
@@ -35,5 +36,8 @@ public:
     EntityObject* getEntity();
 
     void disableEntity(EntityObject &pObject);
+
+private:
+    void enlargePool();
 };
 
