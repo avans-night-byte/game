@@ -30,7 +30,10 @@ void Pool::initialize(const std::string &loadList, const std::string &entityName
 }
 
 void Pool::enlargePool() {
-    GlobalObjects::getInstance()->loadEntities(_objects, _loadedFromList, "boar", 1);
+    GlobalObjects::getInstance()->loadEntities(_objects,
+                                               _loadedFromList,
+                                               "boar",
+                                               1);
     this->_size += 10;
     for (auto item = _objects.end() - 10; item != _objects.end(); item++) {
         _pool.push_back(item->get());

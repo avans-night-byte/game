@@ -18,7 +18,7 @@ private:
     static GlobalObjects *_instance;
     static std::mutex _mutex;
 
-    std::map<std::string, std::multimap<EntityXMLParser::ObjectData, Components::component *>> _objectsLists{};
+    std::map<std::string, std::vector<EntityXMLParser::ObjectData>> _objectsLists{};
 public:
     static GlobalObjects *getInstance();
 
@@ -30,6 +30,6 @@ public:
     void loadEntities(std::vector<std::unique_ptr<EntityObject>> &entities, const std::string &fromList,
                       const std::string &entityName, int amount);
 private:
-    static void getObjectFromLoader(const std::multimap<EntityXMLParser::ObjectData, Components::component *> &loadedEntities,
+    static void getObjectFromLoader(const std::vector<EntityXMLParser::ObjectData> &loadedEntities,
                              std::vector<std::unique_ptr<EntityObject>> &entities, int amount);
 };

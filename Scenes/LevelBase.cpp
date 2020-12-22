@@ -31,7 +31,7 @@ void LevelBase::fixedUpdate(float deltaTime) {
 }
 
 void LevelBase::initialize(const std::string &name, const LevelData &data) {
-    auto outEntities = std::multimap<EntityXMLParser::ObjectData, Components::component *>();
+    auto outEntities = std::vector<EntityXMLParser::ObjectData>();
 
     this->_tmxLevel = std::unique_ptr<TMXLevel>(LevelParserAPI::loadLevel(outEntities, data));
     this->_levelName = name;

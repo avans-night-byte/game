@@ -3,7 +3,7 @@
 #include "../Game.hpp"
 
 
-void ObjectLoader::loadEntities(const std::multimap<EntityXMLParser::ObjectData, Components::component *> &loadedEntities,
+void ObjectLoader::loadEntities(const std::vector<EntityXMLParser::ObjectData> &loadedEntities,
                                 std::vector<std::unique_ptr<EntityObject>> &entities) {
     auto componentFactory = Game::getInstance()->getComponentFactory();
 
@@ -11,25 +11,26 @@ void ObjectLoader::loadEntities(const std::multimap<EntityXMLParser::ObjectData,
     auto entitiesPhysicsComponent = std::map<EntityObject *, Components::component *>();
 
     for (auto &loadedEntity : loadedEntities) {
-        auto &newEntity = instantiatedEntities[loadedEntity.first.name];
-        if (newEntity == nullptr) {
-            newEntity = new EntityObject(Game::getInstance()->createEntity(), loadedEntity.first.name, loadedEntity.first.type);
-            entities.push_back(std::unique_ptr<EntityObject>(newEntity));
+        for (auto &comp : loadedEntity.xmlComponents) {
+            auto &newEntity = instantiatedEntities[loadedEntity.name];
+            if (newEntity == nullptr) {
+                newEntity = new EntityObject(Game::getInstance()->createEntity(), loadedEntity.name, loadedEntity.type);
+                entities.push_back(std::unique_ptr<EntityObject>(newEntity));
 
-            instantiatedEntities[loadedEntity.first.name] = newEntity;
-        }
+                instantiatedEntities[loadedEntity.name] = newEntity;
+            }
 
-        const auto &component = loadedEntity.second;
-        const auto &componentName = component->componentName();
+            const auto &componentName = comp->componentName();
 
-        if (ComponentFactory::IsPhysicsComponent(componentName)) {
-            /** CollisionHandler **/
-            entitiesPhysicsComponent[newEntity] = component->_clone();
-        } else {
-            auto *newComponent = componentFactory->getComponent(newEntity->getEntityId(),
-                                                                componentName,
-                                                                component);
-            newEntity->addComponent(newComponent);
+            if (ComponentFactory::IsPhysicsComponent(componentName)) {
+                /** CollisionHandler **/
+                entitiesPhysicsComponent[newEntity] = comp->_clone();
+            } else {
+                auto *newComponent = componentFactory->getComponent(newEntity->getEntityId(),
+                                                                    componentName,
+                                                                    comp);
+                newEntity->addComponent(newComponent);
+            }
         }
     }
 
