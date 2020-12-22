@@ -65,4 +65,6 @@ public:
     void setAnimation(Animation *animation);
 
     void isAnimating();
+
+    std::string &getSpriteID();
 };

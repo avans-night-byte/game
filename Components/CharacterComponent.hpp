@@ -9,15 +9,20 @@
 #include "BulletComponent.hpp"
 #include "WeaponComponent.hpp"
 #include "Inventory/InventoryComponent.hpp"
+#include "Build/BuildComponent.hpp"
 #include "../Object/CollisionHandler.hpp"
 
 class Game;
+
 class HealthComponent;
+
 class WeaponComponent;
+
 class RenderComponent;
+
 class Input;
 
-class CharacterComponent : public EntityObject, public CollisionHandler {
+class CharacterComponent : public Component, public CollisionHandler {
     enum MovementDirection {
         Left,
         Right,
@@ -31,9 +36,15 @@ private:
     MovementDirection _latestMovementDirection = MovementDirection::None;
 
     std::unique_ptr<HealthComponent> _healthComponent;
-    InventoryComponent* _inventoryComponent = nullptr;
-    RenderComponent* _renderComponent = nullptr;
-    WeaponComponent* _weapon = nullptr;
+    PhysicsComponent *_physicsComponent = nullptr;
+    TransformComponent *_transformComponent = nullptr;
+    InventoryComponent *_inventoryComponent = nullptr;
+    RenderComponent *_renderComponent = nullptr;
+    BuildComponent *_buildComponent = nullptr;
+    WeaponComponent *_weapon = nullptr;
+
+
+    EntityObject *_contactObject;
 
     void resetMovement();
 
@@ -79,9 +90,9 @@ public:
 
 
 public:
-    void onCollisionEnter(const EntityObject *entityObject) override;
+    void onCollisionEnter(EntityObject *self, EntityObject *other) override;
 
-    void onCollisionExit(const EntityObject *entityObject) override;
+    void onCollisionExit(EntityObject *self, EntityObject *other) override;
 
     void render() override;
 

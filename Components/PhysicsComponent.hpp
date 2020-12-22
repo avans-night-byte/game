@@ -3,6 +3,7 @@
 #include "../../API/Physics/EnginePhysicsAPI.hpp"
 #include "../../API/RTransform.hpp"
 #include "Component.hpp"
+#include "../Object/CollisionHandler.hpp"
 
 namespace Components {
     class physicsComponent;
@@ -10,7 +11,7 @@ namespace Components {
 class TransformComponent;
 class EntityObject;
 
-#include "../Object/CollisionHandler.hpp"
+
 
 
 class PhysicsComponent : public Component, public ContactHandler {
@@ -77,9 +78,9 @@ public:
 
     void update(const Input &inputSystem) override;
 
-    void startContact(b2Contact *contact) override;
+    void startContact(b2Contact *contact, bool isA) override;
 
-    void endContact(b2Contact *contact) override;
+    void endContact(b2Contact *contact, bool isA) override;
 
     void setAngle(float angle);
 
@@ -111,7 +112,7 @@ public:
 
     void setEnabled(bool b);
 
-    const EntityObject* getParent() {
+    EntityObject* getParent() {
         return _parent;
     }
 };

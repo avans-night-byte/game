@@ -79,20 +79,37 @@ Component *PhysicsComponent::build(EntityId entityId,
     return newPhysicsComponent;
 }
 
-void PhysicsComponent::startContact(b2Contact *contact) {
+void PhysicsComponent::startContact(b2Contact *contact, bool isA) {
+    PhysicsComponent *self = nullptr;
+    PhysicsComponent *other = nullptr;
+    if (isA) {
+        self = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureA()->GetBody()->GetUserData().contactHandler);
+        other = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureB()->GetBody()->GetUserData().contactHandler);
+    } else {
+        self = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureB()->GetBody()->GetUserData().contactHandler);
+        other = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureA()->GetBody()->GetUserData().contactHandler);
+    }
 
-    if (auto *other = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureA()->GetBody()->GetUserData().contactHandler)) {
-        for (int i = 0; i < this->collisionHandlers.size(); i++) {
-            collisionHandlers[i]->onCollisionEnter(other->getParent());
-        }
+    for (int i = 0; i < this->collisionHandlers.size(); i++) {
+        EntityObject *otherParent = other ? other->getParent() : nullptr;
+        collisionHandlers[i]->onCollisionEnter(self->getParent(), otherParent);
     }
 }
 
-void PhysicsComponent::endContact(b2Contact *contact) {
-    if (auto *other = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureA()->GetBody()->GetUserData().contactHandler)) {
-        for (int i = 0; i < this->collisionHandlers.size(); i++) {
-            collisionHandlers[i]->onCollisionExit(other->getParent());
-        }
+void PhysicsComponent::endContact(b2Contact *contact, bool isA) {
+    PhysicsComponent *self = nullptr;
+    PhysicsComponent *other = nullptr;
+    if (isA) {
+        self = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureA()->GetBody()->GetUserData().contactHandler);
+        other = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureB()->GetBody()->GetUserData().contactHandler);
+    } else {
+        self = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureB()->GetBody()->GetUserData().contactHandler);
+        other = dynamic_cast<PhysicsComponent *>((PhysicsComponent *) contact->GetFixtureA()->GetBody()->GetUserData().contactHandler);
+    }
+
+    for (int i = 0; i < this->collisionHandlers.size(); i++) {
+        EntityObject *otherParent = other ? other->getParent() : nullptr;
+        collisionHandlers[i]->onCollisionExit(self->getParent(), otherParent);
     }
 }
 

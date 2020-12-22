@@ -25,13 +25,13 @@ private:
     std::string _levelName;
 
 public:
-    CharacterComponent* _characterComponent = nullptr; // TODO: Character data should be stored in global resource file
+    EntityObject* _character = nullptr; // TODO: Character data should be stored in global resource file
 
     LevelBase() = default;
 
 
 private:
-    std::vector<std::unique_ptr<EntityObject>> entities{};
+    std::vector<std::unique_ptr<EntityObject>> _entities{};
 
 public:
     virtual void initialize(const std::string& name, const LevelData &data);
@@ -43,4 +43,6 @@ public:
     virtual void fixedUpdate(float deltaTime);
 
     virtual void clearEntities();
+
+    void addObject(const std::string &fromList, const std::string &entityName);
 };

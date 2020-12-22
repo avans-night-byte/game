@@ -1,12 +1,9 @@
 #include "ObjectLoader.hpp"
 
 #include "../Game.hpp"
-#include "../Components/PhysicsComponent.hpp"
-#include "../Components/TransformComponent.hpp"
-#include "../Components/ComponentFactory.hpp"
-#include "../Object/CollisionHandler.hpp"
 
-void ObjectLoader::loadEntities(const std::multimap<std::string, Components::component *> &loadedEntities,
+
+void ObjectLoader::loadEntities(const std::multimap<EntityXMLParser::ObjectData, Components::component *> &loadedEntities,
                                 std::vector<std::unique_ptr<EntityObject>> &entities) {
     auto componentFactory = Game::getInstance()->getComponentFactory();
 
@@ -14,12 +11,12 @@ void ObjectLoader::loadEntities(const std::multimap<std::string, Components::com
     auto entitiesPhysicsComponent = std::map<EntityObject *, Components::component *>();
 
     for (auto &loadedEntity : loadedEntities) {
-        auto &newEntity = instantiatedEntities[loadedEntity.first];
+        auto &newEntity = instantiatedEntities[loadedEntity.first.name];
         if (newEntity == nullptr) {
-            newEntity = new EntityObject(Game::getInstance()->createEntity(), loadedEntity.first);
+            newEntity = new EntityObject(Game::getInstance()->createEntity(), loadedEntity.first.name, loadedEntity.first.type);
             entities.push_back(std::unique_ptr<EntityObject>(newEntity));
 
-            instantiatedEntities[loadedEntity.first] = newEntity;
+            instantiatedEntities[loadedEntity.first.name] = newEntity;
         }
 
         const auto &component = loadedEntity.second;

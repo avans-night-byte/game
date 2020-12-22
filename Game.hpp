@@ -44,7 +44,7 @@ struct LevelData;
 
 class Game {
 private:
-    std::unique_ptr<CharacterComponent> _characterComponent;
+    std::unique_ptr<EntityObject> _character;
 
     static Game *_instance;
     static std::mutex mutex;
@@ -123,5 +123,7 @@ public:
 
     void unloadLevel();
 
-    void FixedUpdate(float deltaTime);
+    void fixedUpdate(float deltaTime);
+
+    void renderMenu();
 };

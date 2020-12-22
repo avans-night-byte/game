@@ -5,18 +5,12 @@
 
 InventoryComponent::InventoryComponent(EntityId id) : Component(id), _renderingAPI(Game::getInstance()->getRenderingApi()) {
     _transformComponent = std::make_unique<TransformComponent>(id);
-
-    _renderingAPI.loadTexture("../../Resources/Sprites/inventory_slot.png", "InventorySlot");
-    _renderingAPI.loadTexture("../../Resources/Sprites/Wooden_Crate.png", "crate");
-    _renderingAPI.loadTexture("../../Resources/Sprites/boar.png", "boar");
-
     _quantityText = std::map<std::string, TextWrapper*>();
-
     _emptySlot = Vector2(1,1);
 
-    addToInventory(new InventoryItem{ 100, "crate", InventoryItem::object});
-    addToInventory(new InventoryItem{ 50, "crate", InventoryItem::object});
-    addToInventory(new InventoryItem{1, "boar", InventoryItem::resource});
+    addToInventory(new InventoryItem{100, "crate", EntityObject::EntityType::object});
+    addToInventory(new InventoryItem{50, "crate", EntityObject::EntityType::object});
+    addToInventory(new InventoryItem{2, "boar", EntityObject::EntityType::resource});
 }
 
 void InventoryComponent::initialize(EntityObject &entityParent) {
@@ -30,12 +24,15 @@ void InventoryComponent::render() {
 
         for (int x = 1; x < _rows; ++x) {
             for (int y = 1; y < _columns; ++y) {
-                _renderingAPI.drawTexture("InventorySlot", _startX + (_offset * x), _startY + (_offset * y), 125, 125, 1, 0);
+                _renderingAPI.drawTexture("inventory_slot", _startX + (_offset * x), _startY + (_offset * y), 125, 125, 1, 0);
             }
         }
 
         for (auto & it : _inventory) {
             InventoryItem item = *it;
+
+            if(checkItemIfEmpty(item.getName())) continue;
+
             _renderingAPI.drawTexture(item.getName(), item.getPosition().x, item.getPosition().y, 125, 125, 1, 0);
             std::string key = item.getName() + "_quantity_" + std::to_string(item.getItemQuantity());
 
@@ -44,7 +41,6 @@ void InventoryComponent::render() {
                 auto wrapper = TextWrapper::createText(_renderingAPI, std::to_string(item.getItemQuantity()), "../../Resources/Fonts/LiberationMono-Regular.ttf", 20, "ffffff", key);
                 _quantityText[key] = wrapper;
             }
-
             _quantityText[key]->render(item.getPosition().x, item.getPosition().y);
         }
     }
@@ -57,7 +53,6 @@ void InventoryComponent::update(const Input &inputSystem) {
     }
 
     if(inputSystem.keyMap.code == "MOUSE_BUTTON_LEFT"){
-
         _isOpen = false;
         onClick(inputSystem);
     }
@@ -99,13 +94,16 @@ void InventoryComponent::removeFromInventory(const std::string &name, int count)
     findEmptySlot();
 }
 
-void InventoryComponent::checkItemIfEmpty(const std::string &name) {
+bool InventoryComponent::checkItemIfEmpty(const std::string &name) {
     auto foundItem = findInventoryItem(name);
-    if(foundItem == nullptr) return;
+    if(foundItem == nullptr) return true;
 
-    if(foundItem->getItemQuantity() < 1) _inventory.erase(_inventory.begin() + (foundItem->getIndex().x -1 + foundItem->getIndex().y -1));
-
-    findEmptySlot();
+    if(foundItem->getItemQuantity() < 1) {
+        _inventory.erase(_inventory.begin() + (foundItem->getIndex().x -1 + foundItem->getIndex().y -1));
+        findEmptySlot();
+        return true;
+    }
+    return false;
 }
 
 void InventoryComponent::addToInventory(InventoryItem *item) {
@@ -126,6 +124,31 @@ void InventoryComponent::addToInventory(InventoryItem *item) {
 
     _inventory.push_back(item);
 
+}
+
+void InventoryComponent::addEntityToInventory(EntityObject &e) {
+    if(e.getType() == EntityObject::EntityType::level_change || e.getType() == EntityObject::EntityType::character) return;
+
+    auto &id = e.getComponent<RenderComponent>()->getSpriteID();
+    auto *item = new InventoryItem { 1, id, e.getType() };
+
+
+    if(_inventory.size() >= getInventorySize() || item->getName() == "") return;
+
+    auto foundItem = findInventoryItem(id);
+    if(foundItem != nullptr){
+        foundItem->addItemQuantity(item->getItemQuantity());
+        return;
+    }
+
+    findEmptySlot();
+
+    item->setIndex(_emptySlot);
+
+    Vector2 position =  {_startX + (_offset * _emptySlot.x), _startY + (_offset * _emptySlot.y)};
+    item->setPosition(position);
+
+    _inventory.push_back(item);
 }
 
 
@@ -167,8 +190,12 @@ bool InventoryComponent::isMenuOpen() const {
     return _isOpen;
 }
 
-Event<InventoryItem&> &InventoryComponent::getEventManager() {
+Event<InventoryItem&> &InventoryComponent::getOnInventoryClickEventManager() {
     return _onInventoryClickEvent;
+}
+
+InventoryComponent::~InventoryComponent() {
+    _inventory.clear();
 }
 
 

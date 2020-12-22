@@ -1,7 +1,7 @@
 #include "GlobalObjects.hpp"
 
 #include "Generated/objects.hxx"
-#include "../../API/XMLParser/LevelParserAPI.hpp"
+
 #include "../Components/EntityObject.hpp"
 #include "ObjectLoader.hpp"
 
@@ -33,12 +33,12 @@ void GlobalObjects::initializeObjects(const std::string &name,
 
     auto poolList = Objects::objectList_(std::string(poolPath));
     auto objectList = Objects::objectList_(path);
-    std::multimap<std::string, Components::component *> loadedEntities;
+    std::multimap<EntityXMLParser::ObjectData, Components::component *> loadedEntities;
     LevelParserAPI::loadEntities(loadedEntities, objectList->object());
 
     _objectsLists[name] = loadedEntities;
 
-    std::multimap<std::string, Components::component *> loadedEntitiesPool;
+    std::multimap<EntityXMLParser::ObjectData, Components::component *> loadedEntitiesPool;
     LevelParserAPI::loadEntities(loadedEntitiesPool, poolList->object());
 
     _objectsLists[poolName] = loadedEntitiesPool;
@@ -50,14 +50,17 @@ GlobalObjects::loadEntity(const std::string &fromList, const std::string &entity
     if (map == _objectsLists.end())
         throw std::runtime_error(fromList + " does not exist in the global list");
 
-    if (map->second.find(entityName) == map->second.end())
+    EntityXMLParser::ObjectData objdata { entityName, "" };
+
+    if (map->second.find(objdata) == map->second.end())
         throw std::runtime_error(entityName + " does not exist in " + fromList);
 
     // Make a map with every loaded component for _entityName
-    auto entityIt = map->second.equal_range(entityName);
-    std::multimap<std::string, Components::component *> entityToLoad{};
+    auto entityIt = map->second.equal_range(objdata);
+    std::multimap<EntityXMLParser::ObjectData, Components::component *> entityToLoad{};
+
     for (auto &it = entityIt.first; it != entityIt.second; it++) {
-        auto pair = std::make_pair(entityName, it->second);
+        auto pair = std::make_pair(it->first, it->second);
         entityToLoad.insert(pair);
     }
 
@@ -75,11 +78,14 @@ void GlobalObjects::loadEntities(std::vector<std::unique_ptr<EntityObject>> &ent
     if (map == _objectsLists.end())
         throw std::runtime_error(fromList + " does not exist in the global list");
 
+    EntityXMLParser::ObjectData objdata { entityName, "" };
+
     // Make a map with every loaded component for _entityName
-    auto entityIt = map->second.equal_range(entityName);
-    std::multimap<std::string, Components::component *> entityToLoad{};
+    auto entityIt = map->second.equal_range(objdata);
+    std::multimap<EntityXMLParser::ObjectData, Components::component *> entityToLoad{};
+
     for (auto &it = entityIt.first; it != entityIt.second; it++) {
-        auto pair = std::make_pair(entityName, it->second);
+        auto pair = std::make_pair(it->first, it->second);
         entityToLoad.insert(pair);
     }
 
@@ -88,7 +94,7 @@ void GlobalObjects::loadEntities(std::vector<std::unique_ptr<EntityObject>> &ent
                         amount);
 }
 
-void GlobalObjects::getObjectFromLoader(const std::multimap<std::string, Components::component *> &loadedEntities,
+void GlobalObjects::getObjectFromLoader(const std::multimap<EntityXMLParser::ObjectData, Components::component *> &loadedEntities,
                                         std::vector<std::unique_ptr<EntityObject>> &entities, int amount) {
     for (int i = 0; i < amount; ++i) {
         ObjectLoader::loadEntities(loadedEntities, entities);

@@ -5,6 +5,11 @@
 #include <vector>
 #include <memory>
 
+#include "../Components/PhysicsComponent.hpp"
+#include "../Components/TransformComponent.hpp"
+#include "../Components/ComponentFactory.hpp"
+#include "../Object/CollisionHandler.hpp"
+
 namespace Components {
     class component;
 }
@@ -13,7 +18,7 @@ class CollisionHandler;
 
 class ObjectLoader {
 public:
-    static void loadEntities(const std::multimap<std::string, Components::component *> &loadedEntities,
+    static void loadEntities(const std::multimap<EntityXMLParser::ObjectData, Components::component *> &loadedEntities,
                       std::vector<std::unique_ptr<EntityObject>> &entities);
 
 private:
