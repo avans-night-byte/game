@@ -1,9 +1,6 @@
-//
-// Created by marco on 12/7/20.
-//
+#include "HealthComponent.hpp"
 
 #include <iostream>
-#include "HealthComponent.hpp"
 
 float HealthComponent::getHealth() const {
     return this->_healthPoints;
@@ -14,7 +11,7 @@ void HealthComponent::setHealth(float newHealthPoints) {
 }
 
 void HealthComponent::doDamage(float amountOfHealthPoints) {
-    std::cout << "HealthComponent: Damaged from " << this->getHealth() << " to " << this->_healthPoints  << std::endl;
+    std::cout << "HealthComponent: Damaged from " << this->getHealth() << " to " << this->_healthPoints << std::endl;
 
     float newHealth = this->_healthPoints -= amountOfHealthPoints;
 
@@ -28,4 +25,30 @@ void HealthComponent::doDamage(float amountOfHealthPoints) {
 void HealthComponent::die() {
     std::cout << "HealthComponent: You died" << std::endl;
     this->setHealth(0);
+}
+
+void HealthComponent::render() {
+    Vector2 vec1(10, 10);
+    Vector2 vec2(100, 10);
+    _renderingApi.drawLine(vec1, vec2);
+}
+
+void HealthComponent::update(const Input &inputSystem) {
+
+}
+
+void HealthComponent::fixedUpdate(const float &deltaTime) {
+
+}
+
+std::string HealthComponent::name() const {
+    return "HealthComponent";
+}
+
+Component *HealthComponent::build(EntityId entityId, const Components::component *component) {
+    return new HealthComponent(entityId);
+}
+
+void HealthComponent::initialize(EntityObject &entityParent) {
+
 }

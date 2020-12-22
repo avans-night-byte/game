@@ -3,6 +3,7 @@
 #include "TransformComponent.hpp"
 #include "CharacterComponent.hpp"
 #include "NextLevelComponent.hpp"
+#include "HealthComponent.hpp"
 #include "Rendering/RenderComponent.hpp"
 #include "EntityObject.hpp"
 
@@ -17,6 +18,7 @@ ComponentFactory::ComponentFactory() {
     components["TransformComponent"] = std::make_unique<TransformComponent>(entityId);
     components["CharacterComponent"] = std::make_unique<CharacterComponent>(entityId);
     components["NextLevelComponent"] = std::make_unique<NextLevelComponent>(entityId);
+    components["HealthComponent"] = std::make_unique<HealthComponent>(entityId);
     components["RenderComponent"] = std::make_unique<RenderComponent>(entityId);
     components["EntityObject"] = std::make_unique<EntityObject>(entityId, "FactoryEntity");
     components["BulletComponent"] = std::make_unique<BulletComponent>(entityId);
