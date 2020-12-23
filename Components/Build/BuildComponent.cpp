@@ -1,5 +1,4 @@
 #include "BuildComponent.hpp"
-#include "../PhysicsComponent.hpp"
 
 BuildComponent::BuildComponent(EntityId id) : Component(id), _poolLevel(*Game::getInstance()->getPoolLevel()) {}
 
@@ -27,7 +26,7 @@ void BuildComponent::pickUpObject(EntityObject &entity) {
 }
 
 void BuildComponent::placeObject(const TransformComponent &transform) {
-    //TODO: Pool should not crash if null
+
     if(_selectedObject == nullptr || _selectedObject->getItemQuantity() < 1) return;
 
     EntityObject *placeable = _poolLevel.getPool(_selectedObject->getName()).getEntity();

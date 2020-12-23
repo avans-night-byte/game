@@ -31,7 +31,7 @@ public:
 
     void fixedUpdate(const float &deltaTime) override;
 
-    std::string name() const override;
+    [[nodiscard]] std::string name() const override;
 
     Component *build(EntityId entityId, const Components::component *component) override;
 
