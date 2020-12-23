@@ -33,17 +33,16 @@ void HealthComponent::render() {
     std::string color("000000");
     std::string colo2("ff1100");
     _renderingApi.drawRectangle(vec1, 500, 50, color, 255);
-    _renderingApi.drawRectangle(vec2, (int) (480.f / 100.f * _healthPoints), 30, colo2, 255);
+    _renderingApi.drawRectangle(vec2,  480.f / 100.f * _healthPoints, 30, colo2, 255);
 }
 
-bool damageIsDone = false;
 
 void HealthComponent::update(const Input &inputSystem) {
     if (inputSystem.keyMap.type == KeyType::KeyUp) {
-        damageIsDone = false;
-    } else if (!damageIsDone && inputSystem.keyMap.code == "G") {
-//        doDamage(10);
-        damageIsDone = true;
+        _damageIsDone = false;
+    } else if (!_damageIsDone && inputSystem.keyMap.code == "G") {
+        doDamage(10);
+        _damageIsDone = true;
     }
 }
 

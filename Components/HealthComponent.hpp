@@ -8,6 +8,7 @@
 class HealthComponent : public Component {
 private:
     float _healthPoints = 100;
+    bool _damageIsDone = false;
     RenderingAPI& _renderingApi;
 
 
