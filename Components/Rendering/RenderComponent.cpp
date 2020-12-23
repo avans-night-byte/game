@@ -12,7 +12,7 @@ RenderComponent::RenderComponent(EntityId id) : Component(id),
                                                 _engineRenderingApi(Game::getInstance()->getRenderingApi()),
                                                 _spriteId(),
                                                 _texturePath(),
-                                                transform(nullptr) {
+                                                transform(nullptr){
 
 }
 
@@ -34,7 +34,6 @@ RenderComponent::RenderComponent(EntityId id, RenderType renderType, const std::
           _engineRenderingApi(Game::getInstance()->getRenderingApi()),
           _spriteId(spriteId),
           _texturePath(texturePath),
-          _renderType(renderType),
           _width(width),
           _height(height),
           _offsetX(offsetX),

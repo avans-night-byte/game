@@ -33,12 +33,12 @@ void GlobalObjects::initializeObjects(const std::string &name,
 
     auto poolList = Objects::objectList_(std::string(poolPath));
     auto objectList = Objects::objectList_(path);
-    std::multimap<EntityXMLParser::ObjectData, Components::component *> loadedEntities;
+    std::vector<EntityXMLParser::ObjectData> loadedEntities{};
     LevelParserAPI::loadEntities(loadedEntities, objectList->object());
 
     _objectsLists[name] = loadedEntities;
 
-    std::multimap<EntityXMLParser::ObjectData, Components::component *> loadedEntitiesPool;
+    std::vector<EntityXMLParser::ObjectData> loadedEntitiesPool{};
     LevelParserAPI::loadEntities(loadedEntitiesPool, poolList->object());
 
     _objectsLists[poolName] = loadedEntitiesPool;
@@ -50,22 +50,20 @@ GlobalObjects::loadEntity(const std::string &fromList, const std::string &entity
     if (map == _objectsLists.end())
         throw std::runtime_error(fromList + " does not exist in the global list");
 
-    EntityXMLParser::ObjectData objdata { entityName, "" };
-
-    if (map->second.find(objdata) == map->second.end())
-        throw std::runtime_error(entityName + " does not exist in " + fromList);
-
-    // Make a map with every loaded component for _entityName
-    auto entityIt = map->second.equal_range(objdata);
-    std::multimap<EntityXMLParser::ObjectData, Components::component *> entityToLoad{};
-
-    for (auto &it = entityIt.first; it != entityIt.second; it++) {
-        auto pair = std::make_pair(it->first, it->second);
-        entityToLoad.insert(pair);
+    // Check if entityName corresponds to any objects
+    EntityXMLParser::ObjectData objectData{"", ""};
+    for (auto &object : map->second) {
+        if (object.name == entityName) {
+            objectData = object;
+            break;
+        }
     }
 
+    if (objectData.name.empty())
+        throw std::runtime_error(entityName + " does not exist in " + fromList);
+
     std::vector<std::unique_ptr<EntityObject>> entities{};
-    getObjectFromLoader(entityToLoad,
+    getObjectFromLoader({objectData},
                         entities,
                         1);
     return std::move(entities.at(0));
@@ -73,28 +71,30 @@ GlobalObjects::loadEntity(const std::string &fromList, const std::string &entity
 
 void GlobalObjects::loadEntities(std::vector<std::unique_ptr<EntityObject>> &entities,
                                  const std::string &fromList,
-                                 const std::string &entityName, int amount) {
+                                 const std::string &entityName,
+                                 int amount) {
     auto map = _objectsLists.find(fromList);
     if (map == _objectsLists.end())
         throw std::runtime_error(fromList + " does not exist in the global list");
 
-    EntityXMLParser::ObjectData objdata { entityName, "" };
-
-    // Make a map with every loaded component for _entityName
-    auto entityIt = map->second.equal_range(objdata);
-    std::multimap<EntityXMLParser::ObjectData, Components::component *> entityToLoad{};
-
-    for (auto &it = entityIt.first; it != entityIt.second; it++) {
-        auto pair = std::make_pair(it->first, it->second);
-        entityToLoad.insert(pair);
+    EntityXMLParser::ObjectData objectData{"", ""};
+    for (auto &object : map->second) {
+        if (object.name == entityName) {
+            objectData = object;
+            break;
+        }
     }
 
-    getObjectFromLoader(entityToLoad,
+    if (objectData.name.empty())
+        throw std::runtime_error(entityName + " does not exist in " + fromList);
+
+
+    getObjectFromLoader({objectData},
                         entities,
                         amount);
 }
 
-void GlobalObjects::getObjectFromLoader(const std::multimap<EntityXMLParser::ObjectData, Components::component *> &loadedEntities,
+void GlobalObjects::getObjectFromLoader(const std::vector<EntityXMLParser::ObjectData> &loadedEntities,
                                         std::vector<std::unique_ptr<EntityObject>> &entities, int amount) {
     for (int i = 0; i < amount; ++i) {
         ObjectLoader::loadEntities(loadedEntities, entities);
