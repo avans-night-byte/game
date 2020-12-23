@@ -20,7 +20,7 @@ ComponentFactory::ComponentFactory() {
     components["NextLevelComponent"] = std::make_unique<NextLevelComponent>(entityId);
     components["HealthComponent"] = std::make_unique<HealthComponent>(entityId);
     components["RenderComponent"] = std::make_unique<RenderComponent>(entityId);
-    components["EntityObject"] = std::make_unique<EntityObject>(entityId, "FactoryEntity");
+    components["EntityObject"] = std::make_unique<EntityObject>(entityId, EntityObject::EntityType::none);
     components["BulletComponent"] = std::make_unique<BulletComponent>(entityId);
 }
 

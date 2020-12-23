@@ -42,7 +42,7 @@ void Game::initialize() {
 
 
     auto characterId = createEntity();
-    _character = std::make_unique<EntityObject>(characterId, "Character", "character");
+    _character = std::make_unique<EntityObject>(characterId, "Character", EntityObject::EntityType::character);
     _character->addComponent(new CharacterComponent(characterId));
     _character->addComponent(new HealthComponent(characterId));
     _character->addComponent(new TransformComponent(characterId));

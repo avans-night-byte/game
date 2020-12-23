@@ -32,7 +32,7 @@ class CharacterComponent : public Component, public CollisionHandler {
     };
 
 private:
-    std::map<MovementDirection, bool> _currentMovementDirection;
+    std::map<MovementDirection, bool> _currentMovementDirection {};
     MovementDirection _latestMovementDirection = MovementDirection::None;
 
     HealthComponent *_healthComponent = nullptr;
@@ -44,7 +44,7 @@ private:
     WeaponComponent *_weapon = nullptr;
 
 
-    EntityObject *_contactObject;
+    EntityObject *_contactObject {};
 
     void resetMovement();
 

@@ -127,13 +127,14 @@ void InventoryComponent::addToInventory(InventoryItem *item) {
 }
 
 void InventoryComponent::addEntityToInventory(EntityObject &e) {
-    if(e.getType() == EntityObject::EntityType::level_change || e.getType() == EntityObject::EntityType::character) return;
+    if(e.getType() == EntityObject::EntityType::level_change ||
+            e.getType() == EntityObject::EntityType::character) return;
 
     auto &id = e.getComponent<RenderComponent>()->getSpriteID();
-    auto *item = new InventoryItem { 1, id, e.getType() };
+    auto *item = new InventoryItem { 1, id, e.getType()};
 
 
-    if(_inventory.size() >= getInventorySize() || item->getName() == "") return;
+    if(_inventory.size() >= getInventorySize() || item->getName().empty()) return;
 
     auto foundItem = findInventoryItem(id);
     if(foundItem != nullptr){

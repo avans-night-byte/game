@@ -15,12 +15,18 @@ class Pool;
 
 class EntityObject : public Component {
 public:
-    //Weapons = Pistol, RPG etc
-    //Resource = Water, Cookie, etc,
-    //Object = Wall, Turret, Box, etc
-    //Level_chagne = go to diffrent level
+    // None = Used only for ComponentFactory
+    // Weapons = Pistol, RPG etc
+    // Resource = Water, Cookie, etc,
+    // Object = Wall, Turret, Box, etc
+    // Level_change = go to diffrent level
     enum EntityType {
-        weapon, resource, object, level_change, character
+        none,
+        weapon,
+        resource,
+        object,
+        level_change, // TODO: It is only used for pickable items. Could make a boolean in EntityObject or a component for pickable
+        character,
     };
 protected:
     std::vector<std::unique_ptr<Component>> _components;
@@ -29,18 +35,20 @@ protected:
 
     Pool *_pool = nullptr;
     EntityType _type;
+
 public:
     std::string entityName;
 public:
-    explicit EntityObject(EntityId id, const std::string name, const std::string &type) : Component(id),
-                                                                              entityName(std::move(name)) {
-        setType(type);
+    explicit EntityObject(EntityId id, const std::string name, EntityType type) : Component(id),
+                                                                                  entityName(std::move(name)),
+                                                                                  _type(type) {
     }
 
-    explicit EntityObject(EntityId id, const std::string &type) : Component(id),
-                                                                               entityName("") {
-        setType(type);
+    explicit EntityObject(EntityId id, EntityType type) : Component(id),
+                                                          entityName(""),
+                                                          _type(type) {
     }
+
     TransformComponent *getTransform();
 
     PhysicsComponent *getPhysicsComponent();
@@ -49,7 +57,7 @@ public:
         return _components;
     }
 
-    void setType(const std::string &type);
+    void setType(const EntityType &type);
 
     template<class T>
     T *getComponent() const {
@@ -65,7 +73,8 @@ public:
 
     Component *getComponent(std::string componentName);
 
-    EntityType getType();
+    static EntityObject::EntityType getType(const std::string &type);
+    EntityObject::EntityType getType();
 
     ~EntityObject() override = default;
 
