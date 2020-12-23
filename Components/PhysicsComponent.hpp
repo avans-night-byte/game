@@ -20,7 +20,7 @@ private:
     unsigned int _bodyId = 0;
     EntityObject *_parent = nullptr;
 
-    std::string contactHandlerName;
+    std::string contactHandlerName {};
 
 public:
     inline const std::string& getContactHandlerName() {

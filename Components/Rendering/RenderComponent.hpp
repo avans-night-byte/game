@@ -31,10 +31,9 @@ private:
     int _offsetX = 0;
     int _offsetY = 0;
 
-    RenderType _renderType;
-    std::string _texturePath;
-    std::string _spriteId;
-    std::unique_ptr<Animation> _animation;
+    std::string _texturePath {};
+    std::string _spriteId {};
+    std::unique_ptr<Animation> _animation {};
 
     bool _isAnimating = false;
 

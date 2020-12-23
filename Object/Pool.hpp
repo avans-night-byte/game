@@ -15,8 +15,8 @@ private:
     int _size = 0;
 
 
-    std::vector<std::unique_ptr<EntityObject>> _objects;
-    std::vector<EntityObject*> _pool;
+    std::vector<std::unique_ptr<EntityObject>> _objects {};
+    std::vector<EntityObject*> _pool {};
 
 
 public:

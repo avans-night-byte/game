@@ -14,8 +14,8 @@ namespace Components {
 
 class TransformComponent : public Component {
 private:
-    float _x;
-    float _y;
+    float _x {};
+    float _y {};
 
     const float *_physicsX = nullptr;
     const float *_physicsY = nullptr;
