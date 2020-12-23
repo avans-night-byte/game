@@ -12,11 +12,11 @@
 class BuildComponent : public Component {
 
 private:
-    Event<EntityObject&> _pickUpEntityEventHandler;
+    Event<EntityObject&> _pickUpEntityEventHandler {};
 
     PoolLevel &_poolLevel;
 
-    InventoryItem *_selectedObject;
+    InventoryItem *_selectedObject = nullptr;
 
 public:
     explicit BuildComponent(EntityId id);
