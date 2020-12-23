@@ -2,16 +2,11 @@
 
 BuildComponent::BuildComponent(EntityId id) : Component(id), _poolLevel(*Game::getInstance()->getPoolLevel()) {}
 
-void BuildComponent::initialize(EntityObject &entityParent) {
+void BuildComponent::initialize(EntityObject &entityParent) {}
 
-}
+void BuildComponent::update(const Input &inputSystem) {}
 
-void BuildComponent::update(const Input &inputSystem) {
-}
-
-void BuildComponent::fixedUpdate(const float &deltaTime) {
-
-}
+void BuildComponent::fixedUpdate(const float &deltaTime) {}
 
 std::string BuildComponent::name() const {
     return "BuildComponent";

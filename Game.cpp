@@ -3,9 +3,12 @@
 
 #include "./Game.hpp"
 
+#include "UI/FrameCounter.h"
+
 #include "./Components/ComponentFactory.hpp"
 #include "./Components/CharacterComponent.hpp"
-#include "UI/FrameCounter.h"
+#include "./Components/Shopkeeper/TradingComponent.hpp"
+
 #include "./Scenes/PoolLevel.hpp"
 #include "./Components/EntityObject.hpp"
 
@@ -56,6 +59,8 @@ void Game::initialize() {
                                                           "../../Resources/Sprites/character.png",
                                                           "spritesheet_char", 96, 104, 0, 20));
     _character->addComponent(new BuildComponent(characterId));
+    _character->addComponent(new WalletComponent(characterId));
+    _character->addComponent(new TradingComponent(characterId, _character->getComponent<InventoryComponent>()->getInventoryItems()));
 
     _character->initializeComponents();
     _character->initialize(*_character);

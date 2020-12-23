@@ -11,6 +11,8 @@
 #include "Inventory/InventoryComponent.hpp"
 #include "Build/BuildComponent.hpp"
 #include "../Object/CollisionHandler.hpp"
+#include "Shopkeeper/TradingComponent.hpp"
+#include "Wallet/WalletComponent.hpp"
 
 class Game;
 
@@ -42,6 +44,8 @@ private:
     RenderComponent *_renderComponent = nullptr;
     BuildComponent *_buildComponent = nullptr;
     WeaponComponent *_weapon = nullptr;
+    TradingComponent *_tradingComponent = nullptr;
+    WalletComponent *_walletComponent = nullptr;
 
 
     EntityObject *_contactObject {};
@@ -99,4 +103,7 @@ public:
     void update(const Input &inputSystem) override;
 
     void isIdleAnimation(bool isHor, bool isVer);
+
+
+
 };
