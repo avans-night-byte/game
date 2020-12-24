@@ -4,7 +4,7 @@
 #include "./Game.hpp"
 
 #include "./Components/ComponentFactory.hpp"
-#include "./Components/CharacterComponent.hpp"
+#include "Components/Characters/CharacterComponent.hpp"
 #include "UI/FrameCounter.h"
 #include "./Scenes/PoolLevel.hpp"
 #include "./Components/EntityObject.hpp"

@@ -2,7 +2,7 @@
 #include "../../Engine/Managers/ResourceManager.hpp"
 
 #include "./EntityObject.hpp"
-#include "./CharacterComponent.hpp"
+#include "Characters/CharacterComponent.hpp"
 #include "../Game.hpp"
 
 std::string NextLevelComponent::name() const {

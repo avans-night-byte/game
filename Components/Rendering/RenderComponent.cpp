@@ -86,7 +86,7 @@ void RenderComponent::render() {
         const auto &currentAnimation = _animation->currentAnimation;
         const auto &animationSpeed = _animation->speed;
 
-        _engineRenderingApi.drawAnimation(_spriteId, v2, currentAnimation, animationSpeed);
+        _engineRenderingApi.drawAnimation(_spriteId, v2, _size, animationSpeed, currentAnimation);
     }
 }
 

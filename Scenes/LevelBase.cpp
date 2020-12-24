@@ -2,7 +2,7 @@
 
 #include "../Components/ComponentFactory.hpp"
 #include "../../API/XMLParser/LevelParserAPI.hpp"
-#include "../Components/CharacterComponent.hpp"
+#include "../Components/Characters/CharacterComponent.hpp"
 #include "../Object/ObjectLoader.hpp"
 
 
@@ -35,6 +35,7 @@ void LevelBase::initialize(const std::string &name, const LevelData &data) {
     this->_levelName = name;
 
     ObjectLoader::loadEntities(outEntities, this->_entities);
+    this->_entities.push_back(GlobalObjects::getInstance()->loadEntity("MainObjects", "zombie"));
 }
 
 void LevelBase::addObject(const std::string &fromList, const std::string &entityName) {

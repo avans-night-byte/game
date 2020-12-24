@@ -1,16 +1,16 @@
 #pragma once
 
 
-#include "../../API/Rendering/EngineRenderingAPI.hpp"
-#include "EntityObject.hpp"
-#include "TransformComponent.hpp"
-#include "PhysicsComponent.hpp"
-#include "HealthComponent.hpp"
-#include "BulletComponent.hpp"
-#include "WeaponComponent.hpp"
-#include "Inventory/InventoryComponent.hpp"
-#include "Build/BuildComponent.hpp"
-#include "../Object/CollisionHandler.hpp"
+#include "../../../API/Rendering/EngineRenderingAPI.hpp"
+#include "../EntityObject.hpp"
+#include "../TransformComponent.hpp"
+#include "../PhysicsComponent.hpp"
+#include "../HealthComponent.hpp"
+#include "../BulletComponent.hpp"
+#include "../WeaponComponent.hpp"
+#include "../Inventory/InventoryComponent.hpp"
+#include "../Build/BuildComponent.hpp"
+#include "../../Object/CollisionHandler.hpp"
 
 class Game;
 
