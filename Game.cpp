@@ -36,6 +36,7 @@ void Game::initialize() {
     resourceManager.loadResource("MainMenu");
     resourceManager.loadResource("MainObjects");
 
+    _character = GlobalObjects::getInstance()->loadEntity("MainObjects", "character");
 
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitLevel, this, std::placeholders::_1);
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitGame, this, std::placeholders::_1);
@@ -239,6 +240,7 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
         ResourceManager::getInstance()->inMenu = false;
         _levelBase = std::make_unique<LevelBase>();
         _levelBase->initialize(levelName, data);
+        _levelBase->character = this->_character.get();
     });
 }
 

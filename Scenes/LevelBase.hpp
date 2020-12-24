@@ -25,7 +25,7 @@ private:
     std::string _levelName;
 
 public:
-    EntityObject* _character = nullptr; // TODO: Character data should be stored in global resource file
+    EntityObject* character = nullptr;
 
     LevelBase() = default;
 

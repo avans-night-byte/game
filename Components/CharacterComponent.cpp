@@ -145,10 +145,10 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
 
         this->isIdleAnimation(movingHor, movingVer);
 
-        setVelocity(velocity * deltaTime);
-
+        moveCharacter(velocity * deltaTime);
     }
 }
+
 
 void CharacterComponent::resetMovement() {
     _currentMovementDirection[Left] = false;
@@ -247,7 +247,7 @@ void CharacterComponent::initialize(EntityObject &entityParent) {
 
     animation->addAnimation("Walk Down Idle", {{0, 0}});
 
-    animation->speed = 1;
+    animation->speed = 10;
 
     _renderComponent->setAnimation(animation);
 

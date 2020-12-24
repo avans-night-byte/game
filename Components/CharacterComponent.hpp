@@ -55,7 +55,7 @@ public:
         _physicsComponent->getVelocity(velocity);
     }
 
-    void setVelocity(const Vector2 &velocity) {
+    void moveCharacter(const Vector2 &velocity) {
         _physicsComponent->setVelocity(velocity);
     }
 

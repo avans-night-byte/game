@@ -68,6 +68,12 @@ public:
         return Vector2(*_physicsX + _x, *_physicsY + _y);
     }
 
+    [[nodiscard]] Vector2 getPhysicsPos() const {
+        if(_physicsX == nullptr || _physicsY == nullptr)
+            return Vector2();
+        return Vector2(*_physicsX, *_physicsY);
+    }
+
     [[nodiscard]]std::string name() const override;
 
     TransformComponent &operator=(Vector2& v2);
