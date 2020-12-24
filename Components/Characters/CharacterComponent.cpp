@@ -2,6 +2,9 @@
 #include "../NextLevelComponent.hpp"
 #include "../Inventory/InventoryComponent.hpp"
 #include "../Build/BuildComponent.hpp"
+#include "../NextLevelComponent.hpp"
+#include "../Shopkeeper/ShopkeeperComponent.hpp"
+
 
 #include <memory>
 
@@ -39,19 +42,36 @@ void CharacterComponent::update(const Input &inputSystem) {
     }
 
     if (_contactObject && inputSystem.keyMap.action == "INTERACT") {
-        _buildComponent->pickUpObject(*_contactObject);
-        _contactObject->destroy();
-        _contactObject = nullptr;
+
+        auto shopKeeper = _contactObject->getComponent<ShopkeeperComponent>();
+        if(shopKeeper != nullptr){
+            shopKeeper->showInventoryItems();
+
+        } else if(_contactObject->getType() != EntityObject::EntityType::level_change &&
+        _contactObject->getType() != EntityObject::EntityType::character) {
+
+            _buildComponent->pickUpObject(*_contactObject);
+            _contactObject->destroy();
+            _contactObject = nullptr;
+        }
     }
 
-    if (!_inventoryComponent->isMenuOpen()) {
-        if (inputSystem.keyMap.action == "CLICK_LEFT") {
-            _weapon->shoot(*_transformComponent);
+    if(inputSystem.keyMap.action == "INVENTORY"){
+        _inventoryComponent->showInventory();
+    }
 
+    if (inputSystem.keyMap.action == "CLICK_LEFT") {
+
+        if(_inventoryComponent->isInventoryOpen()){
+            _inventoryComponent->hideInventory();
+            _inventoryComponent->click(inputSystem);
+            return;
         }
-        if (inputSystem.keyMap.action == "CLICK_RIGHT") {
-            _buildComponent->placeObject(*_transformComponent);
-        }
+
+        _weapon->shoot(*_transformComponent);
+    }
+    if (inputSystem.keyMap.action == "CLICK_RIGHT" && !_inventoryComponent->isInventoryOpen()) {
+        _buildComponent->placeObject(*_transformComponent);
     }
 
 
@@ -185,7 +205,11 @@ void CharacterComponent::initialize(EntityObject &entityParent) {
     _transformComponent = entityParent.getComponent<TransformComponent>();
 
     _healthComponent = entityParent.getComponent<HealthComponent>();
+
     _inventoryComponent = entityParent.getComponent<InventoryComponent>();
+    _tradingComponent = entityParent.getComponent<TradingComponent>();
+    _walletComponent = entityParent.getComponent<WalletComponent>();
+
     _buildComponent = entityParent.getComponent<BuildComponent>();
 
     _inventoryComponent->getOnInventoryClickEventManager() += std::bind(&BuildComponent::setBuildObject,

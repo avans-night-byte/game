@@ -12,7 +12,7 @@
 class BuildComponent : public Component {
 
 private:
-    Event<EntityObject&> _pickUpEntityEventHandler;
+    Event<EntityObject&> _pickUpEntityEventHandler {};
 
     PoolLevel &_poolLevel;
 

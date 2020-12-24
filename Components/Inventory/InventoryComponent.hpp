@@ -15,8 +15,8 @@
 
 class InventoryComponent : public Component {
 
-    std::unique_ptr<TransformComponent> _transformComponent;
-    std::unique_ptr<RenderComponent> _renderComponent;
+    std::unique_ptr<TransformComponent> _transformComponent = nullptr;
+    std::unique_ptr<RenderComponent> _renderComponent = nullptr;
 
     const int _rows = 5;
     const int _columns = 5;
@@ -28,12 +28,12 @@ class InventoryComponent : public Component {
 
     bool _isOpen = false;
 
-    Vector2 _emptySlot;
+    Vector2 _emptySlot {};
 
-    std::vector<InventoryItem*> _inventory;
-    std::map<std::string, TextWrapper*> _quantityText;
+    std::vector<InventoryItem*> _inventory {};
+    std::map<std::string, TextWrapper*> _quantityText {};
 
-    Event<InventoryItem&> _onInventoryClickEvent;
+    Event<InventoryItem&> _onInventoryClickEvent {};
 
     RenderingAPI &_renderingAPI;
 
@@ -59,11 +59,19 @@ public:
 
     void addToInventory(InventoryItem *item);
 
+    std::vector<InventoryItem *> &getInventoryItems();
+
     void removeFromInventory(const std::string &name, int count);
+
+    void showInventory();
+
+    void hideInventory();
+
+    void click(const Input &input);
 
     [[nodiscard]] int getInventorySize() const;
 
-    [[nodiscard]] bool isMenuOpen() const;
+    [[nodiscard]] bool isInventoryOpen() const;
 
     Event<InventoryItem&> &getOnInventoryClickEventManager();
 
@@ -74,7 +82,6 @@ private:
 
     bool findEmptySlot();
 
-    void onClick(const Input &input);
-
     bool checkItemIfEmpty(const std::string &name);
+
 };

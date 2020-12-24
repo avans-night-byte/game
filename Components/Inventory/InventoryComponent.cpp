@@ -48,18 +48,27 @@ void InventoryComponent::render() {
 
 void InventoryComponent::update(const Input &inputSystem) {
 
-    if(inputSystem.keyMap.action == "INVENTORY"){
+    //TODO: parent component needs to tell the inventory when to open
+   /* if(inputSystem.keyMap.action == "INVENTORY"){
         _isOpen = true;
     }
 
     if(inputSystem.keyMap.code == "MOUSE_BUTTON_LEFT"){
         _isOpen = false;
         onClick(inputSystem);
-    }
-
+    }*/
 }
 
-void InventoryComponent::onClick(const Input &input){
+void InventoryComponent::showInventory(){
+    _isOpen = true;
+}
+
+void InventoryComponent::hideInventory(){
+    _isOpen = false;
+}
+
+void InventoryComponent::click(const Input &input){
+
     float width = 125;
     float height = 125;
 
@@ -171,6 +180,11 @@ bool InventoryComponent::findEmptySlot(){
     return false;
 }
 
+
+std::vector<InventoryItem *> &InventoryComponent::getInventoryItems() {
+    return _inventory;
+}
+
 InventoryItem *InventoryComponent::findInventoryItem(const std::string &name){
     for (auto &it : _inventory) {
         if(it->getName() == name) return it;
@@ -185,7 +199,7 @@ InventoryItem *InventoryComponent::findInventoryItem(Vector2 &index){
     return nullptr;
 }
 
-bool InventoryComponent::isMenuOpen() const {
+bool InventoryComponent::isInventoryOpen() const {
     return _isOpen;
 }
 
@@ -196,6 +210,7 @@ Event<InventoryItem&> &InventoryComponent::getOnInventoryClickEventManager() {
 InventoryComponent::~InventoryComponent() {
     _inventory.clear();
 }
+
 
 
 

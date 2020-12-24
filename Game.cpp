@@ -3,9 +3,11 @@
 
 #include "./Game.hpp"
 
+
 #include "./Components/ComponentFactory.hpp"
-#include "Components/Characters/CharacterComponent.hpp"
-#include "UI/FrameCounter.h"
+#include "./Components/Characters/CharacterComponent.hpp"
+#include "./Components/Shopkeeper/TradingComponent.hpp"
+#include "./UI/FrameCounter.h"
 #include "./Scenes/PoolLevel.hpp"
 #include "./Components/EntityObject.hpp"
 
@@ -239,8 +241,8 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
     (*_bodyHandlerAPI).eventOnBodiesHandled([this, levelName, data] {
         ResourceManager::getInstance()->inMenu = false;
         _levelBase = std::make_unique<LevelBase>();
-        _levelBase->initialize(levelName, data);
         _levelBase->character = this->_character.get();
+        _levelBase->initialize(levelName, data);
     });
 }
 
