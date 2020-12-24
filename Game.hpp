@@ -44,8 +44,6 @@ struct LevelData;
 
 class Game {
 private:
-    std::unique_ptr<EntityObject> _character;
-
     static Game *_instance;
     static std::mutex mutex;
 

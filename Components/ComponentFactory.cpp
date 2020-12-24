@@ -22,6 +22,9 @@ ComponentFactory::ComponentFactory() {
     components["RenderComponent"] = std::make_unique<RenderComponent>(entityId);
     components["EntityObject"] = std::make_unique<EntityObject>(entityId, EntityObject::EntityType::none);
     components["BulletComponent"] = std::make_unique<BulletComponent>(entityId);
+    components["InventoryComponent"] = std::make_unique<InventoryComponent>(entityId);
+    components["WeaponComponent"] = std::make_unique<WeaponComponent>(entityId);
+    components["BuildComponent"] = std::make_unique<BuildComponent>(entityId);
 }
 
 Component *ComponentFactory::getComponent(const EntityId &id,

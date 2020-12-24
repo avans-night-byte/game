@@ -19,7 +19,7 @@ std::string BuildComponent::name() const {
 }
 
 Component *BuildComponent::build(EntityId entityId, const Components::component *component) {
-    return nullptr;
+    return new BuildComponent(entityId);
 }
 
 void BuildComponent::pickUpObject(EntityObject &entity) {

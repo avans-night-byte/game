@@ -81,7 +81,7 @@ std::string InventoryComponent::name() const {
 }
 
 Component *InventoryComponent::build(EntityId entityId, const Components::component *component) {
-    return nullptr;
+    return new InventoryComponent(entityId);
 }
 
 void InventoryComponent::removeFromInventory(const std::string &name, int count) {
