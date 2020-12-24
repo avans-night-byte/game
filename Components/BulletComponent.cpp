@@ -3,6 +3,8 @@
 #include "EntityObject.hpp"
 #include "PhysicsComponent.hpp"
 #include "TransformComponent.hpp"
+#include "Characters/ZombieComponent.hpp"
+#include "../Game.hpp"
 
 #include <string>
 
@@ -28,4 +30,23 @@ Component *BulletComponent::build(EntityId entityId, const Components::component
 }
 
 void BulletComponent::initialize(EntityObject &entityParent) {
+    entityParent.getComponent<PhysicsComponent>()->collisionHandlers.push_back(this);
+}
+
+void BulletComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
+    if (other == nullptr)
+        return;
+
+    auto *zombie = other->getComponent<ZombieComponent>();
+    if (zombie) {
+        Game::getInstance()->addEventBodyHandler(
+                [self] {
+                    self->destroy();
+                }
+        );
+    }
+}
+
+void BulletComponent::onCollisionExit(EntityObject *self, EntityObject *other) {
+
 }

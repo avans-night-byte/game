@@ -42,7 +42,6 @@ void ZombieComponent::initialize(EntityObject &entityParent) {
 }
 
 void ZombieComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
-
 }
 
 void ZombieComponent::onCollisionExit(EntityObject *self, EntityObject *other) {
