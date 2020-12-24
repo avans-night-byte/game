@@ -5,6 +5,7 @@
 #include "NextLevelComponent.hpp"
 #include "Rendering/RenderComponent.hpp"
 #include "EntityObject.hpp"
+#include "AIComponent.hpp"
 
 ComponentFactory::ComponentFactory() {
 
@@ -20,6 +21,7 @@ ComponentFactory::ComponentFactory() {
     components["RenderComponent"] = std::make_unique<RenderComponent>(entityId);
     components["EntityObject"] = std::make_unique<EntityObject>(entityId, "FactoryEntity", EntityObject::EntityType::object);
     components["BulletComponent"] = std::make_unique<BulletComponent>(entityId);
+    components["AIComponent"] = std::make_unique<AIComponent>(entityId);
 }
 
 Component *ComponentFactory::getComponent(const EntityId &id,

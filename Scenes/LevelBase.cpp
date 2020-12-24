@@ -55,3 +55,7 @@ void LevelBase::clearEntities() {
     _tmxLevel->cleanup();
     _entities.clear();
 }
+
+TMXLevel& LevelBase::getLevel() {
+    return *_tmxLevel;
+}

@@ -8,12 +8,10 @@
 #include "UI/FrameCounter.h"
 #include "./Scenes/PoolLevel.hpp"
 #include "./Components/EntityObject.hpp"
-
 typedef signed int int32;
 
 void Game::initialize() {
     GameTime::getInstance();
-
     _windowAPI = std::make_unique<EngineWindowAPI>();
     _windowAPI->initWindow(1920, 1080);
 
@@ -238,6 +236,11 @@ Game *Game::getInstance() {
     return _instance;
 }
 
+
+EntityObject* Game::getCharacter(){
+    return _character.get();
+}
+
 PhysicsAPI &Game::getPhysicsAPI() {
     return *_physicsAPI;
 }
@@ -287,6 +290,10 @@ void Game::unloadLevel() {
 
 InputAPI &Game::getInputAPI() {
     return *_inputAPI;
+}
+
+LevelBase &Game::getLevel() {
+    return *_levelBase;
 }
 
 void Game::renderMenu() {

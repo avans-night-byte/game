@@ -123,6 +123,9 @@ public:
 
     void unloadLevel();
 
+    LevelBase& getLevel();
+
+    EntityObject *getCharacter();
     void fixedUpdate(float deltaTime);
 
     void renderMenu();

@@ -22,6 +22,8 @@ void GameTime::update() {
     _accumulator += _frameTimeMiliSeconds;
     _totalTime += _frameTimeSeconds;
 
+    _totalTimeSeconds += _frameTimeSeconds;
+
     while (_accumulator >= _deltaTime) {
         _fixedUpdateEventHandler(_deltaTime);
 
@@ -51,6 +53,10 @@ float GameTime::getFrameTimeMiliSeconds() const{
 
 float GameTime::getAccumulator() const {
     return _accumulator;
+}
+
+float GameTime::getTotalTimeSeconds() const {
+    return _totalTimeSeconds;
 }
 
 void GameTime::resetTotalTime() {

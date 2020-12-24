@@ -45,4 +45,6 @@ public:
     virtual void clearEntities();
 
     void addObject(const std::string &fromList, const std::string &entityName);
+
+    virtual TMXLevel& getLevel();
 };

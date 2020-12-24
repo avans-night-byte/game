@@ -46,7 +46,17 @@ Component *PhysicsComponent::build(EntityId entityId,
 
 
     BodyType bodyType = StringToBodyType(bodyTypeString);
-    Vector2 position = Vector2(physicsComponent.position().x(), physicsComponent.position().y());
+    int x = physicsComponent.position().x();
+    int y =  physicsComponent.position().y();
+
+    if(x != x){
+        x = 0;
+    }
+    if(y != y){
+        y = 0;
+    }
+
+    Vector2 position = Vector2();
     bool isEnabled = physicsComponent.isEnabled().present() ? physicsComponent.isSensor().get()
                                                             : Components::physicsComponent::isEnabled_default_value();
 
