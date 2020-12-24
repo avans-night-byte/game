@@ -1,8 +1,8 @@
 #pragma once
 
-
 #include "../Component.hpp"
 #include "Animation.hpp"
+#include "../../../API/Helpers/Vector2.hpp"
 #include <string>
 
 class RenderingAPI;
@@ -19,6 +19,18 @@ public:
         SPRITE_SHEET
     };
 
+
+    explicit RenderComponent(EntityId id);
+
+    RenderComponent(EntityId id,
+                    std::string spriteId,
+                    const Vector2 &size,
+                    const Vector2 &offset);
+
+    /* Creates a new SpriteSheet */
+    RenderComponent(EntityId id, RenderType renderType, const std::string &texturePath,
+                    const std::string &spriteId, const Vector2 &size, const Vector2 &offset);
+
 private:
     RenderingAPI &_engineRenderingApi;
 
@@ -26,10 +38,8 @@ private:
     PhysicsComponent *physics = nullptr;
 
     int r{}, g{}, b{};
-    int _width = 0;
-    int _height = 0;
-    int _offsetX = 0;
-    int _offsetY = 0;
+    Vector2 _size{};
+    Vector2 _offset{};
 
     std::string _texturePath {};
     std::string _spriteId {};
@@ -46,10 +56,6 @@ public:
 
     void render() override;
 
-    explicit RenderComponent(EntityId id);
-
-    RenderComponent(EntityId id, RenderType renderType, const std::string &texturePath,
-                    const std::string &spriteId, int width, int height, int offsetX, int offsetY);
 
     [[nodiscard]] std::string name() const override;
 

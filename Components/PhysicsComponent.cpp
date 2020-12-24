@@ -151,8 +151,8 @@ void PhysicsComponent::setTransform(Vector2 pos, float angle) {
     _physicsAPI.setTransform(_bodyId, pos, angle / 180.f * M_PI);
 }
 
-void PhysicsComponent::addForce(Vector2 dir) {
-    _physicsAPI.addForce(_bodyId, dir);
+void PhysicsComponent::addForce(const Vector2 &position, Vector2 force) {
+    _physicsAPI.addForce(_bodyId, position, force);
 }
 
 void PhysicsComponent::setEnabled(bool b) {

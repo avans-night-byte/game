@@ -1,6 +1,6 @@
 #pragma once
 #include "../Component.hpp"
-#include "TransactionData.h"
+#include "TransactionData.hpp"
 #include <string>
 
 class WalletComponent : public Component {
@@ -11,7 +11,6 @@ private:
     int _score = 0;
 
 public:
-
     explicit WalletComponent(EntityId id);
 
     void makeTransaction(TransactionData &data);

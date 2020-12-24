@@ -1,18 +1,18 @@
 #pragma once
 
 
-#include "../../API/Rendering/EngineRenderingAPI.hpp"
-#include "EntityObject.hpp"
-#include "TransformComponent.hpp"
-#include "PhysicsComponent.hpp"
-#include "HealthComponent.hpp"
-#include "BulletComponent.hpp"
-#include "WeaponComponent.hpp"
-#include "Inventory/InventoryComponent.hpp"
-#include "Build/BuildComponent.hpp"
-#include "../Object/CollisionHandler.hpp"
-#include "Shopkeeper/TradingComponent.hpp"
-#include "Wallet/WalletComponent.hpp"
+#include "../../../API/Rendering/EngineRenderingAPI.hpp"
+#include "../EntityObject.hpp"
+#include "../TransformComponent.hpp"
+#include "../PhysicsComponent.hpp"
+#include "../HealthComponent.hpp"
+#include "../BulletComponent.hpp"
+#include "../WeaponComponent.hpp"
+#include "../Inventory/InventoryComponent.hpp"
+#include "../Build/BuildComponent.hpp"
+#include "../../Object/CollisionHandler.hpp"
+#include "../Shopkeeper/TradingComponent.hpp"
+#include "../Wallet/WalletComponent.hpp"
 
 class Game;
 
@@ -59,7 +59,7 @@ public:
         _physicsComponent->getVelocity(velocity);
     }
 
-    void setVelocity(const Vector2 &velocity) {
+    void moveCharacter(const Vector2 &velocity) {
         _physicsComponent->setVelocity(velocity);
     }
 
@@ -103,7 +103,4 @@ public:
     void update(const Input &inputSystem) override;
 
     void isIdleAnimation(bool isHor, bool isVer);
-
-
-
 };

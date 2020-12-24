@@ -10,6 +10,8 @@ void ShopkeeperComponent::initialize(EntityObject &entityParent) {
     _renderComponent = entityParent.getComponent<RenderComponent>();
 
     _inventoryComponent->getOnInventoryClickEventManager() += std::bind(&TradingComponent::onItemSelect, _tradingComponent, std::placeholders::_1);
+    _inventoryComponent->addToInventory(new InventoryItem{2, "boar", EntityObject::EntityType::resource});
+
 }
 
 void ShopkeeperComponent::startTransaction() {
@@ -33,26 +35,25 @@ std::string ShopkeeperComponent::name() const {
 }
 
 Component *ShopkeeperComponent::build(EntityId entityId, const Components::component *component) {
-    return nullptr;
+    return new ShopkeeperComponent(entityId);
 }
 
 void ShopkeeperComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
+    if(other == nullptr)
+        return;
+
     auto otherTrading = other->getComponent<TradingComponent>();
     if(otherTrading == nullptr) return;
     _tradingComponent->isTradable(true);
 }
 
 void ShopkeeperComponent::onCollisionExit(EntityObject *self, EntityObject *other) {
+    if(other == nullptr)
+        return;
+
     auto otherTrading = other->getComponent<TradingComponent>();
     if(otherTrading == nullptr) return;
     _tradingComponent->isTradable(false);
-}
-
-ShopkeeperComponent::~ShopkeeperComponent() {
-    delete _physicsComponent;
-    delete _inventoryComponent;
-    delete _transformComponent;
-    delete _renderComponent;
 }
 
 

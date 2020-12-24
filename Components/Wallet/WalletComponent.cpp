@@ -45,7 +45,7 @@ std::string WalletComponent::name() const {
 }
 
 Component *WalletComponent::build(EntityId entityId, const Components::component *component) {
-    return nullptr;
+    return new WalletComponent(entityId);
 }
 
 

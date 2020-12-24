@@ -24,8 +24,7 @@ public:
 
 #pragma region Component
 public:
-
-    ~ShopkeeperComponent() override;
+    explicit ShopkeeperComponent(EntityId id) : Component(id) {};
 
     void render() override;
 

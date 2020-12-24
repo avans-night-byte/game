@@ -10,7 +10,6 @@ InventoryComponent::InventoryComponent(EntityId id) : Component(id), _renderingA
 
     addToInventory(new InventoryItem{100, "crate", EntityObject::EntityType::object});
     addToInventory(new InventoryItem{50, "crate", EntityObject::EntityType::object});
-    addToInventory(new InventoryItem{2, "boar", EntityObject::EntityType::resource});
 }
 
 void InventoryComponent::initialize(EntityObject &entityParent) {
@@ -90,7 +89,7 @@ std::string InventoryComponent::name() const {
 }
 
 Component *InventoryComponent::build(EntityId entityId, const Components::component *component) {
-    return nullptr;
+    return new InventoryComponent(entityId);
 }
 
 void InventoryComponent::removeFromInventory(const std::string &name, int count) {
