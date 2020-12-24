@@ -1,14 +1,15 @@
 #include "ObjectLoader.hpp"
 
-#include "../Game.hpp"
-
+struct physicsComponents {
+    std::vector<Components::component *> physicsComponents{};
+};
 
 void ObjectLoader::loadEntities(const std::vector<EntityXMLParser::ObjectData> &loadedEntities,
                                 std::vector<std::unique_ptr<EntityObject>> &entities) {
     auto componentFactory = Game::getInstance()->getComponentFactory();
 
     auto instantiatedEntities = std::map<std::string, EntityObject *>();
-    auto entitiesPhysicsXml = std::map<EntityObject *, Components::component *>();
+    auto entitiesPhysicsXml = std::map<EntityObject *, physicsComponents>();
 
     for (auto &loadedEntity : loadedEntities) {
         for (auto &comp : loadedEntity.xmlComponents) {
@@ -25,7 +26,7 @@ void ObjectLoader::loadEntities(const std::vector<EntityXMLParser::ObjectData> &
 
             if (ComponentFactory::IsPhysicsComponent(componentName)) {
                 /** CollisionHandler **/
-                entitiesPhysicsXml[newEntity] = comp;
+                entitiesPhysicsXml[newEntity].physicsComponents.push_back(comp);
             } else {
                 auto *newComponent = componentFactory->getComponent(newEntity->getEntityId(),
                                                                     componentName,
@@ -38,31 +39,41 @@ void ObjectLoader::loadEntities(const std::vector<EntityXMLParser::ObjectData> &
 
     /** Collision Handlers & TransformComponent **/
     for (auto &entityPhysicsComponent : entitiesPhysicsXml) {
-        auto *resourceComponent = entityPhysicsComponent.second->_clone();
+        PhysicsComponent *newPhysicsComponent = nullptr;
 
-        auto *entityObject = entityPhysicsComponent.first;
+        for (auto *comp : entityPhysicsComponent.second.physicsComponents) {
+            auto *resourceComponent = comp->_clone();
+            if(newPhysicsComponent != nullptr)
+            {
+                newPhysicsComponent->addFixture(resourceComponent);
+                continue;
+            }
 
-        auto *transformComponent = PhysicsComponent::setPositionPhysicsResource(entityObject,
-                                                                                resourceComponent->physicsComponent().get());
-        auto *physicsComponent = (PhysicsComponent *) componentFactory->getComponent(entityObject->getEntityId(),
-                                                                                     "PhysicsComponent",
-                                                                                     resourceComponent);
 
-        if (transformComponent) {
-            const RTransform &rPosition = physicsComponent->getRTransform();
-            transformComponent->refLocation(rPosition.X, rPosition.Y);
-        }
+            auto *entityObject = entityPhysicsComponent.first;
 
-        entityObject->addComponent(physicsComponent);
+            auto *transformComponent = PhysicsComponent::setPositionPhysicsResource(entityObject,
+                                                                                    resourceComponent->physicsComponent().get());
+            newPhysicsComponent = (PhysicsComponent *) componentFactory->getComponent(entityObject->getEntityId(),
+                                                                                      "PhysicsComponent",
+                                                                                      resourceComponent);
 
-        std::vector<std::string> foundHandlerName{};
-        getCollisionHandlerNames(foundHandlerName, *resourceComponent);
-        if (!foundHandlerName.empty()) {
-            std::vector<CollisionHandler *> collisionHandlers{};
-            getCollisionHandlers(collisionHandlers, entityObject, foundHandlerName);
+            if (transformComponent) {
+                const RTransform &rPosition = newPhysicsComponent->getRTransform();
+                transformComponent->refLocation(rPosition.X, rPosition.Y);
+            }
 
-            for (CollisionHandler *handler : collisionHandlers) {
-                physicsComponent->collisionHandlers.push_back(handler);
+            entityObject->addComponent(newPhysicsComponent);
+
+            std::vector<std::string> foundHandlerName{};
+            getCollisionHandlerNames(foundHandlerName, *resourceComponent);
+            if (!foundHandlerName.empty()) {
+                std::vector<CollisionHandler *> collisionHandlers{};
+                getCollisionHandlers(collisionHandlers, entityObject, foundHandlerName);
+
+                for (CollisionHandler *handler : collisionHandlers) {
+                    newPhysicsComponent->collisionHandlers.push_back(handler);
+                }
             }
         }
     }

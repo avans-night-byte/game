@@ -159,3 +159,18 @@ void PhysicsComponent::setEnabled(bool b) {
     _physicsAPI.setEnabled(_bodyId, b);
 }
 
+// TODO: Only supports box fixtures
+void PhysicsComponent::addFixture(Components::component *pComponent) {
+    auto &physicsComponent = pComponent->physicsComponent().get();
+
+    auto &box = physicsComponent.bodyShape().box().get();
+    auto &width = box.width();
+    auto &height = box.height();
+
+    Box2DBoxData box2DBoxData;
+    box2DBoxData.size = Vector2(width, height);
+    box2DBoxData.isSensor = physicsComponent.isSensor().present() ? physicsComponent.isSensor().get()
+                                                                   : Components::physicsComponent::isSensor_default_value();
+
+    this->_physicsAPI.addFixture(_bodyId, box2DBoxData);
+}

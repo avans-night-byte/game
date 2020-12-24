@@ -28,6 +28,7 @@ Component *ZombieComponent::build(EntityId entityId, const Components::component
 
 void ZombieComponent::initialize(EntityObject &entityParent) {
     auto *renderComponent = entityParent.getComponent<RenderComponent>();
+    entityParent.getComponent<PhysicsComponent>()->setFixedRotation(true);
 
     auto *animation = new Animation(*renderComponent);
     animation->addAnimation("Walk", {{0, 0}, {1, 0}, {2, 0}});
