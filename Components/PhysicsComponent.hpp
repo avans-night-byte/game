@@ -115,8 +115,6 @@ public:
         return _parent;
     }
 
-    void addChild(PhysicsComponent &component);
-
     void addFixture(Components::component *pComponent);
 };
 

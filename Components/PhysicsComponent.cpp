@@ -164,10 +164,14 @@ void PhysicsComponent::addFixture(Components::component *pComponent) {
     auto &physicsComponent = pComponent->physicsComponent().get();
 
     auto &box = physicsComponent.bodyShape().box().get();
-    auto &width = box.width();
-    auto &height = box.height();
+    float &width = box.width();
+    float &height = box.height();
+    float &offsetX = box.offsetX().get();
+    float &offsetY = box.offsetY().get();
+
 
     Box2DBoxData box2DBoxData;
+    box2DBoxData.offset = Vector2(offsetX, offsetY);
     box2DBoxData.size = Vector2(width, height);
     box2DBoxData.isSensor = physicsComponent.isSensor().present() ? physicsComponent.isSensor().get()
                                                                    : Components::physicsComponent::isSensor_default_value();
