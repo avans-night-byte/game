@@ -161,11 +161,30 @@ void PhysicsComponent::setTransform(Vector2 pos, float angle) {
     _physicsAPI.setTransform(_bodyId, pos, angle / 180.f * M_PI);
 }
 
-void PhysicsComponent::addForce(Vector2 dir) {
-    _physicsAPI.addForce(_bodyId, dir);
+void PhysicsComponent::addForce(const Vector2 &position, Vector2 force) {
+    _physicsAPI.addForce(_bodyId, position, force);
 }
 
 void PhysicsComponent::setEnabled(bool b) {
     _physicsAPI.setEnabled(_bodyId, b);
 }
 
+// TODO: Only supports box fixtures
+void PhysicsComponent::addFixture(Components::component *pComponent) {
+    auto &physicsComponent = pComponent->physicsComponent().get();
+
+    auto &box = physicsComponent.bodyShape().box().get();
+    float &width = box.width();
+    float &height = box.height();
+    float &offsetX = box.offsetX().get();
+    float &offsetY = box.offsetY().get();
+
+
+    Box2DBoxData box2DBoxData;
+    box2DBoxData.offset = Vector2(offsetX, offsetY);
+    box2DBoxData.size = Vector2(width, height);
+    box2DBoxData.isSensor = physicsComponent.isSensor().present() ? physicsComponent.isSensor().get()
+                                                                   : Components::physicsComponent::isSensor_default_value();
+
+    this->_physicsAPI.addFixture(_bodyId, box2DBoxData);
+}

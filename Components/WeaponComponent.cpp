@@ -5,8 +5,7 @@
 
 #include <iostream>
 
-WeaponComponent::WeaponComponent(EntityId id) : Component(id),
-                                                _bulletPool(Game::getInstance()->getPoolLevel()->getPool("bullet")) {
+WeaponComponent::WeaponComponent(EntityId id) : Component(id) {
 
 }
 
@@ -27,15 +26,15 @@ std::string WeaponComponent::name() const {
 }
 
 Component *WeaponComponent::build(EntityId entityId, const Components::component *component) {
-    return nullptr;
+    return new WeaponComponent(entityId);
 }
 
 void WeaponComponent::initialize(EntityObject &entityParent) {
-
+    _bulletPool = &Game::getInstance()->getPoolLevel()->getPool("bullet");
 }
 
 void WeaponComponent::shoot(const TransformComponent &transform) {
-    EntityObject *bullet = _bulletPool.getEntity();
+    EntityObject *bullet = _bulletPool->getEntity();
 
     PhysicsComponent *physicsComponent = bullet->getPhysicsComponent();
     Game::getInstance()->addEventBodyHandler([physicsComponent] { physicsComponent->setEnabled(true); });

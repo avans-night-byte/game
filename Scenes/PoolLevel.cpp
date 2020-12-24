@@ -43,10 +43,10 @@ void PoolLevel::addPool(const std::string &loadList, const std::string &entityNa
         return;
     }
 
-    auto pool = std::make_unique<Pool>();
+    auto pool = new Pool();
     pool->initialize(loadList, entityName, startAmount);
 
-    _poolList.push_back(std::move(pool));
+    _poolList.push_back(std::unique_ptr<Pool>(pool));
     _loadedEntities.push_back(entityName);
 }
 

@@ -31,8 +31,6 @@ class InputAPI;
 
 class RenderingAPI;
 
-class CharacterComponent;
-
 class LevelBase;
 
 class PoolLevel;
@@ -44,13 +42,12 @@ struct LevelData;
 
 class Game {
 private:
-    std::unique_ptr<EntityObject> _character;
-
     static Game *_instance;
     static std::mutex mutex;
 
 private:
-    System<Component> _components;
+    std::unique_ptr<EntityObject> _character;
+    System<Component> _components; // TODO: Maybe remove this?
 
     std::list<EntityId> _entities;
 

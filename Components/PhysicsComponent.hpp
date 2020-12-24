@@ -21,7 +21,6 @@ private:
     EntityObject *_parent = nullptr;
 
     std::string contactHandlerName {};
-
 public:
     inline const std::string& getContactHandlerName() {
         return contactHandlerName;
@@ -108,13 +107,15 @@ public:
 
     void setTransform(Vector2 pos, float angle);
 
-    void addForce(Vector2 dir);
+    void addForce(const Vector2 &position, Vector2 force);
 
     void setEnabled(bool b);
 
     EntityObject* getParent() {
         return _parent;
     }
+
+    void addFixture(Components::component *pComponent);
 };
 
 
