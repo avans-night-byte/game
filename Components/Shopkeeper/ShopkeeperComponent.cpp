@@ -12,7 +12,7 @@ void ShopkeeperComponent::initialize(EntityObject &entityParent) {
     _inventoryComponent->getOnInventoryClickEventManager() += std::bind(&TradingComponent::onItemSelect, _tradingComponent, std::placeholders::_1);
 }
 
-void ShopkeeperComponent::showInventoryItems() {
+void ShopkeeperComponent::startTransaction() {
     _inventoryComponent->showInventory();
 }
 

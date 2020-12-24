@@ -42,7 +42,7 @@ void CharacterComponent::update(const Input &inputSystem) {
 
         auto shopKeeper = _contactObject->getComponent<ShopkeeperComponent>();
         if(shopKeeper != nullptr){
-            shopKeeper->showInventoryItems();
+            shopKeeper->startTransaction();
 
         } else if(_contactObject->getType() != EntityObject::EntityType::level_change &&
         _contactObject->getType() != EntityObject::EntityType::character) {

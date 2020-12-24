@@ -20,7 +20,7 @@ private:
     bool _startedTransaction = false;
 
 public:
-    void showInventoryItems();
+    void startTransaction();
 
 #pragma region Component
 public:
