@@ -20,7 +20,12 @@ private:
     bool _startedTransaction = false;
 
 public:
-    void startTransaction();
+
+    void startTransaction(TransactionData &data);
+
+    bool startedTransaction() const;
+
+    void finishTransaction(bool b);
 
 #pragma region Component
 public:

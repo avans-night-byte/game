@@ -15,7 +15,7 @@ TransactionData::TransactionData(int experience, int zombytes, int score, std::v
     _transactionItems = std::move(items);
 }
 
-void TransactionData::setTransactionCallback(const std::function<void(TransactionData)>& function){
+void TransactionData::setTransactionCallback(const std::function<void(TransactionData&)> &function){
     _callback = function;
 }
 
@@ -31,9 +31,15 @@ int TransactionData::getZombytes() const {
     return _zombytes;
 }
 
-void TransactionData::completeTransaction(TransactionData &data) {
+std::vector<InventoryItem *> TransactionData::getInventoryItems() {
+    return _transactionItems;
+}
+
+
+void TransactionData::returnTransaction(TransactionData &data) {
     if(_callback == nullptr) return;
     _callback(data);
 }
+
 
 

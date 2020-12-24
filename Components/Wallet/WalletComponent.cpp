@@ -2,7 +2,7 @@
 
 WalletComponent::WalletComponent(EntityId id) : Component(id) {}
 
-void WalletComponent::makeTransaction(TransactionData &data) {
+void WalletComponent::addItemsFromTransaction(TransactionData &data) {
     _experience += data.getExperience();
     _score += data.getScore();
     _zombytes += data.getZombytes();

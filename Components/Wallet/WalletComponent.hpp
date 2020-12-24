@@ -13,7 +13,7 @@ private:
 public:
     explicit WalletComponent(EntityId id);
 
-    void makeTransaction(TransactionData &data);
+    void addItemsFromTransaction(TransactionData &data);
 
     void addExperience(int experience);
 
