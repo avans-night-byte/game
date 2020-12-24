@@ -230,15 +230,16 @@ ComponentFactory *Game::getComponentFactory() {
 }
 
 void Game::initializeLeveL(const std::string &levelName, const LevelData &data) {
-    if (_levelBase) {
-        unloadLevel();
-    }
-
     ResourceManager::getInstance()->loadResource("Loading");
     ResourceManager::getInstance()->inMenu = true;
     renderMenu();
 
+    if (_levelBase) {
+        unloadLevel();
+    }
+
     (*_bodyHandlerAPI).eventOnBodiesHandled([this, levelName, data] {
+        renderMenu();
         ResourceManager::getInstance()->inMenu = false;
         _levelBase = std::make_unique<LevelBase>();
         _levelBase->character = this->_character.get();
