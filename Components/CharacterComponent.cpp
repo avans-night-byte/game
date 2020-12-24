@@ -11,7 +11,6 @@ std::string CharacterComponent::name() const {
 
 CharacterComponent::CharacterComponent(EntityId id) : Component(id) {
     this->resetMovement();
-    _healthComponent = std::make_unique<HealthComponent>();
 }
 
 void CharacterComponent::update(const Input &inputSystem) {
@@ -185,6 +184,7 @@ void CharacterComponent::initialize(EntityObject &entityParent) {
 
     _transformComponent = entityParent.getComponent<TransformComponent>();
 
+    _healthComponent = entityParent.getComponent<HealthComponent>();
     _inventoryComponent = entityParent.getComponent<InventoryComponent>();
     _buildComponent = entityParent.getComponent<BuildComponent>();
 

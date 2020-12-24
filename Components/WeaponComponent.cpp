@@ -6,7 +6,7 @@
 #include <iostream>
 
 WeaponComponent::WeaponComponent(EntityId id) : Component(id),
-                                                _bulletPool(Game::getInstance()->getPoolLevel()->getPool("bullet1")) {
+                                                _bulletPool(Game::getInstance()->getPoolLevel()->getPool("bullet")) {
 
 }
 

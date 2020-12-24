@@ -20,7 +20,7 @@ void EntityObject::addComponent(Component *component) {
 }
 
 Component *EntityObject::build(EntityId entityId, const Components::component *component) {
-    return new EntityObject(entityId, "New Entity Object", EntityType::object);
+    return new EntityObject(entityId, EntityType::object);
 }
 
 void EntityObject::render() {
@@ -88,9 +88,38 @@ void EntityObject::setPool(Pool &pool) {
     _pool = &pool;
 }
 
-void EntityObject::destroy(){
-    if(_pool == nullptr) return;
+void EntityObject::destroy() {
+    if (_pool == nullptr) return;
     _pool->disableEntity(*this);
+}
+
+EntityObject::EntityType EntityObject::getType(const std::string &type) {
+    if (type == "character") {
+        return EntityType::character;
+    }
+
+    if (type == "level_change") {
+        return EntityType::level_change;
+    }
+
+    if (type == "weapon") {
+        return EntityType::weapon;
+    }
+
+    if (type == "resource") {
+        return EntityType::resource;
+    }
+
+    if (type == "object") {
+        return EntityType::object;
+    }
+
+    throw std::invalid_argument("Type " + type + " does not exists");
+}
+
+
+void EntityObject::setType(const EntityType &type) {
+    _type = type;
 }
 
 EntityObject::EntityType EntityObject::getType() {

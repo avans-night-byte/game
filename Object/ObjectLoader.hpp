@@ -18,7 +18,7 @@ class CollisionHandler;
 
 class ObjectLoader {
 public:
-    static void loadEntities(const std::multimap<EntityXMLParser::ObjectData, Components::component *> &loadedEntities,
+    static void loadEntities(const std::vector<EntityXMLParser::ObjectData> &loadedEntities,
                       std::vector<std::unique_ptr<EntityObject>> &entities);
 
 private:

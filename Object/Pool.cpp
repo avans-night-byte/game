@@ -4,59 +4,62 @@
 
 
 EntityObject *Pool::getEntity() {
-    if (++currentIndex >= size) {
-        std::cout << "Reached _pool size" << std::endl;
-        currentIndex = 0;
+    if (_pool.empty()) {
+        enlargePool();
+        std::cout << "Made '" + _entityName + "' pool bigger" << std::endl;
     }
 
-    auto *entity = _pool.at(currentIndex).get();
-
-    if (amountSpawned < _pool.size())
-        entitiesInUse.push_back(entity);
-    else
-        amountSpawned++;
+    auto *entity = _pool.back();
+    entitiesInUse.push_back(entity);
+    _pool.pop_back();
 
     return entity;
 }
 
 void Pool::initialize(const std::string &loadList, const std::string &entityName, int startAmount) {
+    this->_loadedFromList = std::string(loadList);
     this->_entityName = std::string(entityName);
-    this->size = startAmount;
+    this->_size = startAmount;
 
-    GlobalObjects::getInstance()->loadEntities(_pool, loadList, entityName, startAmount);
-    for (auto &entity : _pool) {
+    GlobalObjects::getInstance()->loadEntities(_objects, loadList, entityName, startAmount);
+    for (auto &entity : _objects) {
+        _pool.push_back(entity.get());
         entity->setPool(*this);
     }
 }
 
+void Pool::enlargePool() {
+    GlobalObjects::getInstance()->loadEntities(_objects,
+                                               _loadedFromList,
+                                               _entityName,
+                                               10);
+    this->_size += 10;
+    for (auto item = _objects.end() - 11; item != _objects.end(); item++) {
+        _pool.push_back(item->get());
+    }
+}
+
 void Pool::resetEntities() {
-    for (auto &entity: _pool) {
-        for (auto &comp : entity->getComponents()) {
-            if (auto *physicsComponent = dynamic_cast<PhysicsComponent *>(comp.get())) {
-                physicsComponent->setEnabled(false);
-            }
+    for (auto &entity: _objects) {
+        if (auto *physicsComponent = entity->getComponent<PhysicsComponent>()) {
+            physicsComponent->setEnabled(false);
         }
     }
 
-    this->currentIndex = 0;
-    this->amountSpawned = 0;
+    _pool.clear();
     this->entitiesInUse.clear();
+
+    for (auto &entity : _objects) {
+        _pool.push_back(entity.get());
+    }
 }
 
 void Pool::disableEntity(EntityObject &pObject) {
-   auto it = std::find(entitiesInUse.begin(), entitiesInUse.end(), &pObject);
-   if(it != entitiesInUse.end()){
-       int index = std::distance(entitiesInUse.begin(), it);
-       entitiesInUse[index]->getComponent<PhysicsComponent>()->setEnabled(false);
-       entitiesInUse.erase(it);
+    auto it = std::find(entitiesInUse.begin(), entitiesInUse.end(), &pObject);
+    if (it != entitiesInUse.end()) {
+        (*it)->getComponent<PhysicsComponent>()->setEnabled(false);
 
-       auto it2 = std::find_if(_pool.begin(), _pool.end(), [&](std::unique_ptr<EntityObject>& p){
-           return p.get() == &pObject;
-       });
-
-       if(it2 != _pool.end()){
-           _pool.push_back(std::move(*it2));
-           _pool.erase(it2);
-       }
-   }
+        _pool.push_back(*it);
+        entitiesInUse.erase(it);
+    }
 }
