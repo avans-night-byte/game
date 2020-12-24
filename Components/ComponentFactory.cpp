@@ -7,6 +7,7 @@
 #include "Rendering/RenderComponent.hpp"
 #include "EntityObject.hpp"
 #include "Characters/ZombieComponent.hpp"
+#include "Shopkeeper/ShopkeeperComponent.hpp"
 
 ComponentFactory::ComponentFactory() {
 
@@ -27,6 +28,9 @@ ComponentFactory::ComponentFactory() {
     components["InventoryComponent"] = std::make_unique<InventoryComponent>(entityId);
     components["WeaponComponent"] = std::make_unique<WeaponComponent>(entityId);
     components["BuildComponent"] = std::make_unique<BuildComponent>(entityId);
+    components["WalletComponent"] = std::make_unique<WalletComponent>(entityId);
+    components["ShopkeeperComponent"] = std::make_unique<ShopkeeperComponent>(entityId);
+    components["TradingComponent"] = std::make_unique<TradingComponent>(entityId);
 }
 
 Component *ComponentFactory::getComponent(const EntityId &id,

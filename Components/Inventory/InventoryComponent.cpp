@@ -10,7 +10,6 @@ InventoryComponent::InventoryComponent(EntityId id) : Component(id), _renderingA
 
     addToInventory(new InventoryItem{100, "crate", EntityObject::EntityType::object});
     addToInventory(new InventoryItem{50, "crate", EntityObject::EntityType::object});
-    addToInventory(new InventoryItem{2, "boar", EntityObject::EntityType::resource});
 }
 
 void InventoryComponent::initialize(EntityObject &entityParent) {

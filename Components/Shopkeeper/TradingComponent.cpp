@@ -1,12 +1,7 @@
 #include "TradingComponent.hpp"
+#include "../Inventory/InventoryComponent.hpp"
 
-TradingComponent::TradingComponent(EntityId id, std::vector<InventoryItem*> &items) : Component(id) {
-    int cost = 10;
-
-    for(InventoryItem *item : items){
-        int totalCost = (item->getItemQuantity() * cost);
-        _buyableItems[item] = totalCost;
-    }
+TradingComponent::TradingComponent(EntityId id) : Component(id) {
 }
 
 void TradingComponent::onItemSelect(InventoryItem &item) {
@@ -49,11 +44,18 @@ std::string TradingComponent::name() const {
 }
 
 Component *TradingComponent::build(EntityId entityId, const Components::component *component) {
-    return nullptr;
+    return new TradingComponent(entityId);
 }
 
 void TradingComponent::initialize(EntityObject &entityParent) {
+    auto inventoryComponent = entityParent.getComponent<InventoryComponent>();
 
+    int cost = 10;
+
+    for(InventoryItem *item : inventoryComponent->getInventoryItems()){
+        int totalCost = (item->getItemQuantity() * cost);
+        _buyableItems[item] = totalCost;
+    }
 }
 
 TradingComponent::~TradingComponent() {

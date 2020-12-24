@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Wallet/TransactionData.h"
+#include "../Wallet/TransactionData.hpp"
 #include "../../API/Helpers/Event.h"
 
 class TradingComponent : public Component {
@@ -16,7 +16,7 @@ private:
 
     bool _isTradable = false;
 public:
-    explicit TradingComponent(EntityId id, std::vector<InventoryItem*> &items);
+    explicit TradingComponent(EntityId id);
 
     ~TradingComponent() override;
 
