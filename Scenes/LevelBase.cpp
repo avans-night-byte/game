@@ -35,8 +35,11 @@ void LevelBase::initialize(const std::string &name, const LevelData &data) {
     this->_levelName = name;
 
     ObjectLoader::loadEntities(outEntities, this->_entities);
-    for (int i = 0; i < 1; ++i) {
-        Game::getInstance()->getPoolLevel()->getPool("zombie").getEntity()->getComponent<PhysicsComponent>()->setEnabled(true);
+    for (int i = 0; i < 0; ++i) {
+        auto &entityObject = Game::getInstance()->getPoolLevel()->getPool("zombie").getEntity();
+        entityObject.getComponent<PhysicsComponent>()->setEnabled(true);
+        entityObject.getComponent<PhysicsComponent>()->setTransform(Vector2(500.f - (i * 5),
+                                                                                500.f + (i * 5)), 0);
     }
 }
 

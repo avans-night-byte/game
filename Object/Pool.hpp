@@ -33,7 +33,7 @@ public:
 
     void resetEntities();
 
-    EntityObject* getEntity();
+    EntityObject & getEntity();
 
     void disableEntity(EntityObject &pObject);
 

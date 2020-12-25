@@ -78,4 +78,5 @@ public:
 
     TransformComponent &operator=(Vector2& v2);
 
+    void setPosition(const Vector2 &vector2);
 };

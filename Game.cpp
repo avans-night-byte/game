@@ -71,6 +71,11 @@ void Game::gameLoop() {
             break;
         }
 
+        // double check
+        if (!_gameLoop) {
+            break;
+        }
+
         if (resourceManager->inMenu) {
             _menuParser->render();
         } else if (_levelBase) {
@@ -243,6 +248,7 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
         ResourceManager::getInstance()->inMenu = false;
         _levelBase = std::make_unique<LevelBase>();
         _levelBase->character = this->_character.get();
+        this->_character->getComponent<CharacterComponent>()->onLevelLoaded();
         _levelBase->initialize(levelName, data);
     });
 }

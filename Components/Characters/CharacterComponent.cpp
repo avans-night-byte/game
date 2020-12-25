@@ -191,6 +191,7 @@ void CharacterComponent::resetMovement() {
     _currentMovementDirection[Right] = false;
     _currentMovementDirection[Up] = false;
     _currentMovementDirection[Down] = false;
+    _latestMovementDirection = None;
 }
 
 Component *CharacterComponent::build(EntityId entityId, const Components::component *component) {
@@ -321,5 +322,10 @@ void CharacterComponent::isIdleAnimation(bool isHor, bool isVer) {
                 break;
         }
     }
+}
+
+void CharacterComponent::onLevelLoaded() {
+    resetMovement();
+    _healthComponent->setHealth(100);
 }
 
