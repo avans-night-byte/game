@@ -11,8 +11,8 @@ private:
     //TODO: Cancle transaction
     //TODO: Clean when transaction completed
 
-    std::map<InventoryItem*, int> _buyableItems;
-    std::vector<InventoryItem *> _selectedItems;
+    std::map<InventoryItem*, int> _buyableItems{};
+    std::vector<InventoryItem *> _selectedItems{};
 
     bool _isTradable = false;
 public:
