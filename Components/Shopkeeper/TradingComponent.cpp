@@ -49,9 +49,10 @@ int TradingComponent::calculateItems(){
 
 void TradingComponent::render(){
     if(_isTradable){
-        auto &renderApi = Game::getInstance()->getRenderingApi();
-        Vector2 position(825, 850);
 
+        auto &renderApi = Game::getInstance()->getRenderingApi();
+
+        Vector2 position(825, 850);
         renderApi.drawRectangle(position, 250, 70, "000000", 100);
 
         std::string money = "money_" + std::to_string(_otherTransactionData.getZombytes() - calculateItems());
@@ -63,6 +64,12 @@ void TradingComponent::render(){
         _tradingText["welcome_store"]->render(570, 300);
         _tradingText["pay_store"]->render(930, 870);
         _tradingText[money]->render(570, 850);
+
+
+        for (auto &item : _selectedItems) {
+            renderApi.drawRectangle(item->getPosition(), 125, 125, "ff0000", 100);
+        }
+
     }
 }
 
