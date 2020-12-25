@@ -41,6 +41,10 @@ void LevelBase::initialize(const std::string &name, const LevelData &data) {
         entityObject.getComponent<PhysicsComponent>()->setTransform(Vector2(500.f - (i * 5),
                                                                                 500.f + (i * 5)), 0);
     }
+
+    for (auto wow : outEntities) {
+        wow.clearRawData();
+    }
 }
 
 

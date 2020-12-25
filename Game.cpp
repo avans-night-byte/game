@@ -97,6 +97,10 @@ void Game::gameLoop() {
         _renderingAPI->render();
         _bodyHandlerAPI->update();
     }
+
+    _levelBase = nullptr;
+    _character = nullptr;
+    _poolLevelBase = nullptr;
 }
 
 void Game::fixedUpdate(float deltaTime) {

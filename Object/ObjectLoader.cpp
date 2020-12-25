@@ -15,7 +15,8 @@ void ObjectLoader::loadEntities(const std::vector<EntityXMLParser::ObjectData> &
         for (auto &comp : loadedEntity.xmlComponents) {
             auto &newEntity = instantiatedEntities[loadedEntity.name];
             if (newEntity == nullptr) {
-                newEntity = new EntityObject(Game::getInstance()->createEntity(), loadedEntity.name,
+                auto newId = Game::getInstance()->createEntity();
+                newEntity = new EntityObject(newId, loadedEntity.name,
                                              EntityObject::getType(loadedEntity.type));
                 entities.push_back(std::unique_ptr<EntityObject>(newEntity));
 
