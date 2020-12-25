@@ -34,17 +34,6 @@ void BulletComponent::initialize(EntityObject &entityParent) {
 }
 
 void BulletComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
-    if (other == nullptr)
-        return;
-
-    auto *zombie = other->getComponent<ZombieComponent>();
-    if (zombie) {
-        Game::getInstance()->addEventBodyHandler(
-                [self] {
-                    self->destroy();
-                }
-        );
-    }
 }
 
 void BulletComponent::onCollisionExit(EntityObject *self, EntityObject *other) {

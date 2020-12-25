@@ -1,6 +1,7 @@
 #include "CharacterComponent.hpp"
 #include "../NextLevelComponent.hpp"
 #include "../Shopkeeper/ShopkeeperComponent.hpp"
+#include "ZombieComponent.hpp"
 
 
 #include <memory>
@@ -42,16 +43,18 @@ void CharacterComponent::update(const Input &inputSystem) {
 
         auto shopKeeper = _contactObject->getComponent<ShopkeeperComponent>();
 
-        if(shopKeeper){
-            TransactionData data(_walletComponent->getExperience(), _walletComponent->getZombytes(), _walletComponent->getScore());
+        if (shopKeeper) {
+            TransactionData data(_walletComponent->getExperience(), _walletComponent->getZombytes(),
+                                 _walletComponent->getScore());
 
-            data.setTransactionCallback(std::bind(&CharacterComponent::transactionCallback, this, std::placeholders::_1));
+            data.setTransactionCallback(
+                    std::bind(&CharacterComponent::transactionCallback, this, std::placeholders::_1));
 
             shopKeeper->startTransaction(data);
             _isShopping = shopKeeper->startedTransaction();
 
-        } else if(_contactObject->getType() != EntityObject::EntityType::level_change &&
-        _contactObject->getType() != EntityObject::EntityType::character) {
+        } else if (_contactObject->getType() != EntityObject::EntityType::level_change &&
+                   _contactObject->getType() != EntityObject::EntityType::character) {
 
             _buildComponent->pickUpObject(*_contactObject);
             _contactObject->destroy();
@@ -59,15 +62,15 @@ void CharacterComponent::update(const Input &inputSystem) {
         }
     }
 
-    if(inputSystem.keyMap.action == "INVENTORY"){
+    if (inputSystem.keyMap.action == "INVENTORY") {
         _inventoryComponent->showInventory();
     }
 
     if (inputSystem.keyMap.action == "CLICK_LEFT") {
 
-        if(_isShopping) return;
+        if (_isShopping) return;
 
-        if(_inventoryComponent->isInventoryOpen()){
+        if (_inventoryComponent->isInventoryOpen()) {
             _inventoryComponent->hideInventory();
             _inventoryComponent->click(inputSystem);
             return;
@@ -199,8 +202,12 @@ void CharacterComponent::render() {
 }
 
 void CharacterComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
-    if(other != nullptr){
+    if (other != nullptr) {
         _contactObject = other;
+
+        if (auto zombie = other->getComponent<ZombieComponent>()) {
+            _healthComponent->doDamage(10);
+        }
     }
 }
 

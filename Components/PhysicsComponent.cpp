@@ -47,13 +47,12 @@ Component *PhysicsComponent::build(EntityId entityId,
 
     BodyType bodyType = StringToBodyType(bodyTypeString);
     Vector2 position = Vector2(physicsComponent.position().x(), physicsComponent.position().y());
-    bool isEnabled = physicsComponent.isEnabled().present() ? physicsComponent.isSensor().get()
-                                                            : Components::physicsComponent::isEnabled_default_value();
 
     std::unique_ptr<Box2DData> box2DData = std::make_unique<Box2DData>();
     box2DData->position = position;
     box2DData->bodyType = bodyType;
-    box2DData->isEnabled = isEnabled;
+    box2DData->isEnabled = physicsComponent.isEnabled().present() ? physicsComponent.isEnabled().get()
+                                                                  : Components::physicsComponent::isEnabled_default_value();
     box2DData->isSensor = physicsComponent.isSensor().present() ? physicsComponent.isSensor().get()
                                                                 : Components::physicsComponent::isSensor_default_value();
 
@@ -174,7 +173,7 @@ void PhysicsComponent::addFixture(Components::component *pComponent) {
     box2DBoxData.offset = Vector2(offsetX, offsetY);
     box2DBoxData.size = Vector2(width, height);
     box2DBoxData.isSensor = physicsComponent.isSensor().present() ? physicsComponent.isSensor().get()
-                                                                   : Components::physicsComponent::isSensor_default_value();
+                                                                  : Components::physicsComponent::isSensor_default_value();
 
     this->_physicsAPI.addFixture(_bodyId, box2DBoxData);
 }
