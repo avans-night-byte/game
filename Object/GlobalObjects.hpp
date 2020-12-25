@@ -32,4 +32,7 @@ public:
 private:
     static void getObjectFromLoader(const std::vector<EntityXMLParser::ObjectData> &loadedEntities,
                              std::vector<std::unique_ptr<EntityObject>> &entities, int amount);
+
+    void loadEntities(std::vector<EntityXMLParser::ObjectData> &loadedObjectData, const std::string &path,
+                      const std::string &name);
 };

@@ -1,9 +1,11 @@
 #include "GlobalObjects.hpp"
 
-#include "Generated/objects.hxx"
-
 #include "../Components/EntityObject.hpp"
+#include "../Scenes/PoolLevel.hpp"
 #include "ObjectLoader.hpp"
+
+
+#include "Generated/objects.hxx"
 
 #include <memory>
 #include <iostream>
@@ -31,17 +33,31 @@ void GlobalObjects::initializeObjects(const std::string &name,
         std::cout << "Skipping: '" + poolName + "', already loaded" << std::endl;
     }
 
-    auto poolList = Objects::objectList_(std::string(poolPath));
-    auto objectList = Objects::objectList_(path);
-    std::vector<EntityXMLParser::ObjectData> loadedEntities{};
-    LevelParserAPI::loadEntities(loadedEntities, objectList->object());
+    try {
+        std::vector<EntityXMLParser::ObjectData> loadedEntities{};
+        loadEntities(loadedEntities, path, name);
 
-    _objectsLists[name] = loadedEntities;
+        std::vector<EntityXMLParser::ObjectData> loadedEntitiesPool{};
+        loadEntities(loadedEntitiesPool, poolPath, poolName);
 
-    std::vector<EntityXMLParser::ObjectData> loadedEntitiesPool{};
-    LevelParserAPI::loadEntities(loadedEntitiesPool, poolList->object());
+        for (auto &obj: loadedEntitiesPool) {
+            PoolLevel *poolLevel = Game::getInstance()->getPoolLevel();
+            poolLevel->addPool(poolName, obj.name, 50); // TODO: Magic number could be replaced by XML.
+        }
+    } catch (const xml_schema::exception &e) {
+        std::cout << e << std::endl;
+    }
+}
 
-    _objectsLists[poolName] = loadedEntitiesPool;
+void GlobalObjects::loadEntities(std::vector<EntityXMLParser::ObjectData> &loadedObjectData, const std::string &path,
+                                 const std::string &name) {
+    auto objectList = Objects::objectList_(std::string(path));
+    LevelParserAPI::loadEntities(loadedObjectData, objectList->object());
+    _objectsLists[name] = loadedObjectData;
+
+    for (auto &resource : objectList->preloadResources().resource()) {
+        ResourceManager::getInstance()->loadResource(resource);
+    }
 }
 
 std::unique_ptr<EntityObject>

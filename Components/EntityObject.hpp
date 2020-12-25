@@ -29,12 +29,12 @@ public:
         character,
     };
 protected:
-    std::vector<std::unique_ptr<Component>> _components;
+    std::vector<std::unique_ptr<Component>> _components {};
     TransformComponent *_transformComponent = nullptr;
     PhysicsComponent *_physicsComponent = nullptr;
 
     Pool *_pool = nullptr;
-    EntityType _type;
+    EntityType _type {};
 
 public:
     std::string entityName;

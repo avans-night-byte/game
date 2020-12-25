@@ -1,16 +1,18 @@
 #pragma once
 
 
-#include "../../API/Rendering/EngineRenderingAPI.hpp"
-#include "EntityObject.hpp"
-#include "TransformComponent.hpp"
-#include "PhysicsComponent.hpp"
-#include "HealthComponent.hpp"
-#include "BulletComponent.hpp"
-#include "WeaponComponent.hpp"
-#include "Inventory/InventoryComponent.hpp"
-#include "Build/BuildComponent.hpp"
-#include "../Object/CollisionHandler.hpp"
+#include "../../../API/Rendering/EngineRenderingAPI.hpp"
+#include "../EntityObject.hpp"
+#include "../TransformComponent.hpp"
+#include "../PhysicsComponent.hpp"
+#include "../HealthComponent.hpp"
+#include "../BulletComponent.hpp"
+#include "../WeaponComponent.hpp"
+#include "../Inventory/InventoryComponent.hpp"
+#include "../Build/BuildComponent.hpp"
+#include "../../Object/CollisionHandler.hpp"
+#include "../Shopkeeper/TradingComponent.hpp"
+#include "../Wallet/WalletComponent.hpp"
 
 class Game;
 
@@ -42,9 +44,11 @@ private:
     RenderComponent *_renderComponent = nullptr;
     BuildComponent *_buildComponent = nullptr;
     WeaponComponent *_weapon = nullptr;
-
+    WalletComponent *_walletComponent = nullptr;
 
     EntityObject *_contactObject {};
+
+    bool _isShopping = false;
 
     void resetMovement();
 
@@ -55,7 +59,7 @@ public:
         _physicsComponent->getVelocity(velocity);
     }
 
-    void setVelocity(const Vector2 &velocity) {
+    void moveCharacter(const Vector2 &velocity) {
         _physicsComponent->setVelocity(velocity);
     }
 
@@ -79,6 +83,8 @@ public:
             this->die();
         }
     }
+
+    void transactionCallback(TransactionData &data);
 
     void fixedUpdate(const float &deltaTime) override;
 

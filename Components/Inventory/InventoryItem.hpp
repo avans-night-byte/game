@@ -8,13 +8,13 @@ class InventoryItem {
 public:
 
 private:
-    Vector2 _position;
-    Vector2 _index;
+    Vector2 _position {};
+    Vector2 _index {};
 
-    int _quantity;
+    int _quantity = 0;
 
-    std::string _name;
-    EntityObject::EntityType _type;
+    std::string _name {};
+    EntityObject::EntityType _type {};
 
 public:
     InventoryItem(int quantity, std::string name, EntityObject::EntityType type);

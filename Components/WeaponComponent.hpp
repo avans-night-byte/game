@@ -14,7 +14,7 @@ public:
     explicit WeaponComponent(EntityId id);
 
 private:
-    Pool &_bulletPool;
+    Pool *_bulletPool = nullptr;
 
 public:
     void render() override;

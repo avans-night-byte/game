@@ -3,9 +3,11 @@
 
 #include "./Game.hpp"
 
+
 #include "./Components/ComponentFactory.hpp"
-#include "./Components/CharacterComponent.hpp"
-#include "UI/FrameCounter.h"
+#include "./Components/Characters/CharacterComponent.hpp"
+#include "./Components/Shopkeeper/TradingComponent.hpp"
+#include "./UI/FrameCounter.h"
 #include "./Scenes/PoolLevel.hpp"
 #include "./Components/EntityObject.hpp"
 
@@ -27,6 +29,8 @@ void Game::initialize() {
     _componentFactory = std::make_unique<ComponentFactory>();
     _bodyHandlerAPI = std::make_unique<BodyHandlerAPI>(*_physicsAPI);
 
+    _poolLevelBase = std::make_unique<PoolLevel>();
+
     resourceManager.loadResource("Loading");
     _menuParser->render();
     _renderingAPI->render();
@@ -34,33 +38,7 @@ void Game::initialize() {
     resourceManager.loadResource("MainMenu");
     resourceManager.loadResource("MainObjects");
 
-    _poolLevelBase = std::make_unique<PoolLevel>();
-
-    _poolLevelBase->addPool("MainPool", "bullet", 50);
-    _poolLevelBase->addPool("MainPool", "crate", 50);
-    _poolLevelBase->addPool("MainPool", "boar", 50);
-
-
-    auto characterId = createEntity();
-    _character = std::make_unique<EntityObject>(characterId, "Character", EntityObject::EntityType::character);
-    _character->addComponent(new CharacterComponent(characterId));
-    _character->addComponent(new HealthComponent(characterId));
-    _character->addComponent(new TransformComponent(characterId));
-    _character->addComponent(new WeaponComponent(characterId));
-    _character->addComponent(new InventoryComponent(characterId));
-    _character->addComponent(new PhysicsComponent(characterId,
-                                                           BodyType::Dynamic,
-                                                           Vector2(100, 100),
-                                                           20.f));
-    _character->addComponent(new RenderComponent(characterId, RenderComponent::RenderType::SPRITE_SHEET,
-                                                          "../../Resources/Sprites/character.png",
-                                                          "spritesheet_char", 96, 104, 0, 20));
-    _character->addComponent(new BuildComponent(characterId));
-
-    _character->initializeComponents();
-    _character->initialize(*_character);
-
-    addComponent(characterId, _character.get());
+    _character = GlobalObjects::getInstance()->loadEntity("MainObjects", "character");
 
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitLevel, this, std::placeholders::_1);
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitGame, this, std::placeholders::_1);
@@ -263,7 +241,7 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
     (*_bodyHandlerAPI).eventOnBodiesHandled([this, levelName, data] {
         ResourceManager::getInstance()->inMenu = false;
         _levelBase = std::make_unique<LevelBase>();
-        _levelBase->_character = this->_character.get(); // TODO: Character data should be stored in a static class
+        _levelBase->character = this->_character.get();
         _levelBase->initialize(levelName, data);
     });
 }

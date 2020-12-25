@@ -1,23 +1,35 @@
 #include "RenderComponent.hpp"
+
 #include "../../Game.hpp"
-#include "../PhysicsComponent.hpp"
 #include "../TransformComponent.hpp"
 #include "Generated/components.hxx"
-
-/**
- * This is a sample component, this one renders an imahe on the screen.
-*/
 
 RenderComponent::RenderComponent(EntityId id) : Component(id),
                                                 _engineRenderingApi(Game::getInstance()->getRenderingApi()),
                                                 _spriteId(),
                                                 _texturePath(),
-                                                transform(nullptr){
-
+                                                transform(nullptr) {
 }
+
 
 std::string RenderComponent::name() const {
     return "RenderComponent";
+}
+
+/**
+ * Reuse a sprite sheet id.
+*/
+
+RenderComponent::RenderComponent(EntityId id,
+                                 std::string spriteId,
+                                 const Vector2 &size,
+                                 const Vector2 &offset)
+        : Component(id),
+          _engineRenderingApi(Game::getInstance()->getRenderingApi()),
+          _spriteId(std::move(spriteId)),
+          _size(size),
+          _offset(offset){
+
 }
 
 /**
@@ -29,22 +41,20 @@ std::string RenderComponent::name() const {
  * @param engineRenderingApi
  */
 RenderComponent::RenderComponent(EntityId id, RenderType renderType, const std::string &texturePath,
-                                 const std::string &spriteId, int width, int height, int offsetX, int offsetY)
+                                 const std::string &spriteId, const Vector2 &size, const Vector2 &offset)
         : Component(id),
           _engineRenderingApi(Game::getInstance()->getRenderingApi()),
           _spriteId(spriteId),
           _texturePath(texturePath),
-          _width(width),
-          _height(height),
-          _offsetX(offsetX),
-          _offsetY(offsetY) {
+          _size(size),
+          _offset(offset) {
     switch (renderType) {
         case TEXTURE: {
             _engineRenderingApi.loadTexture(texturePath, spriteId);
             break;
         }
         case SPRITE_SHEET: {
-            _engineRenderingApi.loadSpriteSheet(texturePath, spriteId, width, height);
+            _engineRenderingApi.loadSpriteSheet(texturePath, spriteId, size.x, size.y, offset.x, offset.y);
             break;
         }
     }
@@ -67,16 +77,16 @@ void RenderComponent::setColor(int red, int blue, int green) {
 void RenderComponent::render() {
     //Render the texture
     Vector2 v2 = transform->getPosition();
-    v2.x -= (float)_width * 0.5f + (float)_offsetX;
-    v2.y -= (float)_height * 0.5f + (float)_offsetY;
+    v2.x -= (float) _size.x * 0.5f + (float)_offset.x;
+    v2.y -= (float) _size.y * 0.5f + (float)_offset.y;
 
     if (!_isAnimating) {
-        _engineRenderingApi.drawTexture(_spriteId, v2.x, v2.y, _width, _height, 2, transform->rotation);
+        _engineRenderingApi.drawTexture(_spriteId, v2.x, v2.y, _size.x, _size.y, 2, transform->rotation);
     } else {
         const auto &currentAnimation = _animation->currentAnimation;
         const auto &animationSpeed = _animation->speed;
 
-        _engineRenderingApi.drawAnimation(_spriteId, v2, currentAnimation, animationSpeed);
+        _engineRenderingApi.drawAnimation(_spriteId, v2, _size, animationSpeed, currentAnimation);
     }
 }
 
@@ -91,16 +101,24 @@ void RenderComponent::fixedUpdate(const float &deltaTime) {
 Component *RenderComponent::build(EntityId entityId, const Components::component *component) {
     const auto &resourceComponent = component->renderComponent();
 
-    auto *newComponent = new RenderComponent(entityId);
-    newComponent->_texturePath = resourceComponent->spritePath();
-    newComponent->_spriteId = resourceComponent->spriteId();
-    newComponent->_width = resourceComponent->width();
-    newComponent->_height = resourceComponent->height();
+    Vector2 size{resourceComponent->size().width(), resourceComponent->size().height()};
+    Vector2 offset{resourceComponent->offset().width(), resourceComponent->offset().height()};
+
+    if (!resourceComponent->spritePath().present()) {
+        auto *newComponent = new RenderComponent(entityId,
+                                                 resourceComponent->spriteId(),
+                                                 size,
+                                                 offset);
+        return newComponent;
+    }
 
 
-    TextureManager::GetInstance()->load(newComponent->_texturePath,
-                                        newComponent->_spriteId);
-    return newComponent;
+    return new RenderComponent(entityId,
+                               RenderType::TEXTURE,
+                               resourceComponent->spritePath().get(),
+                               resourceComponent->spriteId(),
+                               size,
+                               offset);
 }
 
 void RenderComponent::update(const Input &inputSystem) {

@@ -27,17 +27,17 @@ public:
 
     void update();
 
-    float getTime() const;
+    [[nodiscard]] float getTime() const;
 
-    float getDeltaTime() const;
+    [[nodiscard]] float getDeltaTime() const;
 
-    float getTotalTime() const;
+    [[nodiscard]] float getTotalTime() const;
 
-    float getAccumulator() const;
+    [[nodiscard]] float getAccumulator() const;
 
-    float getFrameTimeSeconds() const;
+    [[nodiscard]] float getFrameTimeSeconds() const;
 
-    float getFrameTimeMiliSeconds() const;
+    [[nodiscard]] float getFrameTimeMiliSeconds() const;
 
 public:
     void resetTotalTime();
