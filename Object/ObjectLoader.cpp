@@ -43,10 +43,9 @@ void ObjectLoader::loadEntities(const std::vector<EntityXMLParser::ObjectData> &
         PhysicsComponent *newPhysicsComponent = nullptr;
 
         for (auto *comp : entityPhysicsComponent.second.physicsComponents) {
-            auto *resourceComponent = comp->_clone();
             if(newPhysicsComponent != nullptr)
             {
-                newPhysicsComponent->addFixture(resourceComponent);
+                newPhysicsComponent->addFixture(comp);
                 continue;
             }
 
@@ -54,10 +53,10 @@ void ObjectLoader::loadEntities(const std::vector<EntityXMLParser::ObjectData> &
             auto *entityObject = entityPhysicsComponent.first;
 
             auto *transformComponent = PhysicsComponent::setPositionPhysicsResource(entityObject,
-                                                                                    resourceComponent->physicsComponent().get());
+                                                                                    comp->physicsComponent().get());
             newPhysicsComponent = (PhysicsComponent *) componentFactory->getComponent(entityObject->getEntityId(),
                                                                                       "PhysicsComponent",
-                                                                                      resourceComponent);
+                                                                                      comp);
 
             if (transformComponent) {
                 const RTransform &rPosition = newPhysicsComponent->getRTransform();
@@ -67,7 +66,7 @@ void ObjectLoader::loadEntities(const std::vector<EntityXMLParser::ObjectData> &
             entityObject->addComponent(newPhysicsComponent);
 
             std::vector<std::string> foundHandlerName{};
-            getCollisionHandlerNames(foundHandlerName, *resourceComponent);
+            getCollisionHandlerNames(foundHandlerName, *comp);
             if (!foundHandlerName.empty()) {
                 std::vector<CollisionHandler *> collisionHandlers{};
                 getCollisionHandlers(collisionHandlers, entityObject, foundHandlerName);

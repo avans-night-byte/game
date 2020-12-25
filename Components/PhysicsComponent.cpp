@@ -48,7 +48,7 @@ Component *PhysicsComponent::build(EntityId entityId,
     BodyType bodyType = StringToBodyType(bodyTypeString);
     Vector2 position = Vector2(physicsComponent.position().x(), physicsComponent.position().y());
 
-    std::unique_ptr<Box2DData> box2DData = std::make_unique<Box2DData>();
+    auto *box2DData = new Box2DData();
     box2DData->position = position;
     box2DData->bodyType = bodyType;
     box2DData->isEnabled = physicsComponent.isEnabled().present() ? physicsComponent.isEnabled().get()
@@ -62,19 +62,20 @@ Component *PhysicsComponent::build(EntityId entityId,
 
     /* Shape */
     if (shapeCircle != nullptr) {
-        std::unique_ptr<Box2DCircleData> circleData((Box2DCircleData *) box2DData.release());
+        std::unique_ptr<Box2DCircleData> circleData(new Box2DCircleData(*box2DData));
 
         circleData->radius = shapeCircle->radius();
-        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*circleData.release());
+        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*circleData.get());
     } else {
         // BOX
-        std::unique_ptr<Box2DBoxData> boxData((Box2DBoxData *) box2DData.release());
+        std::unique_ptr<Box2DBoxData> boxData(new Box2DBoxData(*box2DData));
 
         boxData->size = Vector2(shapeBox->width(), shapeBox->height());
 
-        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*boxData.release());
+        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*boxData.get());
     }
 
+    delete box2DData;
     return newPhysicsComponent;
 }
 

@@ -101,6 +101,7 @@ void Game::gameLoop() {
     _levelBase = nullptr;
     _character = nullptr;
     _poolLevelBase = nullptr;
+    _entities.clear();
 }
 
 void Game::fixedUpdate(float deltaTime) {
