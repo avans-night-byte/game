@@ -12,7 +12,7 @@ private:
     int _score = 0;
 
     std::vector<InventoryItem*> _transactionItems;
-    std::function<void(TransactionData)> _callback = nullptr;
+    std::function<void(TransactionData&)> _callback = nullptr;
 
 public:
     TransactionData(int experience, int zombytes, int score);
@@ -21,9 +21,10 @@ public:
     [[nodiscard]] int getExperience() const;
     [[nodiscard]] int getScore() const;
     [[nodiscard]] int getZombytes() const;
+    std::vector<InventoryItem*> getInventoryItems();
 
-    void completeTransaction(TransactionData &data);
-    void setTransactionCallback(const std::function<void(TransactionData)> &function);
+    void returnTransaction(TransactionData &data);
+    void setTransactionCallback(const std::function<void(TransactionData&)> &function);
 };
 
 

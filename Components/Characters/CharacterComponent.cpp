@@ -1,8 +1,5 @@
 #include "CharacterComponent.hpp"
 #include "../NextLevelComponent.hpp"
-#include "../Inventory/InventoryComponent.hpp"
-#include "../Build/BuildComponent.hpp"
-#include "../NextLevelComponent.hpp"
 #include "../Shopkeeper/ShopkeeperComponent.hpp"
 
 
@@ -44,8 +41,14 @@ void CharacterComponent::update(const Input &inputSystem) {
     if (_contactObject && inputSystem.keyMap.action == "INTERACT") {
 
         auto shopKeeper = _contactObject->getComponent<ShopkeeperComponent>();
-        if(shopKeeper != nullptr){
-            shopKeeper->showInventoryItems();
+
+        if(shopKeeper){
+            TransactionData data(_walletComponent->getExperience(), _walletComponent->getZombytes(), _walletComponent->getScore());
+
+            data.setTransactionCallback(std::bind(&CharacterComponent::transactionCallback, this, std::placeholders::_1));
+
+            shopKeeper->startTransaction(data);
+            _isShopping = shopKeeper->startedTransaction();
 
         } else if(_contactObject->getType() != EntityObject::EntityType::level_change &&
         _contactObject->getType() != EntityObject::EntityType::character) {
@@ -61,6 +64,8 @@ void CharacterComponent::update(const Input &inputSystem) {
     }
 
     if (inputSystem.keyMap.action == "CLICK_LEFT") {
+
+        if(_isShopping) return;
 
         if(_inventoryComponent->isInventoryOpen()){
             _inventoryComponent->hideInventory();
@@ -88,6 +93,15 @@ void CharacterComponent::update(const Input &inputSystem) {
     _transformComponent->setRotation(rPosition.rotation);
 
     _physicsComponent->setAngle(mouseAngle);
+}
+
+void CharacterComponent::transactionCallback(TransactionData &data) {
+    _walletComponent->addItemsFromTransaction(data);
+
+    for (auto &item : data.getInventoryItems()) {
+        _inventoryComponent->addToInventory(item);
+    }
+    _isShopping = false;
 }
 
 void CharacterComponent::fixedUpdate(const float &deltaTime) {
@@ -169,7 +183,6 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
     }
 }
 
-
 void CharacterComponent::resetMovement() {
     _currentMovementDirection[Left] = false;
     _currentMovementDirection[Right] = false;
@@ -186,7 +199,9 @@ void CharacterComponent::render() {
 }
 
 void CharacterComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
-    _contactObject = other;
+    if(other != nullptr){
+        _contactObject = other;
+    }
 }
 
 void CharacterComponent::onCollisionExit(EntityObject *self, EntityObject *other) {
@@ -207,8 +222,8 @@ void CharacterComponent::initialize(EntityObject &entityParent) {
     _healthComponent = entityParent.getComponent<HealthComponent>();
 
     _inventoryComponent = entityParent.getComponent<InventoryComponent>();
-    _tradingComponent = entityParent.getComponent<TradingComponent>();
     _walletComponent = entityParent.getComponent<WalletComponent>();
+    _walletComponent->addZombytes(999999);
 
     _buildComponent = entityParent.getComponent<BuildComponent>();
 

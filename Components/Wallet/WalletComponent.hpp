@@ -1,6 +1,7 @@
 #pragma once
 #include "../Component.hpp"
 #include "TransactionData.hpp"
+#include "../../../Engine/Rendering/TextWrapper.hpp"
 #include <string>
 
 class WalletComponent : public Component {
@@ -10,10 +11,13 @@ private:
     int _experience = 0;
     int _score = 0;
 
+    RenderingAPI *_renderAPI = nullptr;
+    std::map<std::string, TextWrapper*> _walletText {};
+
 public:
     explicit WalletComponent(EntityId id);
 
-    void makeTransaction(TransactionData &data);
+    void addItemsFromTransaction(TransactionData &data);
 
     void addExperience(int experience);
 
@@ -39,6 +43,7 @@ public:
     Component *build(EntityId entityId, const Components::component *component) override;
 
     void initialize(EntityObject &entityParent) override;
+
 };
 
 
