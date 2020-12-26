@@ -44,11 +44,11 @@ private:
     RenderComponent *_renderComponent = nullptr;
     BuildComponent *_buildComponent = nullptr;
     WeaponComponent *_weapon = nullptr;
-    TradingComponent *_tradingComponent = nullptr;
     WalletComponent *_walletComponent = nullptr;
 
-
     EntityObject *_contactObject {};
+
+    bool _isShopping = false;
 
     void resetMovement();
 
@@ -84,6 +84,8 @@ public:
         }
     }
 
+    void transactionCallback(TransactionData &data);
+
     void fixedUpdate(const float &deltaTime) override;
 
     [[nodiscard]] Component *build(EntityId entityId, const Components::component *component) override;
@@ -103,4 +105,6 @@ public:
     void update(const Input &inputSystem) override;
 
     void isIdleAnimation(bool isHor, bool isVer);
+
+    void onLevelLoaded();
 };

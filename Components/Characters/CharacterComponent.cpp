@@ -1,9 +1,7 @@
 #include "CharacterComponent.hpp"
 #include "../NextLevelComponent.hpp"
-#include "../Inventory/InventoryComponent.hpp"
-#include "../Build/BuildComponent.hpp"
-#include "../NextLevelComponent.hpp"
 #include "../Shopkeeper/ShopkeeperComponent.hpp"
+#include "ZombieComponent.hpp"
 
 
 #include <memory>
@@ -44,11 +42,19 @@ void CharacterComponent::update(const Input &inputSystem) {
     if (_contactObject && inputSystem.keyMap.action == "INTERACT") {
 
         auto shopKeeper = _contactObject->getComponent<ShopkeeperComponent>();
-        if(shopKeeper != nullptr){
-            shopKeeper->showInventoryItems();
 
-        } else if(_contactObject->getType() != EntityObject::EntityType::level_change &&
-        _contactObject->getType() != EntityObject::EntityType::character) {
+        if (shopKeeper) {
+            TransactionData data(_walletComponent->getExperience(), _walletComponent->getZombytes(),
+                                 _walletComponent->getScore());
+
+            data.setTransactionCallback(
+                    std::bind(&CharacterComponent::transactionCallback, this, std::placeholders::_1));
+
+            shopKeeper->startTransaction(data);
+            _isShopping = shopKeeper->startedTransaction();
+
+        } else if (_contactObject->getType() != EntityObject::EntityType::level_change &&
+                   _contactObject->getType() != EntityObject::EntityType::character) {
 
             _buildComponent->pickUpObject(*_contactObject);
             _contactObject->destroy();
@@ -56,13 +62,15 @@ void CharacterComponent::update(const Input &inputSystem) {
         }
     }
 
-    if(inputSystem.keyMap.action == "INVENTORY"){
+    if (inputSystem.keyMap.action == "INVENTORY") {
         _inventoryComponent->showInventory();
     }
 
     if (inputSystem.keyMap.action == "CLICK_LEFT") {
 
-        if(_inventoryComponent->isInventoryOpen()){
+        if (_isShopping) return;
+
+        if (_inventoryComponent->isInventoryOpen()) {
             _inventoryComponent->hideInventory();
             _inventoryComponent->click(inputSystem);
             return;
@@ -88,6 +96,15 @@ void CharacterComponent::update(const Input &inputSystem) {
     _transformComponent->setRotation(rPosition.rotation);
 
     _physicsComponent->setAngle(mouseAngle);
+}
+
+void CharacterComponent::transactionCallback(TransactionData &data) {
+    _walletComponent->addItemsFromTransaction(data);
+
+    for (auto &item : data.getInventoryItems()) {
+        _inventoryComponent->addToInventory(item);
+    }
+    _isShopping = false;
 }
 
 void CharacterComponent::fixedUpdate(const float &deltaTime) {
@@ -169,12 +186,12 @@ void CharacterComponent::fixedUpdate(const float &deltaTime) {
     }
 }
 
-
 void CharacterComponent::resetMovement() {
     _currentMovementDirection[Left] = false;
     _currentMovementDirection[Right] = false;
     _currentMovementDirection[Up] = false;
     _currentMovementDirection[Down] = false;
+    _latestMovementDirection = None;
 }
 
 Component *CharacterComponent::build(EntityId entityId, const Components::component *component) {
@@ -186,7 +203,13 @@ void CharacterComponent::render() {
 }
 
 void CharacterComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
-    _contactObject = other;
+    if (other != nullptr) {
+        _contactObject = other;
+
+        if (auto zombie = other->getComponent<ZombieComponent>()) {
+            _healthComponent->doDamage(10);
+        }
+    }
 }
 
 void CharacterComponent::onCollisionExit(EntityObject *self, EntityObject *other) {
@@ -207,9 +230,8 @@ void CharacterComponent::initialize(EntityObject &entityParent) {
     _healthComponent = entityParent.getComponent<HealthComponent>();
 
     _inventoryComponent = entityParent.getComponent<InventoryComponent>();
-    _inventoryComponent = entityParent.getComponent<InventoryComponent>();
-    _tradingComponent = entityParent.getComponent<TradingComponent>();
     _walletComponent = entityParent.getComponent<WalletComponent>();
+    _walletComponent->addZombytes(999999);
 
     _buildComponent = entityParent.getComponent<BuildComponent>();
 
@@ -300,5 +322,10 @@ void CharacterComponent::isIdleAnimation(bool isHor, bool isVer) {
                 break;
         }
     }
+}
+
+void CharacterComponent::onLevelLoaded() {
+    resetMovement();
+    _healthComponent->setHealth(100);
 }
 

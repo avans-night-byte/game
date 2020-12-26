@@ -9,13 +9,30 @@ void ShopkeeperComponent::initialize(EntityObject &entityParent) {
     _physicsComponent->collisionHandlers.push_back(this);
     _renderComponent = entityParent.getComponent<RenderComponent>();
 
-    _inventoryComponent->getOnInventoryClickEventManager() += std::bind(&TradingComponent::onItemSelect, _tradingComponent, std::placeholders::_1);
     _inventoryComponent->addToInventory(new InventoryItem{2, "boar", EntityObject::EntityType::resource});
 
+    _inventoryComponent->getOnInventoryClickEventManager() += std::bind(&TradingComponent::onItemSelect, _tradingComponent, std::placeholders::_1);
+    _tradingComponent->getOnTransactionFinishedEventManager() += std::bind(&ShopkeeperComponent::finishTransaction, this, std::placeholders::_1);
 }
 
-void ShopkeeperComponent::showInventoryItems() {
+void ShopkeeperComponent::startTransaction(TransactionData &data) {
+    if(_startedTransaction) return;
+
     _inventoryComponent->showInventory();
+    _tradingComponent->startTransaction(data);
+    _startedTransaction = _tradingComponent->isTradable(true);
+}
+
+bool ShopkeeperComponent::startedTransaction() const{
+    return _startedTransaction;
+}
+
+void ShopkeeperComponent::finishTransaction(bool b){
+
+    _inventoryComponent->hideInventory();
+    _tradingComponent->finishTransaction();
+    _startedTransaction = _tradingComponent->isTradable(false);
+
 }
 
 void ShopkeeperComponent::render() {
@@ -23,6 +40,11 @@ void ShopkeeperComponent::render() {
 }
 
 void ShopkeeperComponent::update(const Input &inputSystem) {
+    if(_inventoryComponent->isInventoryOpen()){
+        if(inputSystem.keyMap.code == "MOUSE_BUTTON_LEFT" ){
+            _inventoryComponent->click(inputSystem);
+        }
+    }
 
 }
 
@@ -41,19 +63,11 @@ Component *ShopkeeperComponent::build(EntityId entityId, const Components::compo
 void ShopkeeperComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
     if(other == nullptr)
         return;
-
-    auto otherTrading = other->getComponent<TradingComponent>();
-    if(otherTrading == nullptr) return;
-    _tradingComponent->isTradable(true);
 }
 
 void ShopkeeperComponent::onCollisionExit(EntityObject *self, EntityObject *other) {
     if(other == nullptr)
         return;
-
-    auto otherTrading = other->getComponent<TradingComponent>();
-    if(otherTrading == nullptr) return;
-    _tradingComponent->isTradable(false);
 }
 
 

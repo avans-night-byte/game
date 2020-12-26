@@ -3,7 +3,7 @@
 #include "../Components/PhysicsComponent.hpp"
 
 
-EntityObject *Pool::getEntity() {
+EntityObject & Pool::getEntity() {
     if (_pool.empty()) {
         enlargePool();
         std::cout << "Made '" + _entityName + "' pool bigger" << std::endl;
@@ -13,7 +13,7 @@ EntityObject *Pool::getEntity() {
     entitiesInUse.push_back(entity);
     _pool.pop_back();
 
-    return entity;
+    return *entity;
 }
 
 void Pool::initialize(const std::string &loadList, const std::string &entityName, int startAmount) {

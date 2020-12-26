@@ -3,6 +3,7 @@
 #include "../Rendering/Animation.hpp"
 #include "../Rendering/RenderComponent.hpp"
 #include "../EntityObject.hpp"
+#include "../../Game.hpp"
 
 #include <string>
 
@@ -42,7 +43,18 @@ void ZombieComponent::initialize(EntityObject &entityParent) {
 }
 
 void ZombieComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
+    if(other == nullptr)
+        return;
 
+    auto *bullet = other->getComponent<BulletComponent>();
+    if (bullet) {
+        Game::getInstance()->addEventBodyHandler(
+                [self, other] {
+                    self->destroy();
+                    other->destroy();
+                }
+        );
+    }
 }
 
 void ZombieComponent::onCollisionExit(EntityObject *self, EntityObject *other) {

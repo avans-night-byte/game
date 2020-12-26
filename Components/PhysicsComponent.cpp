@@ -46,18 +46,13 @@ Component *PhysicsComponent::build(EntityId entityId,
 
 
     BodyType bodyType = StringToBodyType(bodyTypeString);
-    int x = physicsComponent.position().x();
-    int y =  physicsComponent.position().y();
+    Vector2 position = Vector2(physicsComponent.position().x(), physicsComponent.position().y());
 
-
-    Vector2 position = Vector2(x, y);
-    bool isEnabled = physicsComponent.isEnabled().present() ? physicsComponent.isSensor().get()
-                                                            : Components::physicsComponent::isEnabled_default_value();
-
-    std::unique_ptr<Box2DData> box2DData = std::make_unique<Box2DData>();
+    auto *box2DData = new Box2DData();
     box2DData->position = position;
     box2DData->bodyType = bodyType;
-    box2DData->isEnabled = isEnabled;
+    box2DData->isEnabled = physicsComponent.isEnabled().present() ? physicsComponent.isEnabled().get()
+                                                                  : Components::physicsComponent::isEnabled_default_value();
     box2DData->isSensor = physicsComponent.isSensor().present() ? physicsComponent.isSensor().get()
                                                                 : Components::physicsComponent::isSensor_default_value();
 
@@ -67,19 +62,20 @@ Component *PhysicsComponent::build(EntityId entityId,
 
     /* Shape */
     if (shapeCircle != nullptr) {
-        std::unique_ptr<Box2DCircleData> circleData((Box2DCircleData *) box2DData.release());
+        std::unique_ptr<Box2DCircleData> circleData(new Box2DCircleData(*box2DData));
 
         circleData->radius = shapeCircle->radius();
-        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*circleData.release());
+        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*circleData);
     } else {
         // BOX
-        std::unique_ptr<Box2DBoxData> boxData((Box2DBoxData *) box2DData.release());
+        std::unique_ptr<Box2DBoxData> boxData(new Box2DBoxData(*box2DData));
 
         boxData->size = Vector2(shapeBox->width(), shapeBox->height());
 
-        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*boxData.release());
+        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*boxData);
     }
 
+    delete box2DData;
     return newPhysicsComponent;
 }
 
@@ -178,7 +174,7 @@ void PhysicsComponent::addFixture(Components::component *pComponent) {
     box2DBoxData.offset = Vector2(offsetX, offsetY);
     box2DBoxData.size = Vector2(width, height);
     box2DBoxData.isSensor = physicsComponent.isSensor().present() ? physicsComponent.isSensor().get()
-                                                                   : Components::physicsComponent::isSensor_default_value();
+                                                                  : Components::physicsComponent::isSensor_default_value();
 
     this->_physicsAPI.addFixture(_bodyId, box2DBoxData);
 }

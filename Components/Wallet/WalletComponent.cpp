@@ -1,8 +1,9 @@
 #include "WalletComponent.hpp"
+#include "../../Game.hpp"
 
 WalletComponent::WalletComponent(EntityId id) : Component(id) {}
 
-void WalletComponent::makeTransaction(TransactionData &data) {
+void WalletComponent::addItemsFromTransaction(TransactionData &data) {
     _experience += data.getExperience();
     _score += data.getScore();
     _zombytes += data.getZombytes();
@@ -32,9 +33,36 @@ int WalletComponent::getScore() const {
     return _score;
 }
 
-void WalletComponent::initialize(EntityObject &entityParent) {}
+void WalletComponent::initialize(EntityObject &entityParent) {
+    _renderAPI = &Game::getInstance()->getRenderingApi();
+}
 
-void WalletComponent::render() {}
+void WalletComponent::render() {
+
+    std::string exp = "exp_" + std::to_string(_experience);
+    std::string zombytes = "zomb_" + std::to_string(_zombytes);
+    std::string score = "sc_" + std::to_string(_score);
+
+    if(_walletText[exp] == nullptr){
+        auto wrapper = TextWrapper::createText(*_renderAPI, "EXP: " + std::to_string(_experience), "../../Resources/Fonts/LiberationMono-Regular.ttf", 20, "ffffff", exp);
+        _walletText[exp] = wrapper;
+    }
+
+    if(_walletText[zombytes] == nullptr){
+        auto wrapper = TextWrapper::createText(*_renderAPI, "Z: " + std::to_string(_zombytes), "../../Resources/Fonts/LiberationMono-Regular.ttf", 20, "ffffff", zombytes);
+        _walletText[zombytes] = wrapper;
+    }
+
+    if(_walletText[score] == nullptr){
+        auto wrapper = TextWrapper::createText(*_renderAPI, "SCORE: " + std::to_string(_score), "../../Resources/Fonts/LiberationMono-Regular.ttf", 20, "ffffff", score);
+        _walletText[score] = wrapper;
+    }
+
+    _walletText[exp]->render(550, 50);
+    _walletText[zombytes]->render(550, 70);
+    _walletText[score]->render(550, 90);
+
+}
 
 void WalletComponent::update(const Input &inputSystem) {}
 

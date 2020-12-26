@@ -53,3 +53,10 @@ TransformComponent &TransformComponent::operator=(Vector2 &v2) {
 
     return *this;
 }
+
+void TransformComponent::setPosition(const Vector2 &vector2) {
+    if (_physicsX == nullptr || _physicsY == nullptr) {
+        _x = vector2.x;
+        _y = vector2.y;
+    }
+}

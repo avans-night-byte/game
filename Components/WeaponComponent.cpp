@@ -34,9 +34,9 @@ void WeaponComponent::initialize(EntityObject &entityParent) {
 }
 
 void WeaponComponent::shoot(const TransformComponent &transform) {
-    EntityObject *bullet = _bulletPool->getEntity();
+    EntityObject &bullet = _bulletPool->getEntity();
 
-    PhysicsComponent *physicsComponent = bullet->getPhysicsComponent();
+    PhysicsComponent *physicsComponent = bullet.getPhysicsComponent();
     Game::getInstance()->addEventBodyHandler([physicsComponent] { physicsComponent->setEnabled(true); });
 
 

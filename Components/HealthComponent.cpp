@@ -25,6 +25,8 @@ void HealthComponent::doDamage(float amountOfHealthPoints) {
 void HealthComponent::die() {
     std::cout << "HealthComponent: You died" << std::endl;
     this->setHealth(0);
+    ResourceManager::getInstance()->quitLevel = true;
+    ResourceManager::getInstance()->loadResource("GameOver");
 }
 
 void HealthComponent::render() {

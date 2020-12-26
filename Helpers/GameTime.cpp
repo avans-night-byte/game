@@ -67,3 +67,15 @@ Event<float> &GameTime::getFixedUpdateEvent(){
     return _fixedUpdateEventHandler;
 }
 
+void GameTime::setAccumulator(float value) {
+    _accumulator = value;
+}
+
+void GameTime::setDeltaTime(float value) {
+    _deltaTime = value;
+}
+
+void GameTime::setTime(float value) {
+    _time = value;
+}
+
