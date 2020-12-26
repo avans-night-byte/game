@@ -13,8 +13,8 @@ private:
 
     Event<bool> _onTradeFinishedEventHandler {};
 
-    std::map<InventoryItem*, int> _buyableItems;
-    std::vector<InventoryItem *> _selectedItems;
+    std::map<InventoryItem*, int> _buyableItems{};
+    std::vector<InventoryItem *> _selectedItems{};
     std::map<std::string, TextWrapper*> _tradingText {};
 
     RenderingAPI *_renderAPI = nullptr;

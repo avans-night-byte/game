@@ -1,5 +1,6 @@
 #include "BuildComponent.hpp"
 
+
 BuildComponent::BuildComponent(EntityId id) : Component(id), _poolLevel(*Game::getInstance()->getPoolLevel()) {}
 
 void BuildComponent::initialize(EntityObject &entityParent) {}
@@ -22,11 +23,11 @@ void BuildComponent::pickUpObject(EntityObject &entity) {
 
 void BuildComponent::placeObject(const TransformComponent &transform) {
 
-    if(_selectedObject == nullptr || _selectedObject->getItemQuantity() < 1) return;
+    if (_selectedObject == nullptr || _selectedObject->getItemQuantity() < 1) return;
 
-    EntityObject *placeable = _poolLevel.getPool(_selectedObject->getName()).getEntity();
+    EntityObject &placeable = _poolLevel.getPool(_selectedObject->getName()).getEntity();
 
-    PhysicsComponent *physicsComponent = placeable->getPhysicsComponent();
+    PhysicsComponent *physicsComponent = placeable.getPhysicsComponent();
     Game::getInstance()->addEventBodyHandler([physicsComponent] { physicsComponent->setEnabled(true); });
 
     Vector2 spawnPos = transform.getPosition() + (transform.right() * 100);
@@ -39,7 +40,7 @@ void BuildComponent::placeObject(const TransformComponent &transform) {
 }
 
 
-void BuildComponent::setBuildObject(InventoryItem &item){
+void BuildComponent::setBuildObject(InventoryItem &item) {
     _selectedObject = &item;
 }
 

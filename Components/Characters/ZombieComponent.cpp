@@ -3,6 +3,7 @@
 #include "../Rendering/Animation.hpp"
 #include "../Rendering/RenderComponent.hpp"
 #include "../EntityObject.hpp"
+#include "../../Game.hpp"
 
 #include <string>
 
@@ -28,6 +29,9 @@ Component *ZombieComponent::build(EntityId entityId, const Components::component
 
 void ZombieComponent::initialize(EntityObject &entityParent) {
     auto *renderComponent = entityParent.getComponent<RenderComponent>();
+    auto *physicsComponent = entityParent.getComponent<PhysicsComponent>();
+    physicsComponent->setFixedRotation(true);
+    physicsComponent->collisionHandlers.push_back(this);
 
     auto *animation = new Animation(*renderComponent);
     animation->addAnimation("Walk", {{0, 0}, {1, 0}, {2, 0}});
@@ -36,4 +40,23 @@ void ZombieComponent::initialize(EntityObject &entityParent) {
 
     renderComponent->setAnimation(animation);
     animation->activateAnimation("Walk");
+}
+
+void ZombieComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
+    if(other == nullptr)
+        return;
+
+    auto *bullet = other->getComponent<BulletComponent>();
+    if (bullet) {
+        Game::getInstance()->addEventBodyHandler(
+                [self, other] {
+                    self->destroy();
+                    other->destroy();
+                }
+        );
+    }
+}
+
+void ZombieComponent::onCollisionExit(EntityObject *self, EntityObject *other) {
+
 }

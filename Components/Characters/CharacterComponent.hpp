@@ -105,4 +105,6 @@ public:
     void update(const Input &inputSystem) override;
 
     void isIdleAnimation(bool isHor, bool isVer);
+
+    void onLevelLoaded();
 };

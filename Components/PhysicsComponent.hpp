@@ -21,7 +21,6 @@ private:
     EntityObject *_parent = nullptr;
 
     std::string contactHandlerName {};
-
 public:
     inline const std::string& getContactHandlerName() {
         return contactHandlerName;
@@ -115,6 +114,8 @@ public:
     EntityObject* getParent() {
         return _parent;
     }
+
+    void addFixture(Components::component *pComponent);
 };
 
 

@@ -43,6 +43,4 @@ public:
     virtual void fixedUpdate(float deltaTime);
 
     virtual void clearEntities();
-
-    void addObject(const std::string &fromList, const std::string &entityName);
 };

@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Component.hpp"
+#include "../Object/CollisionHandler.hpp"
 
 class PhysicsComponent;
 class TransformComponent;
 
-class BulletComponent : public Component {
+class BulletComponent : public Component, CollisionHandler {
 public:
     explicit BulletComponent(EntityId id) : Component(id){
 
@@ -23,4 +24,9 @@ public:
     Component *build(EntityId entityId, const Components::component *component) override;
 
     void initialize(EntityObject &entityParent) override;
+
+private:
+    void onCollisionEnter(EntityObject *self, EntityObject *other) override;
+
+    void onCollisionExit(EntityObject *self, EntityObject *other) override;
 };

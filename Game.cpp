@@ -71,6 +71,11 @@ void Game::gameLoop() {
             break;
         }
 
+        // double check
+        if (!_gameLoop) {
+            break;
+        }
+
         if (resourceManager->inMenu) {
             _menuParser->render();
         } else if (_levelBase) {
@@ -92,6 +97,11 @@ void Game::gameLoop() {
         _renderingAPI->render();
         _bodyHandlerAPI->update();
     }
+
+    _levelBase = nullptr;
+    _character = nullptr;
+    _poolLevelBase = nullptr;
+    _entities.clear();
 }
 
 void Game::fixedUpdate(float deltaTime) {
@@ -230,18 +240,20 @@ ComponentFactory *Game::getComponentFactory() {
 }
 
 void Game::initializeLeveL(const std::string &levelName, const LevelData &data) {
-    if (_levelBase) {
-        unloadLevel();
-    }
-
     ResourceManager::getInstance()->loadResource("Loading");
     ResourceManager::getInstance()->inMenu = true;
     renderMenu();
 
+    if (_levelBase) {
+        unloadLevel();
+    }
+
     (*_bodyHandlerAPI).eventOnBodiesHandled([this, levelName, data] {
+        renderMenu();
         ResourceManager::getInstance()->inMenu = false;
         _levelBase = std::make_unique<LevelBase>();
         _levelBase->character = this->_character.get();
+        this->_character->getComponent<CharacterComponent>()->onLevelLoaded();
         _levelBase->initialize(levelName, data);
     });
 }

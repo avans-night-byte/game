@@ -38,6 +38,7 @@ protected:
 
 public:
     std::string entityName;
+
 public:
     explicit EntityObject(EntityId id, const std::string name, EntityType type) : Component(id),
                                                                                   entityName(std::move(name)),
