@@ -125,3 +125,7 @@ void EntityObject::setType(const EntityType &type) {
 EntityObject::EntityType EntityObject::getType() {
     return _type;
 }
+
+void EntityObject::postInitialize(EntityObject &entityObject) {
+
+}

@@ -59,3 +59,11 @@ Pool &PoolLevel::getPool(const std::string &poolName) {
 
     throw std::runtime_error("Pool of entity: '" + poolName + "' does not exists");
 }
+
+void PoolLevel::postInitialize() {
+    for (auto &pool : _poolList) {
+        for (auto &entity : pool->entitiesInUse) {
+            entity->postInitialize(*entity);
+        }
+    }
+}

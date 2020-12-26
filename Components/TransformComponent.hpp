@@ -42,6 +42,8 @@ public:
 
     void initialize(EntityObject &entityParent) override;
 
+    void postInitialize(EntityObject &entityObject) override;
+
 public:
     [[nodiscard]] Vector2 right() const {
         return Vector2(cos(rotation / 180.f * M_PI), sin(rotation / 180.f * M_PI));

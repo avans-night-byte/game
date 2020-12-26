@@ -36,6 +36,8 @@ private:
 public:
     virtual void initialize(const std::string& name, const LevelData &data);
 
+    virtual void postInitialize();
+
     virtual void render();
 
     virtual void update(const Input &inputSystem);

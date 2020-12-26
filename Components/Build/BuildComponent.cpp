@@ -52,5 +52,9 @@ Event<EntityObject &> &BuildComponent::getPickupEventHandler() {
     return _pickUpEntityEventHandler;
 }
 
+void BuildComponent::postInitialize(EntityObject &entityObject) {
+
+}
+
 
 

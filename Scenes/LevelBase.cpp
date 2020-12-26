@@ -60,3 +60,7 @@ void LevelBase::clearEntities() {
     _tmxLevel->cleanup();
     _entities.clear();
 }
+
+void LevelBase::postInitialize() {
+
+}

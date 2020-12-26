@@ -60,3 +60,7 @@ void ZombieComponent::onCollisionEnter(EntityObject *self, EntityObject *other) 
 void ZombieComponent::onCollisionExit(EntityObject *self, EntityObject *other) {
 
 }
+
+void ZombieComponent::postInitialize(EntityObject &entityObject) {
+
+}

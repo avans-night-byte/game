@@ -29,5 +29,7 @@ public:
 
     void initialize(EntityObject &entityParent) override;
 
+    void postInitialize(EntityObject &entityObject) override;
+
     void shoot(const TransformComponent &transform);
 };

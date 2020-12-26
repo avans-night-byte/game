@@ -329,3 +329,7 @@ void CharacterComponent::onLevelLoaded() {
     _healthComponent->setHealth(100);
 }
 
+void CharacterComponent::postInitialize(EntityObject &entityObject) {
+
+}
+

@@ -25,6 +25,8 @@ public:
 
     void initialize(EntityObject &entityParent) override;
 
+    void postInitialize(EntityObject &entityObject) override;
+
 private:
     void onCollisionEnter(EntityObject *self, EntityObject *other) override;
 

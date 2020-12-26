@@ -60,3 +60,7 @@ void TransformComponent::setPosition(const Vector2 &vector2) {
         _y = vector2.y;
     }
 }
+
+void TransformComponent::postInitialize(EntityObject &entityObject) {
+
+}
