@@ -49,14 +49,8 @@ Component *PhysicsComponent::build(EntityId entityId,
     int x = physicsComponent.position().x();
     int y =  physicsComponent.position().y();
 
-    if(x != x){
-        x = 0;
-    }
-    if(y != y){
-        y = 0;
-    }
 
-    Vector2 position = Vector2();
+    Vector2 position = Vector2(x, y);
     bool isEnabled = physicsComponent.isEnabled().present() ? physicsComponent.isSensor().get()
                                                             : Components::physicsComponent::isEnabled_default_value();
 

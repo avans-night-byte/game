@@ -36,6 +36,12 @@ void LevelBase::initialize(const std::string &name, const LevelData &data) {
 
     ObjectLoader::loadEntities(outEntities, this->_entities);
     this->_entities.push_back(GlobalObjects::getInstance()->loadEntity("MainObjects", "zombie"));
+    this->_entities.push_back(GlobalObjects::getInstance()->loadEntity("MainObjects", "zombie"));
+    this->_entities.push_back(GlobalObjects::getInstance()->loadEntity("MainObjects", "zombie"));
+    this->_entities.push_back(GlobalObjects::getInstance()->loadEntity("MainObjects", "zombie"));
+    this->_entities.push_back(GlobalObjects::getInstance()->loadEntity("MainObjects", "zombie"));
+    this->_entities.push_back(GlobalObjects::getInstance()->loadEntity("MainObjects", "zombie"));
+    this->_entities.push_back(GlobalObjects::getInstance()->loadEntity("MainObjects", "zombie"));
 }
 
 void LevelBase::addObject(const std::string &fromList, const std::string &entityName) {

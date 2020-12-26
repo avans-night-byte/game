@@ -16,13 +16,16 @@ class TransformComponent;
 
 class AIComponent : public Component {
 private:
-    std::vector<GridLocation> _path;
-    int _currentPosition;
-    GridLocation _target;
+    std::vector<GridLocation> _path{};
+    int _currentPosition = 1;
+    GridLocation _target {};
     bool _followTransform = false;
     EntityObject* _parent = nullptr;
-    std::unique_ptr<EntityObject> _following;
+    std::unique_ptr<EntityObject> _following = nullptr;
     float _totalTime = 0;
+
+    float _nextTime = 0.0f;
+    float _period = 0.5f;
 
     void updatePath();
     GridLocation positionToGrid(Vector2 position);

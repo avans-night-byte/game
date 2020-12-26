@@ -38,18 +38,18 @@ void AIComponent::render() {
 }
 
 void AIComponent::update(const Input &inputSystem) {
-    _totalTime += GameTime::getInstance().getTotalTimeSeconds();
+    float time = GameTime::getInstance().getTotalTimeSeconds();
 
 
-    if( clock() % 500 == 0){
+    if(time > _nextTime){
+        _nextTime = time + _period;
         this->updatePath();
     }
 }
 
 void AIComponent::fixedUpdate(const float &deltaTime) {
     // Update path every x time.
-
-
+    this->navigatePath(deltaTime);
 }
 
 void AIComponent::initialize(EntityObject &entityParent) {
@@ -68,12 +68,25 @@ void AIComponent::follow(EntityObject& entityObject){
 void AIComponent::updatePath() {
     // Get the target location and
     if(_followTransform){
+
         auto transform = _following->getTransform();
         auto position = transform->getPosition();
+        auto pPosition = _parent->getTransform();
+
+
 
         // Transform into gridlocation and generate a path to it.
         auto goal = positionToGrid(position);
-        auto start = positionToGrid(Vector2{400, 400});
+
+
+        if(!_path.empty()){
+            if(goal == _path[_path.size()]){
+                return;
+            }
+        }
+
+
+        auto start = positionToGrid(Vector2{pPosition->getPosition().x, pPosition->getPosition().y});
         int** items;
         items = new int*[30];
         Game::getInstance()->getLevel().getLevel().GetGrid(items);
@@ -111,15 +124,25 @@ GridLocation AIComponent::positionToGrid(Vector2 pos) {
 
 
 Vector2 AIComponent::gridToPosition(GridLocation location){
-    float x = location.x * (16 * 4);
-    float y = location.y * (16 * 4);
+    float x = (location.x * (16 * 4));
+    float y = (location.y * (16 * 4));
     return Vector2{x, y};
 }
 
 void AIComponent::navigatePath(const float& deltaTime) {
     auto currentPos = _parent->getTransform()->getPosition();
 
+
+    if(_path.size() < 1)
+        return;
+
     auto nextPos = gridToPosition(_path[_currentPosition]);
+
+
+    nextPos.y = nextPos.y + 32;
+    nextPos.x = nextPos.x + 32;
+
+
 
     float dx = (nextPos.x - currentPos.x);
     float dy = (nextPos.y - currentPos.y);
@@ -130,15 +153,16 @@ void AIComponent::navigatePath(const float& deltaTime) {
     dy/=length;
 
     // Speed (constant of 1 for now)
-    dx *= 1 * deltaTime;
-    dy *= 1 * deltaTime;
+    dx *= 1000 * deltaTime;
+    dy *= 1000 * deltaTime;
 
-    if(currentPos == nextPos){
+
+    if(positionToGrid(currentPos) == positionToGrid(nextPos)){
         if(_currentPosition < _path.size()){
             _currentPosition++;
         }
         else{
-            _currentPosition = 0;
+            _currentPosition = 1;
         }
     }
     _parent->getPhysicsComponent()->setVelocity(Vector2{dx, dy});

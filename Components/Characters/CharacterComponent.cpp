@@ -207,6 +207,7 @@ void CharacterComponent::initialize(EntityObject &entityParent) {
     _healthComponent = entityParent.getComponent<HealthComponent>();
 
     _inventoryComponent = entityParent.getComponent<InventoryComponent>();
+    _inventoryComponent = entityParent.getComponent<InventoryComponent>();
     _tradingComponent = entityParent.getComponent<TradingComponent>();
     _walletComponent = entityParent.getComponent<WalletComponent>();
 
