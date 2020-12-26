@@ -9,6 +9,6 @@ private:
 
 public:
     CheatMode() {
-        _characterObject = Game::getInstance()->
+//        _characterObject = Game::getInstance()->
     }
 };
