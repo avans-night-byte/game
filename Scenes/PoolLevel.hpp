@@ -25,5 +25,7 @@ public:
                  const std::string& entityName,
                  int startAmount);
 
+    void postInitialize() override;
+
     Pool &getPool(const std::string &poolName);
 };

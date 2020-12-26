@@ -53,11 +53,9 @@ void AIComponent::fixedUpdate(const float &deltaTime) {
 
 void AIComponent::initialize(EntityObject &entityParent) {
     _parent = &entityParent;
-
-    auto* character = (EntityObject*) Game::getInstance()->getCharacter();
-
-    this->follow(*character);
 }
+
+
 
 std::string AIComponent::name() const {
     return "AIComponent";
@@ -175,3 +173,8 @@ AIComponent::AIComponent(EntityId &entityId) {
 }
 
 
+void AIComponent::postInitialize(EntityObject &entityObject) {
+    auto* character = (EntityObject*) Game::getInstance()->getCharacter();
+
+    this->follow(*character);
+}

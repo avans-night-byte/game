@@ -42,6 +42,9 @@ void Game::initialize() {
 
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitLevel, this, std::placeholders::_1);
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitGame, this, std::placeholders::_1);
+
+
+    _poolLevelBase->postInitialize();
 }
 
 /**

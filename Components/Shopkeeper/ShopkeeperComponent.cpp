@@ -70,6 +70,10 @@ void ShopkeeperComponent::onCollisionExit(EntityObject *self, EntityObject *othe
         return;
 }
 
+void ShopkeeperComponent::postInitialize(EntityObject &entityObject) {
+
+}
+
 
 
 

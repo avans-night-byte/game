@@ -63,3 +63,7 @@ Component *HealthComponent::build(EntityId entityId, const Components::component
 void HealthComponent::initialize(EntityObject &entityParent) {
 
 }
+
+void HealthComponent::postInitialize(EntityObject &entityObject) {
+
+}

@@ -47,6 +47,8 @@ public:
     void follow(EntityObject& entityObject);
 
     Vector2 gridToPosition(GridLocation location);
+
+    void postInitialize(EntityObject &entityObject) override;
 };
 
 

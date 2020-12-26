@@ -39,3 +39,7 @@ void BulletComponent::onCollisionEnter(EntityObject *self, EntityObject *other) 
 void BulletComponent::onCollisionExit(EntityObject *self, EntityObject *other) {
 
 }
+
+void BulletComponent::postInitialize(EntityObject &entityObject) {
+
+}

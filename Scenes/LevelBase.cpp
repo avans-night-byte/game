@@ -61,6 +61,10 @@ void LevelBase::clearEntities() {
     _entities.clear();
 }
 
+void LevelBase::postInitialize() {
+
+}
+
 TMXLevel& LevelBase::getLevel() {
     return *_tmxLevel;
 }
