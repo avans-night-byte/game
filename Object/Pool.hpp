@@ -15,13 +15,13 @@ private:
     int _size = 0;
 
 
-    std::vector<std::unique_ptr<EntityObject>> _objects {};
     std::vector<EntityObject*> _pool {};
 
 
 public:
     Pool() = default;
 
+    std::vector<std::unique_ptr<EntityObject>> _objects {};
     [[nodiscard]] inline const std::string &getEntityName() const {
         return _entityName;
     }
@@ -36,6 +36,8 @@ public:
     EntityObject & getEntity();
 
     void disableEntity(EntityObject &pObject);
+
+
 
 private:
     void enlargePool();

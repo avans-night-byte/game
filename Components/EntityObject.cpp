@@ -127,5 +127,7 @@ EntityObject::EntityType EntityObject::getType() {
 }
 
 void EntityObject::postInitialize(EntityObject &entityObject) {
-
+    for(auto &comp : _components){
+        comp->postInitialize(*this);
+    }
 }

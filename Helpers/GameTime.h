@@ -8,6 +8,8 @@ private:
 
     float _totalTime{};
 
+    float _totalTimeSeconds{};
+
     float _frameTimeSeconds{};
     float _frameTimeMiliSeconds{};
 
@@ -51,6 +53,8 @@ public:
 public:
 
     Event<float> &getFixedUpdateEvent();
+
+    float getTotalTimeSeconds() const;
 };
 
 

@@ -246,6 +246,11 @@ Game *Game::getInstance() {
     return _instance;
 }
 
+
+EntityObject* Game::getCharacter(){
+    return _character.get();
+}
+
 PhysicsAPI &Game::getPhysicsAPI() {
     return *_physicsAPI;
 }
@@ -302,4 +307,9 @@ InputAPI &Game::getInputAPI() {
 void Game::renderMenu() {
     _menuParser->render();
     _renderingAPI->render();
+}
+
+
+LevelBase &Game::getLevel() {
+    return *_levelBase;
 }

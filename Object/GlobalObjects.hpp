@@ -36,3 +36,4 @@ private:
     void loadEntities(std::vector<EntityXMLParser::ObjectData> &loadedObjectData, const std::string &path,
                       const std::string &name);
 };
+

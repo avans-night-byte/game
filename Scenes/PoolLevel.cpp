@@ -62,7 +62,7 @@ Pool &PoolLevel::getPool(const std::string &poolName) {
 
 void PoolLevel::postInitialize() {
     for (auto &pool : _poolList) {
-        for (auto &entity : pool->entitiesInUse) {
+        for (auto &entity : pool->_objects) {
             entity->postInitialize(*entity);
         }
     }
