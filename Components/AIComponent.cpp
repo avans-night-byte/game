@@ -13,12 +13,11 @@ Component* AIComponent::build(EntityId entityId, const Components::component *co
 
     auto &followingString = aiComponent.followingName();
 
-    auto* character = (EntityObject*) Game::getInstance()->getCharacter();
 
-    newAiComponent->follow(*character);
 
     return newAiComponent;
 }
+
 void AIComponent::render() {
     // Nothing
 
@@ -54,6 +53,10 @@ void AIComponent::fixedUpdate(const float &deltaTime) {
 
 void AIComponent::initialize(EntityObject &entityParent) {
     _parent = &entityParent;
+
+    auto* character = (EntityObject*) Game::getInstance()->getCharacter();
+
+    this->follow(*character);
 }
 
 std::string AIComponent::name() const {

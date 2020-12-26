@@ -285,11 +285,12 @@ InputAPI &Game::getInputAPI() {
     return *_inputAPI;
 }
 
-LevelBase &Game::getLevel() {
-    return *_levelBase;
-}
-
 void Game::renderMenu() {
     _menuParser->render();
     _renderingAPI->render();
+}
+
+
+LevelBase &Game::getLevel() {
+    return *_levelBase;
 }

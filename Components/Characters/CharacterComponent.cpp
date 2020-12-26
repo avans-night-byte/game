@@ -219,6 +219,7 @@ void CharacterComponent::onCollisionExit(EntityObject *self, EntityObject *other
 
 
 void CharacterComponent::initialize(EntityObject &entityParent) {
+
     _renderComponent = entityParent.getComponent<RenderComponent>();
     _weapon = entityParent.getComponent<WeaponComponent>();
 
