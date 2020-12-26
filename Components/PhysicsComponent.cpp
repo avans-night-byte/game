@@ -65,14 +65,14 @@ Component *PhysicsComponent::build(EntityId entityId,
         std::unique_ptr<Box2DCircleData> circleData(new Box2DCircleData(*box2DData));
 
         circleData->radius = shapeCircle->radius();
-        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*circleData.get());
+        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*circleData);
     } else {
         // BOX
         std::unique_ptr<Box2DBoxData> boxData(new Box2DBoxData(*box2DData));
 
         boxData->size = Vector2(shapeBox->width(), shapeBox->height());
 
-        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*boxData.get());
+        newPhysicsComponent->_bodyId = _physicsAPI.createBody(*boxData);
     }
 
     delete box2DData;

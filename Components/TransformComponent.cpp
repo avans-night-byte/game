@@ -21,11 +21,11 @@ Component *TransformComponent::build(EntityId entityId, const Components::compon
 
     if (component != nullptr) {
         auto &resourceTransform = component->transformComponent().get();
-        auto position = resourceTransform.position();
+        auto *position = resourceTransform.position()._clone();
 
-        newTransformComponent->setPosition(Vector2(position.x(), position.y()));
+        newTransformComponent->refLocation(position->x(), position->y());
     } else {
-        newTransformComponent->setPosition(Vector2());
+        newTransformComponent->refLocation(0, 0);
     }
 
     return newTransformComponent;
