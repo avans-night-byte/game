@@ -47,6 +47,8 @@ void Game::initialize() {
     _poolLevelBase->postInitialize();
 }
 
+bool cheatMode = false;
+
 /**
  * Gameloop
  **/
@@ -64,6 +66,9 @@ void Game::gameLoop() {
                               "ffffff", "fpsText");
     // Gameloop
     while (_gameLoop) {
+
+
+
         time.update();
 
         // Poll input and keep track of lastInput
@@ -73,6 +78,11 @@ void Game::gameLoop() {
             Game::QuitGame("close");
             break;
         }
+
+        if (i.keyMap.action == "`") {
+            cheatMode = true;
+        }
+
 
         // double check
         if (!_gameLoop) {
@@ -97,7 +107,13 @@ void Game::gameLoop() {
         } else if (i.keyMap.code == "\\") {
             isDebuggingPhysics = false;
         }
-        _renderingAPI->render();
+        if (!cheatMode) {
+            _renderingAPI->render();
+        } else {
+            _renderingAPI->clear();
+            _windowAPI->renderImGui(cheatMode);
+        }
+
         _bodyHandlerAPI->update();
     }
 
