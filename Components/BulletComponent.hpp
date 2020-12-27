@@ -8,6 +8,8 @@ class TransformComponent;
 
 class BulletComponent : public Component, CollisionHandler {
 public:
+    bool hasHit = false;
+
     explicit BulletComponent(EntityId id) : Component(id){
 
     }

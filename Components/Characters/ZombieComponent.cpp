@@ -34,7 +34,9 @@ void ZombieComponent::initialize(EntityObject &entityParent) {
     physicsComponent->collisionHandlers.push_back(this);
 
     auto *animation = new Animation(*renderComponent);
-    animation->addAnimation("Walk", {{0, 0}, {1, 0}, {2, 0}});
+    animation->addAnimation("Walk", {{0, 0},
+                                     {1, 0},
+                                     {2, 0}});
 
     animation->speed = 100;
 
@@ -43,17 +45,21 @@ void ZombieComponent::initialize(EntityObject &entityParent) {
 }
 
 void ZombieComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
-    if(other == nullptr)
+    if (other == nullptr)
         return;
 
     auto *bullet = other->getComponent<BulletComponent>();
     if (bullet) {
+        bool hasHit = bullet->hasHit;
         Game::getInstance()->addEventBodyHandler(
-                [self, other] {
-                    self->destroy();
+                [self, other, bullet, hasHit] {
+                    if (!hasHit)
+                        self->destroy();
                     other->destroy();
+                    bullet->hasHit = false;
                 }
         );
+        bullet->hasHit = true;
     }
 }
 
