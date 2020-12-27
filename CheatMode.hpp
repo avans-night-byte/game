@@ -1,14 +1,19 @@
 #pragma once
 
-#include "Game.hpp"
-#include "./Components/EntityObject.hpp"
+class WindowAPI;
+class HealthComponent;
 
 class CheatMode {
 private:
-    EntityObject *_characterObject = nullptr;
+    const WindowAPI &_windowApi;
+    bool &_isCheatMode;
+
+    HealthComponent *_characterHealthComponent = nullptr;
+
+    bool isGodMode = false;
 
 public:
-    CheatMode() {
-//        _characterObject = Game::getInstance()->
-    }
+    CheatMode(WindowAPI &windowApi, bool *isCheatMode);
+
+    void render();
 };

@@ -1,4 +1,3 @@
-
 #include <iostream>
 
 #include "./Game.hpp"
@@ -29,6 +28,7 @@ void Game::initialize() {
     _componentFactory = std::make_unique<ComponentFactory>();
     _bodyHandlerAPI = std::make_unique<BodyHandlerAPI>(*_physicsAPI);
 
+
     _poolLevelBase = std::make_unique<PoolLevel>();
 
     resourceManager.loadResource("Loading");
@@ -45,9 +45,8 @@ void Game::initialize() {
 
 
     _poolLevelBase->postInitialize();
+    _cheatMode = std::make_unique<CheatMode>(*_windowAPI, &_isCheatMode);
 }
-
-bool cheatMode = false;
 
 /**
  * Gameloop
@@ -66,52 +65,49 @@ void Game::gameLoop() {
                               "ffffff", "fpsText");
     // Gameloop
     while (_gameLoop) {
-
-
-
         time.update();
 
         // Poll input and keep track of lastInput
         Input i = _inputAPI->getInput();
-
         if (i.keyMap.action == "QUIT") {
             Game::QuitGame("close");
             break;
         }
 
         if (i.keyMap.action == "`") {
-            cheatMode = true;
+            _isCheatMode = true;
         }
-
 
         // double check
         if (!_gameLoop) {
             break;
         }
 
-        if (resourceManager->inMenu) {
-            _menuParser->render();
-        } else if (_levelBase) {
-            _levelBase->render();
-            _poolLevelBase->render(); // TODO Make a list of level base and put for loop here
-            _levelBase->update(i);
-            _poolLevelBase->update(i);
-        }
+        if (!_isCheatMode) {
 
-        fpsCounter.render();
-        if (isDebuggingPhysics)
-            _physicsAPI->debugDraw(*_renderingAPI);
+            if (resourceManager->inMenu) {
+                _menuParser->render();
+            } else if (_levelBase) {
+                _levelBase->render();
+                _poolLevelBase->render(); // TODO Make a list of level base and put for loop here
+                _levelBase->update(i);
+                _poolLevelBase->update(i);
+            }
 
-        if (i.keyMap.code == "]") {
-            isDebuggingPhysics = true;
-        } else if (i.keyMap.code == "\\") {
-            isDebuggingPhysics = false;
-        }
-        if (!cheatMode) {
+            fpsCounter.render();
+            if (isDebuggingPhysics)
+                _physicsAPI->debugDraw(*_renderingAPI);
+
+            if (i.keyMap.code == "]") {
+                isDebuggingPhysics = true;
+            } else if (i.keyMap.code == "\\") {
+                isDebuggingPhysics = false;
+            }
+
             _renderingAPI->render();
         } else {
             _renderingAPI->clear();
-            _windowAPI->renderImGui(cheatMode);
+            _cheatMode->render();
         }
 
         _bodyHandlerAPI->update();
@@ -124,7 +120,7 @@ void Game::gameLoop() {
 }
 
 void Game::fixedUpdate(float deltaTime) {
-    if (!ResourceManager::getInstance()->inMenu) {
+    if (!ResourceManager::getInstance()->inMenu && !_isCheatMode) {
         _physicsAPI->update(deltaTime);
         if (_levelBase)
             _levelBase->fixedUpdate(deltaTime);
@@ -247,7 +243,7 @@ Game *Game::getInstance() {
 }
 
 
-EntityObject* Game::getCharacter(){
+EntityObject *Game::getCharacter() {
     return _character.get();
 }
 

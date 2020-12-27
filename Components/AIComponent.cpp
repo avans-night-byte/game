@@ -1,9 +1,5 @@
-//
-// Created by sascha on 12/21/20.
-//
 #include "AIComponent.hpp"
 #include "../Helpers/GameTime.h"
-
 
 
 Component* AIComponent::build(EntityId entityId, const Components::component *component) {
