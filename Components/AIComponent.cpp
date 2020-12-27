@@ -157,8 +157,9 @@ void AIComponent::navigatePath(const float& deltaTime) {
     dx *= 1000 * deltaTime;
     dy *= 1000 * deltaTime;
 
+    GridLocation gridLoc = positionToGrid(currentPos);
 
-    if(positionToGrid(currentPos) == positionToGrid(nextPos)){
+    if( gridLoc == positionToGrid(nextPos)){
         if(_currentPosition < _path.size()){
             _currentPosition++;
         }
