@@ -5,14 +5,15 @@
 #include <string>
 
 class WalletComponent : public Component {
-
 private:
-    int _zombytes = 0;
     int _experience = 0;
     int _score = 0;
 
     RenderingAPI *_renderAPI = nullptr;
     std::map<std::string, TextWrapper*> _walletText {};
+
+public:
+    int zombytes = 0;
 
 public:
     explicit WalletComponent(EntityId id);

@@ -37,6 +37,7 @@ protected:
     EntityType _type {};
 
 public:
+    bool cheatMode = false;
     std::string entityName;
 
 public:

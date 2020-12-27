@@ -107,7 +107,7 @@ void Game::gameLoop() {
             _renderingAPI->render();
         } else {
             _renderingAPI->clear();
-            _cheatMode->render();
+            _cheatMode->render(i);
         }
 
         _bodyHandlerAPI->update();
