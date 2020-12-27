@@ -58,7 +58,7 @@ std::string AIComponent::name() const {
 }
 
 void AIComponent::follow(EntityObject& entityObject){
-    _following = std::unique_ptr<EntityObject>(&entityObject);
+    _following = &entityObject;
     _followTransform = true;
 }
 

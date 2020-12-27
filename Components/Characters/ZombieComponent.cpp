@@ -53,8 +53,10 @@ void ZombieComponent::onCollisionEnter(EntityObject *self, EntityObject *other) 
         bool hasHit = bullet->hasHit;
         Game::getInstance()->addEventBodyHandler(
                 [self, other, bullet, hasHit] {
-                    if (!hasHit)
+                    if (!hasHit) {
                         self->destroy();
+
+                    }
                     other->destroy();
                     bullet->hasHit = false;
                 }
