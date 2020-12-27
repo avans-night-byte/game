@@ -1,6 +1,3 @@
-//
-// Created by sascha on 12/21/20.
-//
 #pragma once
 
 #include "Component.hpp"
@@ -14,9 +11,10 @@
 
 class TransformComponent;
 
+
 class AIComponent : public Component {
 private:
-    std::vector<GridLocation> _path{};
+    std::vector<GridLocation> _path = std::vector<GridLocation>();
     int _currentPosition = 1;
     GridLocation _target {};
     GridLocation _previous{};
@@ -34,7 +32,7 @@ private:
     GridLocation positionToGrid(Vector2 position);
     void navigatePath(const float& deltaTime);
 public:
-    AIComponent(EntityId& entityId);
+    explicit AIComponent(EntityId& entityId);
     void render() override;
 
     void update(const Input &inputSystem) override;

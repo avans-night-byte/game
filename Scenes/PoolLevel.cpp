@@ -1,4 +1,6 @@
 #include "PoolLevel.hpp"
+#include "../Input/Input.hpp"
+#include "../Game.hpp"
 
 #include <iostream>
 
@@ -19,6 +21,20 @@ void PoolLevel::update(const Input &inputSystem) {
     for (auto &pool : _poolList) {
         for (auto &entity : pool->entitiesInUse) {
             entity->update(inputSystem);
+        }
+    }
+
+    if (spawnPoolOnMiddleClick && inputSystem.keyMap.action == "CLICK_MIDDLE") {
+        EntityObject &obj = spawnPoolOnMiddleClick->getEntity();
+        auto *physicsComponent = obj.getComponent<PhysicsComponent>();
+
+        if (physicsComponent) {
+            Vector2 spawnPos = Vector2(inputSystem.x, inputSystem.y);
+
+            physicsComponent->setTransform(spawnPos, 0);
+            Game::getInstance()->addEventBodyHandler([physicsComponent] {
+                physicsComponent->setEnabled(true);
+            });
         }
     }
 }

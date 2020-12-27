@@ -11,6 +11,9 @@ void HealthComponent::setHealth(float newHealthPoints) {
 }
 
 void HealthComponent::doDamage(float amountOfHealthPoints) {
+    if(isGodMode)
+        return;
+
     std::cout << "HealthComponent: Damaged from " << this->getHealth() << " to " << this->_healthPoints << std::endl;
 
     float newHealth = this->_healthPoints -= amountOfHealthPoints;

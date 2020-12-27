@@ -11,6 +11,9 @@ private:
     bool _damageIsDone = false;
     RenderingAPI& _renderingApi;
 
+public:
+    bool isGodMode = false;
+
 
 public:
     explicit HealthComponent(EntityId id) : Component(id), _renderingApi(Game::getInstance()->getRenderingApi()) {
