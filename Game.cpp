@@ -69,21 +69,22 @@ void Game::gameLoop() {
 
         // Poll input and keep track of lastInput
         Input i = _inputAPI->getInput();
-        if (i.keyMap.action == "QUIT") {
-            Game::QuitGame("close");
-            break;
-        }
-
-        if (i.keyMap.action == "`") {
-            _isCheatMode = true;
-        }
-
-        // double check
-        if (!_gameLoop) {
-            break;
-        }
 
         if (!_isCheatMode) {
+            if (i.keyMap.action == "QUIT") {
+                Game::QuitGame("close");
+                break;
+            }
+
+            if (i.keyMap.action == "`") {
+                _isCheatMode = true;
+            }
+
+            // double check
+            if (!_gameLoop) {
+                break;
+            }
+
 
             if (resourceManager->inMenu) {
                 _menuParser->render();

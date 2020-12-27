@@ -2,6 +2,7 @@
 
 #include "../Rendering/Animation.hpp"
 #include "../Rendering/RenderComponent.hpp"
+#include "../Wallet/WalletComponent.hpp"
 #include "../EntityObject.hpp"
 #include "../../Game.hpp"
 
@@ -44,6 +45,7 @@ void ZombieComponent::initialize(EntityObject &entityParent) {
     animation->activateAnimation("Walk");
 }
 
+// TODO: Make Component "Hittable".
 void ZombieComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
     if (other == nullptr)
         return;
@@ -55,7 +57,9 @@ void ZombieComponent::onCollisionEnter(EntityObject *self, EntityObject *other) 
                 [self, other, bullet, hasHit] {
                     if (!hasHit) {
                         self->destroy();
-
+                        auto wallet = Game::getInstance()->getCharacter()->getComponent<WalletComponent>();
+                        wallet->zombytes += 10;
+                        wallet->addScore(100);
                     }
                     other->destroy();
                     bullet->hasHit = false;

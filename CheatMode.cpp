@@ -23,6 +23,15 @@ void CheatMode::render(const Input &i) {
         _walletComponent->zombytes = _newValue;
     }
 
+    _windowApi.showInputText("", _newLevelValue, 100);
+    if (_windowApi.button("Load Level")) {
+        try {
+            ResourceManager::getInstance()->loadResource(std::string(_newLevelValue));
+        }
+        catch (std::exception &e) {
+            std::cout << e.what() << std::endl;
+        }
+    }
 
     _windowApi.clearCheatMenu();
 }

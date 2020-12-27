@@ -30,6 +30,7 @@ private:
     bool _spawnZombies = false;
     bool _teleportPlayer = false;
     int _newValue = 0;
+    char _newLevelValue[100] = "";
 
 public:
     CheatMode(WindowAPI &windowApi, bool *isCheatMode);
