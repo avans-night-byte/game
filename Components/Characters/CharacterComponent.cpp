@@ -219,6 +219,7 @@ void CharacterComponent::onCollisionExit(EntityObject *self, EntityObject *other
 
 
 void CharacterComponent::initialize(EntityObject &entityParent) {
+
     _renderComponent = entityParent.getComponent<RenderComponent>();
     _weapon = entityParent.getComponent<WeaponComponent>();
 
@@ -327,5 +328,9 @@ void CharacterComponent::isIdleAnimation(bool isHor, bool isVer) {
 void CharacterComponent::onLevelLoaded() {
     resetMovement();
     _healthComponent->setHealth(100);
+}
+
+void CharacterComponent::postInitialize(EntityObject &entityObject) {
+
 }
 

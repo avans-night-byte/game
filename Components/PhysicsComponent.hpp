@@ -71,6 +71,8 @@ public:
 
     void initialize(EntityObject &entityParent) override;
 
+    void postInitialize(EntityObject &entityObject) override;
+
     void fixedUpdate(const float &deltaTime) override;
 
     void render() override;

@@ -44,6 +44,8 @@ public:
     virtual Component *build(EntityId entityId, const Components::component *component) = 0;
 
     virtual void initialize(EntityObject &entityParent) = 0;
+
+    virtual void postInitialize(EntityObject &entityObject) = 0;
 };
 
 template<typename C>

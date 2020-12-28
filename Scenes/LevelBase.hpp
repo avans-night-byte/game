@@ -21,8 +21,8 @@ class BulletComponent;
 
 class LevelBase {
 private:
-    std::unique_ptr<TMXLevel> _tmxLevel;
-    std::string _levelName;
+    std::unique_ptr<TMXLevel> _tmxLevel{};
+    std::string _levelName{};
 
 public:
     EntityObject* character = nullptr;
@@ -36,6 +36,8 @@ private:
 public:
     virtual void initialize(const std::string& name, const LevelData &data);
 
+    virtual void postInitialize();
+
     virtual void render();
 
     virtual void update(const Input &inputSystem);
@@ -43,4 +45,6 @@ public:
     virtual void fixedUpdate(float deltaTime);
 
     virtual void clearEntities();
+
+    virtual TMXLevel& getLevel();
 };

@@ -11,6 +11,9 @@ private:
     std::vector<std::string> _loadedEntities{};
 
 public:
+    Pool *spawnPoolOnMiddleClick = nullptr;
+
+public:
     void initialize(const std::string &name, const LevelData &data) override;
 
     void render() override;
@@ -24,6 +27,8 @@ public:
     void addPool(const std::string& loadList,
                  const std::string& entityName,
                  int startAmount);
+
+    void postInitialize() override;
 
     Pool &getPool(const std::string &poolName);
 };

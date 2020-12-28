@@ -42,6 +42,10 @@ void Game::initialize() {
 
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitLevel, this, std::placeholders::_1);
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitGame, this, std::placeholders::_1);
+
+
+    _poolLevelBase->postInitialize();
+    _cheatMode = std::make_unique<CheatMode>(*_windowAPI, &_isCheatMode);
 }
 
 /**
@@ -66,35 +70,47 @@ void Game::gameLoop() {
         // Poll input and keep track of lastInput
         Input i = _inputAPI->getInput();
 
-        if (i.keyMap.action == "QUIT") {
-            Game::QuitGame("close");
-            break;
+        if (!_isCheatMode) {
+            if (i.keyMap.action == "QUIT") {
+                Game::QuitGame("close");
+                break;
+            }
+
+            if (i.keyMap.action == "`") {
+                _isCheatMode = true;
+            }
+
+            // double check
+            if (!_gameLoop) {
+                break;
+            }
+
+
+            if (resourceManager->inMenu) {
+                _menuParser->render();
+            } else if (_levelBase) {
+                _levelBase->render();
+                _poolLevelBase->render(); // TODO Make a list of level base and put for loop here
+                _levelBase->update(i);
+                _poolLevelBase->update(i);
+            }
+
+            fpsCounter.render();
+            if (isDebuggingPhysics)
+                _physicsAPI->debugDraw(*_renderingAPI);
+
+            if (i.keyMap.code == "]") {
+                isDebuggingPhysics = true;
+            } else if (i.keyMap.code == "\\") {
+                isDebuggingPhysics = false;
+            }
+
+            _renderingAPI->render();
+        } else {
+            _renderingAPI->clear();
+            _cheatMode->render(i);
         }
 
-        // double check
-        if (!_gameLoop) {
-            break;
-        }
-
-        if (resourceManager->inMenu) {
-            _menuParser->render();
-        } else if (_levelBase) {
-            _levelBase->render();
-            _poolLevelBase->render(); // TODO Make a list of level base and put for loop here
-            _levelBase->update(i);
-            _poolLevelBase->update(i);
-        }
-
-        fpsCounter.render();
-        if (isDebuggingPhysics)
-            _physicsAPI->debugDraw(*_renderingAPI);
-
-        if (i.keyMap.code == "]") {
-            isDebuggingPhysics = true;
-        } else if (i.keyMap.code == "\\") {
-            isDebuggingPhysics = false;
-        }
-        _renderingAPI->render();
         _bodyHandlerAPI->update();
     }
 
@@ -105,7 +121,7 @@ void Game::gameLoop() {
 }
 
 void Game::fixedUpdate(float deltaTime) {
-    if (!ResourceManager::getInstance()->inMenu) {
+    if (!ResourceManager::getInstance()->inMenu && !_isCheatMode) {
         _physicsAPI->update(deltaTime);
         if (_levelBase)
             _levelBase->fixedUpdate(deltaTime);
@@ -227,6 +243,11 @@ Game *Game::getInstance() {
     return _instance;
 }
 
+
+EntityObject *Game::getCharacter() {
+    return _character.get();
+}
+
 PhysicsAPI &Game::getPhysicsAPI() {
     return *_physicsAPI;
 }
@@ -287,4 +308,9 @@ InputAPI &Game::getInputAPI() {
 void Game::renderMenu() {
     _menuParser->render();
     _renderingAPI->render();
+}
+
+
+LevelBase &Game::getLevel() {
+    return *_levelBase;
 }

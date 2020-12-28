@@ -53,6 +53,8 @@ public:
 
     void initialize(EntityObject &entityParent) override;
 
+    void postInitialize(EntityObject &entityObject) override;
+
     void update(const Input &inputSystem) override;
 
     void addEntityToInventory(EntityObject &e);

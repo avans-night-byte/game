@@ -76,6 +76,10 @@ Component *WalletComponent::build(EntityId entityId, const Components::component
     return new WalletComponent(entityId);
 }
 
+void WalletComponent::postInitialize(EntityObject &entityObject) {
+
+}
+
 
 
 

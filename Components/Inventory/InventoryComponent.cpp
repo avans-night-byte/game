@@ -211,6 +211,10 @@ InventoryComponent::~InventoryComponent() {
     _inventory.clear();
 }
 
+void InventoryComponent::postInitialize(EntityObject &entityObject) {
+
+}
+
 
 
 

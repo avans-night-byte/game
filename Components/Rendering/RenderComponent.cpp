@@ -146,3 +146,7 @@ void RenderComponent::isAnimating() {
 std::string &RenderComponent::getSpriteID() {
     return _spriteId;
 }
+
+void RenderComponent::postInitialize(EntityObject &entityObject) {
+
+}
