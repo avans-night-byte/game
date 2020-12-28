@@ -34,7 +34,7 @@ int WalletComponent::getScore() const {
 }
 
 void WalletComponent::initialize(EntityObject &entityParent) {
-    _renderAPI = &Game::getInstance()->getRenderingApi();
+    _renderAPI = &Game::getInstance()->getRenderingAPI();
 }
 
 void WalletComponent::render() {

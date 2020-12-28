@@ -3,7 +3,8 @@
 #include "../../Game.hpp"
 
 
-InventoryComponent::InventoryComponent(EntityId id) : Component(id), _renderingAPI(Game::getInstance()->getRenderingApi()) {
+InventoryComponent::InventoryComponent(EntityId id) : Component(id), _renderingAPI(
+        Game::getInstance()->getRenderingAPI()) {
     _transformComponent = std::make_unique<TransformComponent>(id);
     _quantityText = std::map<std::string, TextWrapper*>();
     _emptySlot = Vector2(1,1);

@@ -231,7 +231,11 @@ PhysicsAPI &Game::getPhysicsAPI() {
     return *_physicsAPI;
 }
 
-RenderingAPI &Game::getRenderingApi() {
+AudioAPI &Game::getAudioAPI() {
+    return *_audioAPI;
+}
+
+RenderingAPI &Game::getRenderingAPI() {
     return *_renderingAPI;
 }
 

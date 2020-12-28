@@ -110,7 +110,7 @@ public:
 
     PhysicsAPI &getPhysicsAPI();
 
-    RenderingAPI &getRenderingApi();
+    RenderingAPI &getRenderingAPI();
 
     ComponentFactory *getComponentFactory();
 
@@ -123,4 +123,6 @@ public:
     void fixedUpdate(float deltaTime);
 
     void renderMenu();
+
+    AudioAPI &getAudioAPI();
 };
