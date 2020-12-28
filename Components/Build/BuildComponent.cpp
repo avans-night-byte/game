@@ -32,6 +32,7 @@ void BuildComponent::placeObject(const TransformComponent &transform, const Inpu
 
     physicsComponent->setTransform(Vector2(inputSystem.x, inputSystem.y), false);
 
+    Game::getInstance()->getAudioAPI().playFromMemory("drop");
     _selectedObject->removeItemQuantity(1);
 }
 

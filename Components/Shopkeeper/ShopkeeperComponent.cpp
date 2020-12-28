@@ -38,6 +38,7 @@ void ShopkeeperComponent::finishTransaction(bool b){
     _tradingComponent->finishTransaction();
     _startedTransaction = _tradingComponent->isTradable(false);
 
+    Game::getInstance()->getAudioAPI().playFromMemory("comeback");
 }
 
 void ShopkeeperComponent::render() {
