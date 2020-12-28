@@ -3,7 +3,6 @@
 
 #include "./EntityObject.hpp"
 #include "Characters/CharacterComponent.hpp"
-#include "../Game.hpp"
 
 std::string NextLevelComponent::name() const {
     return "NextLevelComponent";
@@ -25,7 +24,7 @@ void NextLevelComponent::render() {
 }
 
 void NextLevelComponent::update(const Input &inputSystem) {
-    if (inputSystem.keyMap.action == "INTERACT" && hasContactWithPlayer) {
+    if (hasContactWithPlayer) {
         ResourceManager::getInstance()->loadResource(NextLevel);
     }
 }

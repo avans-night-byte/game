@@ -20,7 +20,7 @@ void CheatMode::render(const Input &i) {
     }
 
     if (_windowApi.showInputInt("Set Money Player", &_newValue)) {
-        _walletComponent->zombytes = _newValue;
+        _walletComponent->setZombytes(_newValue);
     }
 
     _windowApi.showInputText("", _newLevelValue, 100);
@@ -44,5 +44,5 @@ CheatMode::CheatMode(WindowAPI &windowApi, bool *isCheatMode)
           _character(*Game::getInstance()->getCharacter()) {
     _characterHealthComponent = _character.getComponent<HealthComponent>();
     _walletComponent = _character.getComponent<WalletComponent>();
-    _newValue = _walletComponent->zombytes;
+    _newValue = _walletComponent->getZombytes();
 }

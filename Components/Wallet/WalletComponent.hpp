@@ -8,12 +8,11 @@ class WalletComponent : public Component {
 private:
     int _experience = 0;
     int _score = 0;
+    int _zombytes = 0;
 
     RenderingAPI *_renderAPI = nullptr;
     std::map<std::string, TextWrapper*> _walletText {};
 
-public:
-    int zombytes = 0;
 
 public:
     explicit WalletComponent(EntityId id);
@@ -32,6 +31,12 @@ public:
 
     [[nodiscard]] int getScore() const;
 
+    int setZombytes(int zombytes);
+
+    int setExperience(int experience);
+
+    int setScore(int score) ;
+    
 public:
     void render() override;
 

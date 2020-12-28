@@ -33,6 +33,18 @@ int WalletComponent::getScore() const {
     return _score;
 }
 
+int WalletComponent::setZombytes(int zombytes) {
+    return _zombytes = zombytes;
+}
+
+int WalletComponent::setScore(int score) {
+    return _score = score;
+}
+
+int WalletComponent::setExperience(int experience) {
+    return _experience = experience;
+}
+
 void WalletComponent::initialize(EntityObject &entityParent) {
     _renderAPI = &Game::getInstance()->getRenderingAPI();
 }
@@ -79,6 +91,7 @@ Component *WalletComponent::build(EntityId entityId, const Components::component
 void WalletComponent::postInitialize(EntityObject &entityObject) {
 
 }
+
 
 
 

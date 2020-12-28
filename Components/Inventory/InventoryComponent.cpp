@@ -46,18 +46,7 @@ void InventoryComponent::render() {
     }
 }
 
-void InventoryComponent::update(const Input &inputSystem) {
-
-    //TODO: parent component needs to tell the inventory when to open
-   /* if(inputSystem.keyMap.action == "INVENTORY"){
-        _isOpen = true;
-    }
-
-    if(inputSystem.keyMap.code == "MOUSE_BUTTON_LEFT"){
-        _isOpen = false;
-        onClick(inputSystem);
-    }*/
-}
+void InventoryComponent::update(const Input &inputSystem) {}
 
 void InventoryComponent::showInventory(){
     _isOpen = true;
