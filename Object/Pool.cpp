@@ -34,8 +34,10 @@ void Pool::enlargePool() {
                                                _entityName,
                                                10);
     this->_size += 10;
-    for (auto item = _objects.end() - 11; item != _objects.end(); item++) {
+    for (auto item = _objects.end() - 10; item != _objects.end(); item++) {
         _pool.push_back(item->get());
+        item->get()->postInitialize(*item->get());
+        item->get()->setPool(*this);
     }
 }
 

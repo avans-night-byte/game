@@ -42,6 +42,9 @@ public:
     Component *build(EntityId entityId, const Components::component *component) override;
 
     void initialize(EntityObject &entityParent) override;
+
+    void postInitialize(EntityObject &entityObject) override;
+
 #pragma endregion Component
 
 #pragma region CollisionHandler

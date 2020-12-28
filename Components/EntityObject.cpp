@@ -33,6 +33,10 @@ void EntityObject::update(const Input &inputSystem) {
     for (auto &component : _components) {
         component->update(inputSystem);
     }
+
+    if (cheatMode && _physicsComponent && inputSystem.keyMap.action == "CLICK_MIDDLE") {
+        _physicsComponent->setTransform(Vector2(inputSystem.x, inputSystem.y), false);
+    }
 }
 
 void EntityObject::initializeComponents() {
@@ -41,6 +45,8 @@ void EntityObject::initializeComponents() {
     if (getComponent<TransformComponent>()) {
         transformFound = true;
     }
+
+    _physicsComponent = getComponent<PhysicsComponent>();
 
     if (!transformFound) {
         auto *pTransformComponent = Game::getInstance()
@@ -124,4 +130,10 @@ void EntityObject::setType(const EntityType &type) {
 
 EntityObject::EntityType EntityObject::getType() {
     return _type;
+}
+
+void EntityObject::postInitialize(EntityObject &entityObject) {
+    for (auto &comp : _components) {
+        comp->postInitialize(*this);
+    }
 }

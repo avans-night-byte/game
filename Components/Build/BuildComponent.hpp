@@ -37,6 +37,8 @@ public:
 
     void initialize(EntityObject &entityParent) override;
 
+    void postInitialize(EntityObject &entityObject) override;
+
     Event<EntityObject&> &getPickupEventHandler();
 
     void setBuildObject(InventoryItem &item);

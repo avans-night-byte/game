@@ -29,6 +29,8 @@ public:
 
     void initialize(EntityObject &entityParent) override;
 
+    void postInitialize(EntityObject &entityObject) override;
+
 public:
 
     [[nodiscard]] std::string name() const override;

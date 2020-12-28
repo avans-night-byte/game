@@ -6,7 +6,7 @@ WalletComponent::WalletComponent(EntityId id) : Component(id) {}
 void WalletComponent::addItemsFromTransaction(TransactionData &data) {
     _experience += data.getExperience();
     _score += data.getScore();
-    _zombytes += data.getZombytes();
+    zombytes += data.getZombytes();
 }
 
 void WalletComponent::addExperience(int experience) {
@@ -18,11 +18,11 @@ void WalletComponent::addScore(int score) {
 }
 
 void WalletComponent::addZombytes(int zombytes) {
-    _zombytes += zombytes;
+    zombytes += zombytes;
 }
 
 int WalletComponent::getZombytes() const {
-    return _zombytes;
+    return zombytes;
 }
 
 int WalletComponent::getExperience() const {
@@ -40,7 +40,7 @@ void WalletComponent::initialize(EntityObject &entityParent) {
 void WalletComponent::render() {
 
     std::string exp = "exp_" + std::to_string(_experience);
-    std::string zombytes = "zomb_" + std::to_string(_zombytes);
+    std::string zombytesString = "zomb_" + std::to_string(zombytes);
     std::string score = "sc_" + std::to_string(_score);
 
     if(_walletText[exp] == nullptr){
@@ -48,9 +48,9 @@ void WalletComponent::render() {
         _walletText[exp] = wrapper;
     }
 
-    if(_walletText[zombytes] == nullptr){
-        auto wrapper = TextWrapper::createText(*_renderAPI, "Z: " + std::to_string(_zombytes), "../../Resources/Fonts/LiberationMono-Regular.ttf", 20, "ffffff", zombytes);
-        _walletText[zombytes] = wrapper;
+    if(_walletText[zombytesString] == nullptr){
+        auto wrapper = TextWrapper::createText(*_renderAPI, "Z: " + std::to_string(zombytes), "../../Resources/Fonts/LiberationMono-Regular.ttf", 20, "ffffff", zombytesString);
+        _walletText[zombytesString] = wrapper;
     }
 
     if(_walletText[score] == nullptr){
@@ -59,7 +59,7 @@ void WalletComponent::render() {
     }
 
     _walletText[exp]->render(550, 50);
-    _walletText[zombytes]->render(550, 70);
+    _walletText[zombytesString]->render(550, 70);
     _walletText[score]->render(550, 90);
 
 }
@@ -74,6 +74,10 @@ std::string WalletComponent::name() const {
 
 Component *WalletComponent::build(EntityId entityId, const Components::component *component) {
     return new WalletComponent(entityId);
+}
+
+void WalletComponent::postInitialize(EntityObject &entityObject) {
+
 }
 
 

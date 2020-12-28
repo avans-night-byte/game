@@ -129,4 +129,8 @@ Event<bool> &TradingComponent::getOnTransactionFinishedEventManager() {
     return _onTradeFinishedEventHandler;
 }
 
+void TradingComponent::postInitialize(EntityObject &entityObject) {
+
+}
+
 

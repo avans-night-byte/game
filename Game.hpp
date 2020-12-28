@@ -19,6 +19,7 @@
 #include <list>
 #include <map>
 #include "memory"
+#include "CheatMode.hpp"
 #include <mutex>
 
 class PhysicsAPI;
@@ -57,6 +58,8 @@ private:
     std::unique_ptr<ComponentFactory> _componentFactory;
 
     bool _gameLoop = true;
+    bool _isCheatMode = false;
+
 
     // API's
     std::unique_ptr<InputAPI> _inputAPI;
@@ -66,6 +69,8 @@ private:
     std::unique_ptr<BodyHandlerAPI> _bodyHandlerAPI;
     std::unique_ptr<PhysicsAPI> _physicsAPI;
     std::unique_ptr<MenuParserAPI> _menuParser;
+
+    std::unique_ptr<CheatMode> _cheatMode;
 
 private:
     void QuitLevel(std::string command);
@@ -120,7 +125,11 @@ public:
 
     void unloadLevel();
 
+    LevelBase& getLevel();
+
+    EntityObject *getCharacter();
     void fixedUpdate(float deltaTime);
 
     void renderMenu();
+
 };

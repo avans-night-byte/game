@@ -10,8 +10,8 @@
 #include <memory>
 #include <iostream>
 
-GlobalObjects *GlobalObjects::_instance{};
-std::mutex GlobalObjects::_mutex;
+GlobalObjects *GlobalObjects::_instance = nullptr;
+std::mutex GlobalObjects::_mutex{};
 
 GlobalObjects *GlobalObjects::getInstance() {
     std::lock_guard<std::mutex> lock(_mutex);

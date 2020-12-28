@@ -63,6 +63,8 @@ public:
 
     void initialize(EntityObject &entityParent) override;
 
+    void postInitialize(EntityObject &entityObject) override;
+
     [[nodiscard]] Animation *getAnimation() {
         return _animation.get();
     }

@@ -178,3 +178,7 @@ void PhysicsComponent::addFixture(Components::component *pComponent) {
 
     this->_physicsAPI.addFixture(_bodyId, box2DBoxData);
 }
+
+void PhysicsComponent::postInitialize(EntityObject &entityObject) {
+
+}

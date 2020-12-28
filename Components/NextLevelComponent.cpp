@@ -45,3 +45,7 @@ void NextLevelComponent::onCollisionExit(EntityObject *self, EntityObject *other
         hasContactWithPlayer = false;
     }
 }
+
+void NextLevelComponent::postInitialize(EntityObject &entityObject) {
+
+}

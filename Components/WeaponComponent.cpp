@@ -49,3 +49,7 @@ void WeaponComponent::shoot(const TransformComponent &transform) {
 
     physicsComponent->setVelocity(transform.right() * 100);
 }
+
+void WeaponComponent::postInitialize(EntityObject &entityObject) {
+
+}
