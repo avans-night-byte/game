@@ -9,6 +9,7 @@
 #include "./UI/FrameCounter.h"
 #include "./Scenes/PoolLevel.hpp"
 #include "./Components/EntityObject.hpp"
+#include "Save/SaveSystem.hpp"
 
 typedef signed int int32;
 
@@ -46,6 +47,8 @@ void Game::initialize() {
 
     _poolLevelBase->postInitialize();
     _cheatMode = std::make_unique<CheatMode>(*_windowAPI, &_isCheatMode);
+
+    SaveSystem::loadSave("../../Resources/Saves/example_save.xml");
 }
 
 /**

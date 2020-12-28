@@ -4,5 +4,5 @@
 
 class SaveSystem {
 public:
-    void loadSave(std::string file);
+    static void loadSave(const std::string& file);
 };
