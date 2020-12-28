@@ -16,6 +16,7 @@ Component *NextLevelComponent::build(EntityId entityId, const Components::compon
     const auto &nextLevelComponent = component->nextLevelComponent();
     auto *newInstance = new NextLevelComponent(entityId);
     newInstance->NextLevel = nextLevelComponent->levelName();
+    newInstance->nextLevelSpawnPointName = nextLevelComponent->spawnPointName();
     return newInstance;
 }
 
@@ -25,9 +26,7 @@ void NextLevelComponent::render() {
 
 void NextLevelComponent::update(const Input &inputSystem) {
     if (hasContactWithPlayer) {
-        if (_playerSpawnerComponent) {
-            Game::getInstance()->currentSpawner = _playerSpawnerComponent;
-        }
+        Game::getInstance()->currentSpawnPointName = nextLevelSpawnPointName;
         ResourceManager::getInstance()->loadResource(NextLevel);
     }
 }

@@ -43,14 +43,15 @@ void LevelBase::initialize(const std::string &name, const LevelData &data) {
         }
     }
 
-    if (game->currentSpawner) {
+    if (!game->currentSpawnPointName.empty()) {
         for (auto &point : _spawnPoints) {
-            if (game->currentSpawner->getPointName() == point->getPointName()) {
+            if (game->currentSpawnPointName == point->getPointName()) {
                 character->getPhysicsComponent()->setTransform(point->getTransformComponent()->getPosition(),
                                                                0.0f);
             }
         }
-        game->currentSpawner = nullptr;
+
+        game->currentSpawnPointName = "";
     }
 
     for (auto d : outEntities) {

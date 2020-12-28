@@ -12,7 +12,7 @@ public:
     std::string NextLevel;
     bool hasContactWithPlayer = false;
 
-    PlayerSpawnerComponent* _playerSpawnerComponent = nullptr;
+    std::string nextLevelSpawnPointName{};
 
     explicit NextLevelComponent(EntityId id) : Component(id) {
 

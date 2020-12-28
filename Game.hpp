@@ -74,7 +74,7 @@ private:
     std::unique_ptr<CheatMode> _cheatMode;
 
 public:
-    PlayerSpawnerComponent *currentSpawner = nullptr;
+    std::string currentSpawnPointName{};
 
 private:
     void QuitLevel(std::string command);
