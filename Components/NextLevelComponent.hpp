@@ -4,12 +4,15 @@
 #include <string>
 #include "Component.hpp"
 #include "../Object/CollisionHandler.hpp"
+#include "PlayerSpawnerComponent.hpp"
 
 // TODO: Don't use ContactHandler of Engine but of API (which does not exist yet).
 class NextLevelComponent : public Component, public CollisionHandler {
 public:
     std::string NextLevel;
     bool hasContactWithPlayer = false;
+
+    PlayerSpawnerComponent* _playerSpawnerComponent = nullptr;
 
     explicit NextLevelComponent(EntityId id) : Component(id) {
 

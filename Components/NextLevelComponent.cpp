@@ -26,12 +26,14 @@ void NextLevelComponent::render() {
 
 void NextLevelComponent::update(const Input &inputSystem) {
     if (inputSystem.keyMap.action == "INTERACT" && hasContactWithPlayer) {
+        if (_playerSpawnerComponent) {
+            Game::getInstance()->currentSpawner = _playerSpawnerComponent;
+        }
         ResourceManager::getInstance()->loadResource(NextLevel);
     }
 }
 
 void NextLevelComponent::initialize(EntityObject &entityParent) {
-
 }
 
 void NextLevelComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {

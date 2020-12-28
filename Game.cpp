@@ -276,6 +276,7 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
         _levelBase->character = this->_character.get();
         this->_character->getComponent<CharacterComponent>()->onLevelLoaded();
         _levelBase->initialize(levelName, data);
+        _levelBase->postInitialize();
     });
 }
 
