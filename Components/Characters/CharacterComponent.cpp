@@ -79,7 +79,7 @@ void CharacterComponent::update(const Input &inputSystem) {
         _weapon->shoot(*_transformComponent);
     }
     if (inputSystem.keyMap.action == "CLICK_RIGHT" && !_inventoryComponent->isInventoryOpen()) {
-        _buildComponent->placeObject(*_transformComponent);
+        _buildComponent->placeObject(*_transformComponent, inputSystem);
     }
 
 
@@ -232,7 +232,6 @@ void CharacterComponent::initialize(EntityObject &entityParent) {
 
     _inventoryComponent = entityParent.getComponent<InventoryComponent>();
     _walletComponent = entityParent.getComponent<WalletComponent>();
-    _walletComponent->addZombytes(999999);
 
     _buildComponent = entityParent.getComponent<BuildComponent>();
 
@@ -240,6 +239,8 @@ void CharacterComponent::initialize(EntityObject &entityParent) {
                                                                         _buildComponent, std::placeholders::_1);
     _buildComponent->getPickupEventHandler() += std::bind(&InventoryComponent::addEntityToInventory,
                                                           _inventoryComponent, std::placeholders::_1);
+
+    _walletComponent->addZombytes(500);
 
     auto *animation = new Animation(*_renderComponent);
     animation->addAnimation("Walk Right", {{0, 7},
