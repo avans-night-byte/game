@@ -1,4 +1,5 @@
 #include "ShopkeeperComponent.hpp"
+#include "../../Game.hpp"
 
 void ShopkeeperComponent::initialize(EntityObject &entityParent) {
 
@@ -19,6 +20,8 @@ void ShopkeeperComponent::initialize(EntityObject &entityParent) {
 
 void ShopkeeperComponent::startTransaction(TransactionData &data) {
     if(_startedTransaction) return;
+
+    Game::getInstance()->getAudioAPI().playFromMemory("welcome");
 
     _inventoryComponent->showInventory();
     _tradingComponent->startTransaction(data);
