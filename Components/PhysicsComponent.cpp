@@ -53,6 +53,7 @@ Component *PhysicsComponent::build(EntityId entityId,
     box2DData->bodyType = bodyType;
     box2DData->isEnabled = physicsComponent.isEnabled().present() ? physicsComponent.isEnabled().get()
                                                                   : Components::physicsComponent::isEnabled_default_value();
+
     box2DData->isSensor = physicsComponent.isSensor().present() ? physicsComponent.isSensor().get()
                                                                 : Components::physicsComponent::isSensor_default_value();
 

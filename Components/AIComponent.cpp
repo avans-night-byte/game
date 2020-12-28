@@ -100,8 +100,6 @@ void AIComponent::updatePath() {
         Astar::reconstruct_path(path, start, goal, came_from);
 
         _path = path;
-
-        std::cout << _path.size() << std::endl;
     }
 }
 

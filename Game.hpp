@@ -20,6 +20,7 @@
 #include <map>
 #include "memory"
 #include "CheatMode.hpp"
+#include "Components/PlayerSpawnerComponent.hpp"
 #include <mutex>
 
 class PhysicsAPI;
@@ -71,6 +72,9 @@ private:
     std::unique_ptr<MenuParserAPI> _menuParser;
 
     std::unique_ptr<CheatMode> _cheatMode;
+
+public:
+    std::string currentSpawnPointName{};
 
 private:
     void QuitLevel(std::string command);
