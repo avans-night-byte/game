@@ -5,7 +5,7 @@
 #include "Generated/components.hxx"
 
 RenderComponent::RenderComponent(EntityId id) : Component(id),
-                                                _engineRenderingApi(Game::getInstance()->getRenderingApi()),
+                                                _engineRenderingApi(Game::getInstance()->getRenderingAPI()),
                                                 _spriteId(),
                                                 _texturePath(),
                                                 transform(nullptr) {
@@ -25,7 +25,7 @@ RenderComponent::RenderComponent(EntityId id,
                                  const Vector2 &size,
                                  const Vector2 &offset)
         : Component(id),
-          _engineRenderingApi(Game::getInstance()->getRenderingApi()),
+          _engineRenderingApi(Game::getInstance()->getRenderingAPI()),
           _spriteId(std::move(spriteId)),
           _size(size),
           _offset(offset){
@@ -43,7 +43,7 @@ RenderComponent::RenderComponent(EntityId id,
 RenderComponent::RenderComponent(EntityId id, RenderType renderType, const std::string &texturePath,
                                  const std::string &spriteId, const Vector2 &size, const Vector2 &offset)
         : Component(id),
-          _engineRenderingApi(Game::getInstance()->getRenderingApi()),
+          _engineRenderingApi(Game::getInstance()->getRenderingAPI()),
           _spriteId(spriteId),
           _texturePath(texturePath),
           _size(size),

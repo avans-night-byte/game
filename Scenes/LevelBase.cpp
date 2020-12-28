@@ -1,14 +1,13 @@
 #include "LevelBase.hpp"
 
 #include "../Components/ComponentFactory.hpp"
-#include "../../API/XMLParser/LevelParserAPI.hpp"
 #include "../Components/Characters/CharacterComponent.hpp"
 #include "../Object/ObjectLoader.hpp"
 #include "../Components/PlayerSpawnerComponent.hpp"
 
 
 void LevelBase::render() {
-    _tmxLevel->render(Game::getInstance()->getRenderingApi());
+    _tmxLevel->render(Game::getInstance()->getRenderingAPI());
     for (auto &entity : _entities) {
         entity->render();
     }

@@ -119,7 +119,9 @@ public:
 
     PhysicsAPI &getPhysicsAPI();
 
-    RenderingAPI &getRenderingApi();
+    RenderingAPI &getRenderingAPI();
+
+    AudioAPI &getAudioAPI();
 
     ComponentFactory *getComponentFactory();
 
@@ -132,6 +134,7 @@ public:
     LevelBase& getLevel();
 
     EntityObject *getCharacter();
+
     void fixedUpdate(float deltaTime);
 
     void renderMenu();
