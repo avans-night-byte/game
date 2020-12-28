@@ -18,18 +18,18 @@ void AIComponent::render() {
 
     std::string color = "ffffff";
 
-    for(auto& item : _path){
-        auto pos = gridToPosition(item);
-//        Game::getInstance()->getRenderingApi().drawRectangle(pos, 16 * 4, 16 * 4, color, 255);
-
-            Vector2 vert[4]{};
-            vert[0] = Vector2{pos.x, pos.y};
-            vert[1] = Vector2{pos.x + (16 * 4), pos.y};
-            vert[2] = Vector2{pos.x + (16 * 4), pos.y + (16 * 4)};
-            vert[3] = Vector2{pos.x, pos.y + (16 * 4)};
-
-          Game::getInstance()->getRenderingApi().drawBox(vert, 4);
-    }
+//    for(auto& item : _path){
+//        auto pos = gridToPosition(item);
+////        Game::getInstance()->getRenderingApi().drawRectangle(pos, 16 * 4, 16 * 4, color, 255);
+//
+//            Vector2 vert[4]{};
+//            vert[0] = Vector2{pos.x, pos.y};
+//            vert[1] = Vector2{pos.x + (16 * 4), pos.y};
+//            vert[2] = Vector2{pos.x + (16 * 4), pos.y + (16 * 4)};
+//            vert[3] = Vector2{pos.x, pos.y + (16 * 4)};
+//
+//          Game::getInstance()->getRenderingApi().drawBox(vert, 4);
+//    }
 }
 
 void AIComponent::update(const Input &inputSystem) {
@@ -76,27 +76,22 @@ void AIComponent::updatePath() {
         auto goal = positionToGrid(position);
 
 
-        if(!_path.empty()){
-            if(goal == _path[_path.size()]){
-                return;
-            }
-        }
+//        if(!_path.empty()){
+//            if(goal == _path[_path.size()]){
+//                return;
+//            }
+//        }
 
 
         auto start = positionToGrid(Vector2{pPosition->getPosition().x, pPosition->getPosition().y});
-        int** items;
-        items = new int*[30];
-        Game::getInstance()->getLevel().getLevel().GetGrid(items);
-        auto grid = GridWithWeights::fromArray(items);
+
+
+        auto weights = Game::getInstance()->getLevel().getLevel().GetGrid();
+        auto grid = GridWithWeights::fromArray(weights);
 
         // Cleanup.
-        for (  int i = 0; i < 30; i++)
-        {
-            delete [] items[i];
-        }
-        delete [] items;
 
-        items = nullptr;
+
         std::unordered_map<GridLocation, GridLocation>came_from{};
         std::unordered_map<GridLocation, double> cost_so_far{};
         std::vector<GridLocation> path = std::vector<GridLocation>();

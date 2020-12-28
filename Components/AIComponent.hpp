@@ -21,7 +21,6 @@ private:
     bool _followTransform = false;
     EntityObject* _parent = nullptr;
     EntityObject* _following = nullptr;
-
     float _totalTime = 0;
 
     float _nextTime = 0.0f;
