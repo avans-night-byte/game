@@ -10,6 +10,7 @@
 #include "Shopkeeper/ShopkeeperComponent.hpp"
 #include "AIComponent.hpp"
 #include "PlayerSpawnerComponent.hpp"
+#include "WaveComponent.hpp"
 
 ComponentFactory::ComponentFactory() {
 
@@ -35,6 +36,7 @@ ComponentFactory::ComponentFactory() {
     components["TradingComponent"] = std::make_unique<TradingComponent>(entityId);
     components["AIComponent"] = std::make_unique<AIComponent>(entityId);
     components["PlayerSpawnerComponent"] = std::make_unique<PlayerSpawnerComponent>(entityId);
+    components["WaveComponent"] = std::make_unique<WaveComponent>(entityId);
 }
 
 Component *ComponentFactory::getComponent(const EntityId &id,

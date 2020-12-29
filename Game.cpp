@@ -10,6 +10,7 @@
 #include "./UI/FrameCounter.h"
 #include "./Scenes/PoolLevel.hpp"
 #include "./Components/EntityObject.hpp"
+#include "Helpers/WaveManager.hpp"
 
 typedef signed int int32;
 
@@ -93,6 +94,7 @@ void Game::gameLoop() {
                 _poolLevelBase->render(); // TODO Make a list of level base and put for loop here
                 _levelBase->update(i);
                 _poolLevelBase->update(i);
+                WaveManager::getInstance().update();
             }
 
             fpsCounter.render();
@@ -281,6 +283,8 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
         this->_character->getComponent<CharacterComponent>()->onLevelLoaded();
         _levelBase->initialize(levelName, data);
         _levelBase->postInitialize();
+
+        WaveManager::getInstance().updateSlaves();
     });
 }
 
