@@ -34,7 +34,7 @@ void WaveManager::setWave(int wave = 0) {
 void WaveManager::updateSlaves() {
     Game::getInstance()->getLevel().findComponents<WaveComponent>(_slaves);
     float spawnRate = 3;
-    spawnRate -= (_wave * 0.1f);
+    spawnRate -= (_wave * 0.3f);
 
     for(auto* slave : _slaves){
         slave->setPeriod(spawnRate);
@@ -45,12 +45,14 @@ void WaveManager::render() {
     const std::string wave = "wv_wave_" + std::to_string(_wave);
 
     if(_waveText[wave] == nullptr){
+        _waveText.clear();
+
         auto wrapper = TextWrapper::createText(*_renderingAPI, "WAVE: " + std::to_string(_wave), "../../Resources/Fonts/LiberationMono-Regular.ttf", 20, "ffffff", wave);
         _waveText[wave] = wrapper;
     }
 
     _waveText[wave]->render(550, 110);
-    _waveText.clear();
+
 }
 
 void WaveManager::update() {
