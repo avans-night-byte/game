@@ -20,11 +20,13 @@ void WaveComponent::update(const Input &inputSystem) {
     //TODO: Spawn something every x time.
     float time = GameTime::getInstance().getTotalTimeSeconds();
 
+    if(_isPaused)
+        return;
+
     if(time > _nextTime){
         _nextTime = time + _period;
 
-        if(!_isPaused)
-            spawnEntity();
+        spawnEntity();
     }
 }
 
@@ -81,4 +83,12 @@ void WaveComponent::pause() {
 
 void WaveComponent::resume() {
     _isPaused = false;
+}
+
+float WaveComponent::getPeriod() {
+    return _period;
+}
+
+void WaveComponent::setPeriod(float period) {
+    _period = period;
 }

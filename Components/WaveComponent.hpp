@@ -32,9 +32,11 @@ public:
     Component *build(EntityId entityId, const Components::component *component) override;
 
     void initialize(EntityObject &entityParent) override;
-
     void postInitialize(EntityObject &entityObject) override;
 
     void pause();
     void resume();
+
+    float getPeriod();
+    void setPeriod(float period);
 };

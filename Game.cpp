@@ -95,6 +95,7 @@ void Game::gameLoop() {
                 _levelBase->update(i);
                 _poolLevelBase->update(i);
                 WaveManager::getInstance().update();
+                WaveManager::getInstance().render();
             }
 
             fpsCounter.render();

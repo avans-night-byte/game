@@ -13,7 +13,7 @@ WaveManager* WaveManager::_instance = nullptr;
 
 WaveManager &WaveManager::getInstance() {
     if(_instance == nullptr){
-        _instance = new WaveManager;
+        _instance = new WaveManager();
     }
     return *_instance;
 }
@@ -33,26 +33,40 @@ void WaveManager::setWave(int wave = 0) {
 
 void WaveManager::updateSlaves() {
     Game::getInstance()->getLevel().findComponents<WaveComponent>(_slaves);
+    float spawnRate = 3;
+    spawnRate -= (_wave * 0.1f);
 
     for(auto* slave : _slaves){
-        //TODO: Update slave their spawnRate according to the wave, location of the player.
+        slave->setPeriod(spawnRate);
     }
 }
 
 void WaveManager::render() {
-    //TODO: Render the current wave underneath the rest of the stats.
+    const std::string wave = "wv_wave_" + std::to_string(_wave);
+
+    if(_waveText[wave] == nullptr){
+        auto wrapper = TextWrapper::createText(*_renderingAPI, "WAVE: " + std::to_string(_wave), "../../Resources/Fonts/LiberationMono-Regular.ttf", 20, "ffffff", wave);
+        _waveText[wave] = wrapper;
+    }
+
+    _waveText[wave]->render(550, 110);
+    _waveText.clear();
 }
 
 void WaveManager::update() {
+    if(_slaves.empty()){
+        return;
+    }
     //TODO: Keep track of wave time, pauses.
     float time = GameTime::getInstance().getTotalTimeSeconds();
     if(time > _nextTime){
-        if(_isGrace){
+        if(_isGrace || _nextTime == 0){
             _nextTime = time + _waveTime;
             resumeSlaves();
         }
         else{
             setWave();
+            updateMaster();
             updateSlaves();
             pauseSlaves();
             _nextTime = time + _gracePeriod;
@@ -73,5 +87,14 @@ void WaveManager::resumeSlaves() {
     for(auto* slave : _slaves){
         slave->resume();
     }
+}
+
+void WaveManager::updateMaster() {
+    _waveTime += 2;
+    _gracePeriod += 1;
+}
+
+WaveManager::WaveManager() {
+    _renderingAPI = &Game::getInstance()->getRenderingAPI();
 }
 
