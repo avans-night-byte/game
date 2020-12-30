@@ -48,7 +48,12 @@ void InventoryComponent::render() {
 void InventoryComponent::update(const Input &inputSystem) {}
 
 void InventoryComponent::showInventory(){
+    if(_isOpen) return;
+
+    Game::getInstance()->getAudioAPI().playFromMemory("open_inventory");
+
     _isOpen = true;
+
 }
 
 void InventoryComponent::hideInventory(){

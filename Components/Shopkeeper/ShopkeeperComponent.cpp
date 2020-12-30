@@ -1,4 +1,5 @@
 #include "ShopkeeperComponent.hpp"
+#include "../../Game.hpp"
 
 void ShopkeeperComponent::initialize(EntityObject &entityParent) {
 
@@ -20,6 +21,8 @@ void ShopkeeperComponent::initialize(EntityObject &entityParent) {
 void ShopkeeperComponent::startTransaction(TransactionData &data) {
     if(_startedTransaction) return;
 
+    Game::getInstance()->getAudioAPI().playFromMemory("welcome");
+
     _inventoryComponent->showInventory();
     _tradingComponent->startTransaction(data);
     _startedTransaction = _tradingComponent->isTradable(true);
@@ -35,6 +38,7 @@ void ShopkeeperComponent::finishTransaction(bool b){
     _tradingComponent->finishTransaction();
     _startedTransaction = _tradingComponent->isTradable(false);
 
+    Game::getInstance()->getAudioAPI().playFromMemory("comeback");
 }
 
 void ShopkeeperComponent::render() {
