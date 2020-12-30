@@ -4,6 +4,10 @@
 #include "../../Object/CollisionHandler.hpp"
 
 class ZombieComponent : public Component, CollisionHandler {
+private:
+
+    float _timeSinceLastSound = 0;
+
 public:
     explicit ZombieComponent(EntityId id) : Component(id) {};
 public:
