@@ -11,8 +11,8 @@
 
 WaveManager* WaveManager::_instance = nullptr;
 
-WaveManager &WaveManager::getInstance() {
-    if(_instance == nullptr){
+WaveManager &WaveManager::getInstance(bool reset) {
+    if(_instance == nullptr || reset){
         _instance = new WaveManager();
     }
     return *_instance;
@@ -32,6 +32,7 @@ void WaveManager::setWave(int wave = 0) {
 }
 
 void WaveManager::updateSlaves() {
+    _slaves.clear();
     Game::getInstance()->getLevel().findComponents<WaveComponent>(_slaves);
     float spawnRate = 3;
     spawnRate -= (_wave * 0.3f);
@@ -59,6 +60,7 @@ void WaveManager::update() {
     if(_slaves.empty()){
         return;
     }
+
     //TODO: Keep track of wave time, pauses.
     float time = GameTime::getInstance().getTotalTimeSeconds();
     if(time > _nextTime){

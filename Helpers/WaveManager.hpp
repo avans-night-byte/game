@@ -22,7 +22,7 @@ class WaveManager {
 
     public:
         WaveManager();
-        static WaveManager& getInstance();
+        static WaveManager& getInstance(bool reset = false);
         int getWave() const;
         void setWave(const int wave);
         void updateSlaves();

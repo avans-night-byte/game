@@ -94,6 +94,7 @@ void Game::gameLoop() {
                 _poolLevelBase->render(); // TODO Make a list of level base and put for loop here
                 _levelBase->update(i);
                 _poolLevelBase->update(i);
+
                 WaveManager::getInstance().update();
                 WaveManager::getInstance().render();
             }
@@ -274,6 +275,9 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
 
     if (_levelBase) {
         unloadLevel();
+    }
+    else{
+        auto test = WaveManager::getInstance(true);
     }
 
     (*_bodyHandlerAPI).eventOnBodiesHandled([this, levelName, data] {
