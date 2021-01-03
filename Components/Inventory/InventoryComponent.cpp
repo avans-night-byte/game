@@ -8,8 +8,8 @@ InventoryComponent::InventoryComponent(EntityId id) : Component(id), _renderingA
     _quantityText = std::map<std::string, TextWrapper*>();
     _emptySlot = Vector2(1,1);
 
-    addToInventory(new InventoryItem{100, "crate", EntityObject::EntityType::object});
-    addToInventory(new InventoryItem{50, "crate", EntityObject::EntityType::object});
+  //  addToInventory(new InventoryItem{100, "crate", EntityObject::EntityType::object});
+   // addToInventory(new InventoryItem{50, "crate", EntityObject::EntityType::object});
 }
 
 void InventoryComponent::initialize(EntityObject &entityParent) {

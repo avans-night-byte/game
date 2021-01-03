@@ -22,6 +22,8 @@ public:
     std::string getName();
     Vector2 &getPosition();
     Vector2 &getIndex();
+    EntityObject::EntityType &getType();
+
 
     [[nodiscard]] int getItemQuantity() const;
     int addItemQuantity(int quantity);
@@ -31,6 +33,7 @@ public:
     void setPosition(Vector2 &value);
 
     int removeItemQuantity(int quantity);
+
 };
 
 

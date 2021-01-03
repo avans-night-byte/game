@@ -2,6 +2,7 @@
 #include "../NextLevelComponent.hpp"
 #include "../Shopkeeper/ShopkeeperComponent.hpp"
 #include "ZombieComponent.hpp"
+#include "../../Save/SaveSystem.hpp"
 
 
 #include <memory>
@@ -37,6 +38,7 @@ void CharacterComponent::update(const Input &inputSystem) {
     if (inputSystem.keyMap.action == "ESCAPE") {
         auto &p = *ResourceManager::getInstance();
         p.loadResource("Options");
+        SaveSystem::saveSave("../../Resources/Saves/test_save.xml");
     }
 
     if (_contactObject && inputSystem.keyMap.action == "INTERACT") {
@@ -232,7 +234,6 @@ void CharacterComponent::initialize(EntityObject &entityParent) {
 
     _inventoryComponent = entityParent.getComponent<InventoryComponent>();
     _walletComponent = entityParent.getComponent<WalletComponent>();
-    _walletComponent->addZombytes(999999);
 
     _buildComponent = entityParent.getComponent<BuildComponent>();
 
@@ -327,7 +328,6 @@ void CharacterComponent::isIdleAnimation(bool isHor, bool isVer) {
 
 void CharacterComponent::onLevelLoaded() {
     resetMovement();
-    _healthComponent->setHealth(100);
 }
 
 void CharacterComponent::postInitialize(EntityObject &entityObject) {

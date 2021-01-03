@@ -39,5 +39,9 @@ int InventoryItem::removeItemQuantity(int quantity) {
     return _quantity;
 }
 
+EntityObject::EntityType &InventoryItem::getType() {
+    return _type;
+}
+
 
 
