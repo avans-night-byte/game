@@ -3,6 +3,7 @@
 
 #include "./EntityObject.hpp"
 #include "Characters/CharacterComponent.hpp"
+#include "../Save/SaveSystem.hpp"
 
 std::string NextLevelComponent::name() const {
     return "NextLevelComponent";
@@ -28,6 +29,7 @@ void NextLevelComponent::update(const Input &inputSystem) {
     if (hasContactWithPlayer) {
         Game::getInstance()->currentSpawnPointName = nextLevelSpawnPointName;
         ResourceManager::getInstance()->loadResource(NextLevel);
+        SaveSystem::saveSave("../../Resources/Saves/save.xml");
     }
 }
 

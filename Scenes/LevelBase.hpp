@@ -28,10 +28,10 @@ class PlayerSpawnerComponent;
 class LevelBase {
 private:
     std::unique_ptr<TMXLevel> _tmxLevel{};
-    std::string _levelName{};
 
 public:
     EntityObject *character = nullptr;
+    std::string _levelName{};
 
     LevelBase() = default;
 

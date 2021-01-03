@@ -10,11 +10,10 @@ void SaveSystem::loadSave(const std::string &file) {
     auto save = Save::save_(file);
     auto game = Game::getInstance();
 
-
     game->getCharacter()->getComponent<PhysicsComponent>()->setTransform(
             Vector2(save->playerData().position().x(), save->playerData().position().y()), 0);
 
-    game->getCharacter()->getComponent<WalletComponent>()->zombytes = save->playerData().money();
+    game->getCharacter()->getComponent<WalletComponent>()->setZombytes(save->playerData().money());
     game->getCharacter()->getComponent<HealthComponent>()->setHealth(save->playerData().health());
 
     for(Save::item item : save->inventoryData().item()) {
@@ -30,6 +29,9 @@ void SaveSystem::loadSave(const std::string &file) {
 
         game->getCharacter()->getComponent<InventoryComponent>()->addToInventory(new InventoryItem{item.quantity(), item.name(), type});
     }
+
+    ResourceManager::getInstance()->loadResource(save->playerData().level());
+
 }
 
 void SaveSystem::saveSave(const std::string &file) {
@@ -55,6 +57,7 @@ void SaveSystem::saveSave(const std::string &file) {
     xml.append("        </common:position>\n");
     xml.append("        <health>" + std::to_string(game->getCharacter()->getComponent<HealthComponent>()->getHealth()) +  "</health>\n");
     xml.append("        <money>" + std::to_string(game->getCharacter()->getComponent<WalletComponent>()->getZombytes()) +  "</money>\n");
+    xml.append("        <level>" + game->getLevel()._levelName +  "</level>\n");
     xml.append("    </playerData>\n");
 
     // INVENTORY DATA

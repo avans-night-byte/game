@@ -38,7 +38,7 @@ void CharacterComponent::update(const Input &inputSystem) {
     if (inputSystem.keyMap.action == "ESCAPE") {
         auto &p = *ResourceManager::getInstance();
         p.loadResource("Options");
-        SaveSystem::saveSave("../../Resources/Saves/test_save.xml");
+        SaveSystem::saveSave("../../Resources/Saves/save.xml");
     }
 
     if (_contactObject && inputSystem.keyMap.action == "INTERACT") {

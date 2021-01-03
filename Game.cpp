@@ -11,6 +11,7 @@
 #include "./Scenes/PoolLevel.hpp"
 #include "./Components/EntityObject.hpp"
 #include "Save/SaveSystem.hpp"
+#include <filesystem>
 
 typedef signed int int32;
 
@@ -36,19 +37,27 @@ void Game::initialize() {
     _menuParser->render();
     _renderingAPI->render();
 
-    resourceManager.loadResource("MainMenu");
+    if (std::filesystem::exists("../../Resources/Saves/save.xml")) {
+        resourceManager.loadResource("MainMenuContinue");
+    } else {
+        resourceManager.loadResource("MainMenu");
+    }
+
+//     SaveSystem::loadSave("../../Resources/Saves/save.xml");
+
     resourceManager.loadResource("MainObjects");
 
     _character = GlobalObjects::getInstance()->loadEntity("MainObjects", "character");
 
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitLevel, this, std::placeholders::_1);
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitGame, this, std::placeholders::_1);
+    _menuParser->getCustomEventHandler() += std::bind(&Game::LoadGame, this, std::placeholders::_1);
+    _menuParser->getCustomEventHandler() += std::bind(&Game::NewGame, this, std::placeholders::_1);
 
 
     _poolLevelBase->postInitialize();
     _cheatMode = std::make_unique<CheatMode>(*_windowAPI, &_isCheatMode);
 
-    SaveSystem::loadSave("../../Resources/Saves/example_save.xml");
 }
 
 /**
@@ -141,6 +150,15 @@ void Game::QuitGame(std::string command) {
     if (command != "close") return;
     _gameLoop = false;
     _windowAPI->closeWindow();
+}
+void Game::LoadGame(std::string command) {
+    if (command != "loadGame") return;
+    SaveSystem::loadSave("../../Resources/Saves/save.xml");
+
+}
+void Game::NewGame(std::string command) {
+    if (command != "newGame") return;
+    ResourceManager::getInstance()->loadResource("ShopOutside");
 }
 
 /*
