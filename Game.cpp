@@ -277,7 +277,9 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
         unloadLevel();
     }
     else{
-        auto test = WaveManager::getInstance(true);
+
+        // Reset the waves when we are coming from menu.
+        auto reset = WaveManager::getInstance(true);
     }
 
     (*_bodyHandlerAPI).eventOnBodiesHandled([this, levelName, data] {
@@ -289,7 +291,9 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
         _levelBase->initialize(levelName, data);
         _levelBase->postInitialize();
 
-        WaveManager::getInstance().updateSlaves();
+
+        // Update the wave spawns.
+        WaveManager::getInstance().levelUpdate();
     });
 }
 

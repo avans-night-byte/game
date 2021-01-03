@@ -16,8 +16,8 @@ class WaveManager {
         float _nextTime = 0.0f;
 
         // Wave time in seconds, this gets multiplied every round.
-        float _waveTime = 10.0f;
-        float _gracePeriod = 5.0f;
+        float _waveTime = 30.0f;
+        float _gracePeriod = 10.0f;
         bool _isGrace = false;
 
     public:
@@ -26,6 +26,7 @@ class WaveManager {
         int getWave() const;
         void setWave(const int wave);
         void updateSlaves();
+        void levelUpdate();
         void updateMaster();
         void pauseSlaves();
         void resumeSlaves();

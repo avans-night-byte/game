@@ -31,6 +31,8 @@ void WaveManager::setWave(int wave = 0) {
     _wave = wave;
 }
 
+
+
 void WaveManager::updateSlaves() {
     _slaves.clear();
     Game::getInstance()->getLevel().findComponents<WaveComponent>(_slaves);
@@ -100,5 +102,12 @@ void WaveManager::updateMaster() {
 
 WaveManager::WaveManager() {
     _renderingAPI = &Game::getInstance()->getRenderingAPI();
+}
+
+void WaveManager::levelUpdate() {
+    updateSlaves();
+    if(_isGrace){
+        pauseSlaves();
+    }
 }
 
