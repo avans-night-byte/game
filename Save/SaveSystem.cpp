@@ -41,7 +41,6 @@ void SaveSystem::loadPoolData(const std::string &file, const std::string &level)
     auto game = Game::getInstance();
 
     for (auto object : save->objectData().object()) {
-        std::cout << object.level() << " current level is " << level << std::endl;
         if (object.level() != level) continue;
 
         EntityObject &placeable = game->getPoolLevel()->getPool(object.type()).getEntity();
