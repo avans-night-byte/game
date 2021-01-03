@@ -21,7 +21,7 @@ private:
 public:
     explicit BuildComponent(EntityId id);
 
-    void placeObject(const TransformComponent &transform);
+    void placeObject(const TransformComponent &transform, const Input &inputSystem);
 
     void pickUpObject(EntityObject &entity);
 

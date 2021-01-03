@@ -6,7 +6,7 @@ WalletComponent::WalletComponent(EntityId id) : Component(id) {}
 void WalletComponent::addItemsFromTransaction(TransactionData &data) {
     _experience += data.getExperience();
     _score += data.getScore();
-    zombytes += data.getZombytes();
+    _zombytes += data.getZombytes();
 }
 
 void WalletComponent::addExperience(int experience) {
@@ -18,11 +18,11 @@ void WalletComponent::addScore(int score) {
 }
 
 void WalletComponent::addZombytes(int zombytes) {
-    zombytes += zombytes;
+    _zombytes += zombytes;
 }
 
 int WalletComponent::getZombytes() const {
-    return zombytes;
+    return _zombytes;
 }
 
 int WalletComponent::getExperience() const {
@@ -33,14 +33,26 @@ int WalletComponent::getScore() const {
     return _score;
 }
 
+int WalletComponent::setZombytes(int zombytes) {
+    return _zombytes = zombytes;
+}
+
+int WalletComponent::setScore(int score) {
+    return _score = score;
+}
+
+int WalletComponent::setExperience(int experience) {
+    return _experience = experience;
+}
+
 void WalletComponent::initialize(EntityObject &entityParent) {
-    _renderAPI = &Game::getInstance()->getRenderingApi();
+    _renderAPI = &Game::getInstance()->getRenderingAPI();
 }
 
 void WalletComponent::render() {
 
     std::string exp = "exp_" + std::to_string(_experience);
-    std::string zombytesString = "zomb_" + std::to_string(zombytes);
+    std::string zombytes = "zomb_" + std::to_string(_zombytes);
     std::string score = "sc_" + std::to_string(_score);
 
     if(_walletText[exp] == nullptr){
@@ -48,9 +60,9 @@ void WalletComponent::render() {
         _walletText[exp] = wrapper;
     }
 
-    if(_walletText[zombytesString] == nullptr){
-        auto wrapper = TextWrapper::createText(*_renderAPI, "Z: " + std::to_string(zombytes), "../../Resources/Fonts/LiberationMono-Regular.ttf", 20, "ffffff", zombytesString);
-        _walletText[zombytesString] = wrapper;
+    if(_walletText[zombytes] == nullptr){
+        auto wrapper = TextWrapper::createText(*_renderAPI, "Z: " + std::to_string(_zombytes), "../../Resources/Fonts/LiberationMono-Regular.ttf", 20, "ffffff", zombytes);
+        _walletText[zombytes] = wrapper;
     }
 
     if(_walletText[score] == nullptr){
@@ -59,7 +71,7 @@ void WalletComponent::render() {
     }
 
     _walletText[exp]->render(550, 50);
-    _walletText[zombytesString]->render(550, 70);
+    _walletText[zombytes]->render(550, 70);
     _walletText[score]->render(550, 90);
 
 }
@@ -79,6 +91,7 @@ Component *WalletComponent::build(EntityId entityId, const Components::component
 void WalletComponent::postInitialize(EntityObject &entityObject) {
 
 }
+
 
 
 

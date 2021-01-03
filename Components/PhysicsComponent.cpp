@@ -53,11 +53,15 @@ Component *PhysicsComponent::build(EntityId entityId,
     box2DData->bodyType = bodyType;
     box2DData->isEnabled = physicsComponent.isEnabled().present() ? physicsComponent.isEnabled().get()
                                                                   : Components::physicsComponent::isEnabled_default_value();
+
     box2DData->isSensor = physicsComponent.isSensor().present() ? physicsComponent.isSensor().get()
                                                                 : Components::physicsComponent::isSensor_default_value();
 
     box2DData->isBullet = physicsComponent.isBullet().present() ? physicsComponent.isBullet().get()
                                                                 : Components::physicsComponent::isBullet_default_value();
+
+    box2DData->isRotationLocked = physicsComponent.isRotationLocked().present() ? physicsComponent.isRotationLocked().get()
+                                                                : Components::physicsComponent::isRotationLocked_default_value();
     box2DData->contactHandler = newPhysicsComponent;
 
     /* Shape */

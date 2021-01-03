@@ -16,7 +16,7 @@ public:
 
 
 public:
-    explicit HealthComponent(EntityId id) : Component(id), _renderingApi(Game::getInstance()->getRenderingApi()) {
+    explicit HealthComponent(EntityId id) : Component(id), _renderingApi(Game::getInstance()->getRenderingAPI()) {
 
     }
 

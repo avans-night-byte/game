@@ -1,6 +1,4 @@
 #include "WeaponComponent.hpp"
-
-#include "PhysicsComponent.hpp"
 #include "../Scenes/PoolLevel.hpp"
 
 #include <iostream>
@@ -38,10 +36,9 @@ void WeaponComponent::shoot(const TransformComponent &transform) {
 
     PhysicsComponent *physicsComponent = bullet.getPhysicsComponent();
     Game::getInstance()->addEventBodyHandler([physicsComponent] { physicsComponent->setEnabled(true); });
-
+    Game::getInstance()->getAudioAPI().playFromMemory("shot");
 
     Vector2 spawnPos = transform.getPosition() + (transform.right() * 100);
-
 
     physicsComponent->setFixedRotation(true);
     physicsComponent->setTransform(spawnPos, transform.rotation);

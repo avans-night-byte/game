@@ -1,16 +1,25 @@
 #pragma once
 
-#include "../Component.hpp"
-#include "../../Object/CollisionHandler.hpp"
+#include "Component.hpp"
 
-class ZombieComponent : public Component, CollisionHandler {
+#include <string>
+
+class TransformComponent;
+
+class PlayerSpawnerComponent : public Component {
 private:
+    std::string _pointName{};
 
-    float _timeSinceLastSound = 0;
+    TransformComponent *_transformComponent = nullptr;
 
 public:
-    explicit ZombieComponent(EntityId id) : Component(id) {};
+    inline const TransformComponent *getTransformComponent() { return _transformComponent; }
+
 public:
+    inline std::string getPointName() { return _pointName; }
+
+    explicit PlayerSpawnerComponent(EntityId i);
+
     void render() override;
 
     void update(const Input &inputSystem) override;
@@ -24,9 +33,4 @@ public:
     void initialize(EntityObject &entityParent) override;
 
     void postInitialize(EntityObject &entityObject) override;
-
-private:
-    void onCollisionEnter(EntityObject *self, EntityObject *other) override;
-
-    void onCollisionExit(EntityObject *self, EntityObject *other) override;
 };

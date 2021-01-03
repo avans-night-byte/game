@@ -1,3 +1,4 @@
+
 #include <iostream>
 
 #include "./Game.hpp"
@@ -28,7 +29,6 @@ void Game::initialize() {
     _menuParser = std::make_unique<MenuParserAPI>(*_renderingAPI, _inputAPI->getInputEvent());
     _componentFactory = std::make_unique<ComponentFactory>();
     _bodyHandlerAPI = std::make_unique<BodyHandlerAPI>(*_physicsAPI);
-
 
     _poolLevelBase = std::make_unique<PoolLevel>();
 
@@ -255,7 +255,11 @@ PhysicsAPI &Game::getPhysicsAPI() {
     return *_physicsAPI;
 }
 
-RenderingAPI &Game::getRenderingApi() {
+AudioAPI &Game::getAudioAPI() {
+    return *_audioAPI;
+}
+
+RenderingAPI &Game::getRenderingAPI() {
     return *_renderingAPI;
 }
 
@@ -279,6 +283,7 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
         _levelBase->character = this->_character.get();
         this->_character->getComponent<CharacterComponent>()->onLevelLoaded();
         _levelBase->initialize(levelName, data);
+        _levelBase->postInitialize();
     });
 }
 

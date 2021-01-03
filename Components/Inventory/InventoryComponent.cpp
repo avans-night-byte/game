@@ -3,13 +3,13 @@
 #include "../../Game.hpp"
 
 
-InventoryComponent::InventoryComponent(EntityId id) : Component(id), _renderingAPI(Game::getInstance()->getRenderingApi()) {
+InventoryComponent::InventoryComponent(EntityId id) : Component(id), _renderingAPI(
+        Game::getInstance()->getRenderingAPI()) {
     _transformComponent = std::make_unique<TransformComponent>(id);
     _quantityText = std::map<std::string, TextWrapper*>();
     _emptySlot = Vector2(1,1);
 
-  //  addToInventory(new InventoryItem{100, "crate", EntityObject::EntityType::object});
-   // addToInventory(new InventoryItem{50, "crate", EntityObject::EntityType::object});
+
 }
 
 void InventoryComponent::initialize(EntityObject &entityParent) {
@@ -45,21 +45,15 @@ void InventoryComponent::render() {
     }
 }
 
-void InventoryComponent::update(const Input &inputSystem) {
-
-    //TODO: parent component needs to tell the inventory when to open
-   /* if(inputSystem.keyMap.action == "INVENTORY"){
-        _isOpen = true;
-    }
-
-    if(inputSystem.keyMap.code == "MOUSE_BUTTON_LEFT"){
-        _isOpen = false;
-        onClick(inputSystem);
-    }*/
-}
+void InventoryComponent::update(const Input &inputSystem) {}
 
 void InventoryComponent::showInventory(){
+    if(_isOpen) return;
+
+    Game::getInstance()->getAudioAPI().playFromMemory("open_inventory");
+
     _isOpen = true;
+
 }
 
 void InventoryComponent::hideInventory(){

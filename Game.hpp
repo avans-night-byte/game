@@ -20,6 +20,7 @@
 #include <map>
 #include "memory"
 #include "CheatMode.hpp"
+#include "Components/PlayerSpawnerComponent.hpp"
 #include <mutex>
 
 class PhysicsAPI;
@@ -72,6 +73,9 @@ private:
 
     std::unique_ptr<CheatMode> _cheatMode;
 
+public:
+    std::string currentSpawnPointName{};
+
 private:
     void QuitLevel(std::string command);
 
@@ -115,7 +119,9 @@ public:
 
     PhysicsAPI &getPhysicsAPI();
 
-    RenderingAPI &getRenderingApi();
+    RenderingAPI &getRenderingAPI();
+
+    AudioAPI &getAudioAPI();
 
     ComponentFactory *getComponentFactory();
 
@@ -128,8 +134,8 @@ public:
     LevelBase& getLevel();
 
     EntityObject *getCharacter();
+
     void fixedUpdate(float deltaTime);
 
     void renderMenu();
-
 };

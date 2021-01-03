@@ -50,7 +50,7 @@ int TradingComponent::calculateItems(){
 void TradingComponent::render(){
     if(_isTradable){
 
-        auto &renderApi = Game::getInstance()->getRenderingApi();
+        auto &renderApi = Game::getInstance()->getRenderingAPI();
 
         Vector2 position(825, 850);
         renderApi.drawRectangle(position, 250, 70, "000000", 100);
@@ -100,7 +100,7 @@ Component *TradingComponent::build(EntityId entityId, const Components::componen
 void TradingComponent::initialize(EntityObject &entityParent) {
 
     _parent = &entityParent;
-    _renderAPI = &Game::getInstance()->getRenderingApi();
+    _renderAPI = &Game::getInstance()->getRenderingAPI();
 
     std::string welcome = "welcome_store";
     std::string pay = "pay_store";

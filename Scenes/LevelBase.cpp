@@ -1,13 +1,13 @@
 #include "LevelBase.hpp"
 
 #include "../Components/ComponentFactory.hpp"
-#include "../../API/XMLParser/LevelParserAPI.hpp"
 #include "../Components/Characters/CharacterComponent.hpp"
 #include "../Object/ObjectLoader.hpp"
+#include "../Components/PlayerSpawnerComponent.hpp"
 
 
 void LevelBase::render() {
-    _tmxLevel->render(Game::getInstance()->getRenderingApi());
+    _tmxLevel->render(Game::getInstance()->getRenderingAPI());
     for (auto &entity : _entities) {
         entity->render();
     }
@@ -29,6 +29,7 @@ void LevelBase::fixedUpdate(float deltaTime) {
 }
 
 void LevelBase::initialize(const std::string &name, const LevelData &data) {
+    Game *game = Game::getInstance();
     auto outEntities = std::vector<EntityXMLParser::ObjectData>();
 
     this->_tmxLevel = std::unique_ptr<TMXLevel>(LevelParserAPI::loadLevel(outEntities, data));
@@ -36,8 +37,25 @@ void LevelBase::initialize(const std::string &name, const LevelData &data) {
 
     ObjectLoader::loadEntities(outEntities, this->_entities);
 
-    for (auto wow : outEntities) {
-        wow.clearRawData();
+    for (auto &entity : _entities) {
+        if (entity->getComponent<PlayerSpawnerComponent>()) {
+            _spawnPoints.push_back(entity->getComponent<PlayerSpawnerComponent>());
+        }
+    }
+
+    if (!game->currentSpawnPointName.empty()) {
+        for (auto &point : _spawnPoints) {
+            if (game->currentSpawnPointName == point->getPointName()) {
+                character->getPhysicsComponent()->setTransform(point->getTransformComponent()->getPosition(),
+                                                               0.0f);
+            }
+        }
+
+        game->currentSpawnPointName = "";
+    }
+
+    for (auto d : outEntities) {
+        d.clearRawData();
     }
 }
 
@@ -59,6 +77,6 @@ void LevelBase::postInitialize() {
 
 }
 
-TMXLevel& LevelBase::getLevel() {
+TMXLevel &LevelBase::getLevel() {
     return *_tmxLevel;
 }

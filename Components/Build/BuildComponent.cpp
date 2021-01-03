@@ -21,7 +21,7 @@ void BuildComponent::pickUpObject(EntityObject &entity) {
     _pickUpEntityEventHandler(entity);
 }
 
-void BuildComponent::placeObject(const TransformComponent &transform) {
+void BuildComponent::placeObject(const TransformComponent &transform, const Input &inputSystem) {
 
     if (_selectedObject == nullptr || _selectedObject->getItemQuantity() < 1) return;
 
@@ -30,12 +30,9 @@ void BuildComponent::placeObject(const TransformComponent &transform) {
     PhysicsComponent *physicsComponent = placeable.getPhysicsComponent();
     Game::getInstance()->addEventBodyHandler([physicsComponent] { physicsComponent->setEnabled(true); });
 
-    Vector2 spawnPos = transform.getPosition() + (transform.right() * 100);
+    physicsComponent->setTransform(Vector2(inputSystem.x, inputSystem.y), false);
 
-    physicsComponent->setFixedRotation(true);
-    physicsComponent->setTransform(spawnPos, transform.rotation);
-    physicsComponent->setFixedRotation(false);
-
+    Game::getInstance()->getAudioAPI().playFromMemory("drop");
     _selectedObject->removeItemQuantity(1);
 }
 

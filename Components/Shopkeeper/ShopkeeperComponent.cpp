@@ -1,4 +1,5 @@
 #include "ShopkeeperComponent.hpp"
+#include "../../Game.hpp"
 
 void ShopkeeperComponent::initialize(EntityObject &entityParent) {
 
@@ -9,6 +10,8 @@ void ShopkeeperComponent::initialize(EntityObject &entityParent) {
     _physicsComponent->collisionHandlers.push_back(this);
     _renderComponent = entityParent.getComponent<RenderComponent>();
 
+    _inventoryComponent->addToInventory(new InventoryItem{150, "crate", EntityObject::EntityType::object});
+    _inventoryComponent->addToInventory(new InventoryItem{20, "wall", EntityObject::EntityType::object});
     _inventoryComponent->addToInventory(new InventoryItem{2, "boar", EntityObject::EntityType::resource});
 
     _inventoryComponent->getOnInventoryClickEventManager() += std::bind(&TradingComponent::onItemSelect, _tradingComponent, std::placeholders::_1);
@@ -17,6 +20,8 @@ void ShopkeeperComponent::initialize(EntityObject &entityParent) {
 
 void ShopkeeperComponent::startTransaction(TransactionData &data) {
     if(_startedTransaction) return;
+
+    Game::getInstance()->getAudioAPI().playFromMemory("welcome");
 
     _inventoryComponent->showInventory();
     _tradingComponent->startTransaction(data);
@@ -33,6 +38,7 @@ void ShopkeeperComponent::finishTransaction(bool b){
     _tradingComponent->finishTransaction();
     _startedTransaction = _tradingComponent->isTradable(false);
 
+    Game::getInstance()->getAudioAPI().playFromMemory("comeback");
 }
 
 void ShopkeeperComponent::render() {
