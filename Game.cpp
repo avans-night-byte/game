@@ -10,6 +10,8 @@
 #include "./UI/FrameCounter.h"
 #include "./Scenes/PoolLevel.hpp"
 #include "./Components/EntityObject.hpp"
+#include "Save/SaveSystem.hpp"
+#include <filesystem>
 #include "Helpers/WaveManager.hpp"
 
 typedef signed int int32;
@@ -36,17 +38,26 @@ void Game::initialize() {
     _menuParser->render();
     _renderingAPI->render();
 
-    resourceManager.loadResource("MainMenu");
+    if (std::filesystem::exists("../../Resources/Saves/save.xml")) {
+        resourceManager.loadResource("MainMenuContinue");
+    } else {
+        resourceManager.loadResource("MainMenu");
+    }
+
+
     resourceManager.loadResource("MainObjects");
 
     _character = GlobalObjects::getInstance()->loadEntity("MainObjects", "character");
 
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitLevel, this, std::placeholders::_1);
     _menuParser->getCustomEventHandler() += std::bind(&Game::QuitGame, this, std::placeholders::_1);
+    _menuParser->getCustomEventHandler() += std::bind(&Game::LoadGame, this, std::placeholders::_1);
+    _menuParser->getCustomEventHandler() += std::bind(&Game::NewGame, this, std::placeholders::_1);
 
 
     _poolLevelBase->postInitialize();
     _cheatMode = std::make_unique<CheatMode>(*_windowAPI, &_isCheatMode);
+
 }
 
 /**
@@ -142,6 +153,15 @@ void Game::QuitGame(std::string command) {
     if (command != "close") return;
     _gameLoop = false;
     _windowAPI->closeWindow();
+}
+void Game::LoadGame(std::string command) {
+    if (command != "loadGame") return;
+    SaveSystem::loadSave("../../Resources/Saves/save.xml");
+}
+void Game::NewGame(std::string command) {
+    if (command != "newGame") return;
+    ResourceManager::getInstance()->loadResource("ShopOutside");
+    std::filesystem::remove("../../Resources/Saves/save.xml");
 }
 
 /*
@@ -290,8 +310,7 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
         this->_character->getComponent<CharacterComponent>()->onLevelLoaded();
         _levelBase->initialize(levelName, data);
         _levelBase->postInitialize();
-
-
+        SaveSystem::loadPoolData("../../Resources/Saves/save.xml", levelName);
         // Update the wave spawns.
         WaveManager::getInstance().levelUpdate();
     });

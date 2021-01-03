@@ -2,6 +2,7 @@
 #include "../NextLevelComponent.hpp"
 #include "../Shopkeeper/ShopkeeperComponent.hpp"
 #include "ZombieComponent.hpp"
+#include "../../Save/SaveSystem.hpp"
 
 
 #include <memory>
@@ -37,6 +38,7 @@ void CharacterComponent::update(const Input &inputSystem) {
     if (inputSystem.keyMap.action == "ESCAPE") {
         auto &p = *ResourceManager::getInstance();
         p.loadResource("Options");
+        SaveSystem::saveSave("../../Resources/Saves/save.xml", Game::getInstance()->getLevel()._levelName);
     }
 
     if (_contactObject && inputSystem.keyMap.action == "INTERACT") {
@@ -328,7 +330,6 @@ void CharacterComponent::isIdleAnimation(bool isHor, bool isVer) {
 
 void CharacterComponent::onLevelLoaded() {
     resetMovement();
-    _healthComponent->setHealth(100);
 }
 
 void CharacterComponent::postInitialize(EntityObject &entityObject) {

@@ -80,6 +80,8 @@ private:
     void QuitLevel(std::string command);
 
     void QuitGame(std::string command);
+    void LoadGame(std::string command);
+    void NewGame(std::string command);
 
 protected:
     Game() = default;
