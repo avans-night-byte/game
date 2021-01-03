@@ -9,5 +9,7 @@ private:
 public:
     static void loadSave(const std::string& file);
 
-    static void saveSave(const std::string &file);
+    static void saveSave(const std::string &file, const std::string &level);
+
+    static void loadPoolData(const std::string &file, const std::string &level);
 };

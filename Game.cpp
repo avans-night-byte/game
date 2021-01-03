@@ -154,7 +154,6 @@ void Game::QuitGame(std::string command) {
 void Game::LoadGame(std::string command) {
     if (command != "loadGame") return;
     SaveSystem::loadSave("../../Resources/Saves/save.xml");
-
 }
 void Game::NewGame(std::string command) {
     if (command != "newGame") return;
@@ -302,6 +301,7 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
         this->_character->getComponent<CharacterComponent>()->onLevelLoaded();
         _levelBase->initialize(levelName, data);
         _levelBase->postInitialize();
+        SaveSystem::loadPoolData("../../Resources/Saves/save.xml", levelName);
     });
 }
 

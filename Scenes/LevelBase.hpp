@@ -30,8 +30,8 @@ private:
     std::unique_ptr<TMXLevel> _tmxLevel{};
 
 public:
-    EntityObject *character = nullptr;
     std::string _levelName{};
+    EntityObject *character = nullptr;
 
     LevelBase() = default;
 

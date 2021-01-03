@@ -28,8 +28,8 @@ void NextLevelComponent::render() {
 void NextLevelComponent::update(const Input &inputSystem) {
     if (hasContactWithPlayer) {
         Game::getInstance()->currentSpawnPointName = nextLevelSpawnPointName;
+        SaveSystem::saveSave("../../Resources/Saves/save.xml", NextLevel);
         ResourceManager::getInstance()->loadResource(NextLevel);
-        SaveSystem::saveSave("../../Resources/Saves/save.xml");
     }
 }
 

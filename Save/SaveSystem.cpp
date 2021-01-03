@@ -4,7 +4,7 @@
 #include "../../Resources/XML/Generated/save.hxx"
 #include "../Game.hpp"
 #include "../Components/Characters/CharacterComponent.hpp"
-
+#include <filesystem>
 
 void SaveSystem::loadSave(const std::string &file) {
     auto save = Save::save_(file);
@@ -16,25 +16,46 @@ void SaveSystem::loadSave(const std::string &file) {
     game->getCharacter()->getComponent<WalletComponent>()->setZombytes(save->playerData().money());
     game->getCharacter()->getComponent<HealthComponent>()->setHealth(save->playerData().health());
 
-    for(Save::item item : save->inventoryData().item()) {
+    for (Save::item item : save->inventoryData().item()) {
         EntityObject::EntityType type;
 
-        if(item.type() == "weapon") {
+        if (item.type() == "weapon") {
             type = EntityObject::EntityType::weapon;
-        } else if(item.type() == "resource") {
+        } else if (item.type() == "resource") {
             type = EntityObject::EntityType::resource;
-        } else if(item.type() == "object") {
+        } else if (item.type() == "object") {
             type = EntityObject::EntityType::object;
         }
 
-        game->getCharacter()->getComponent<InventoryComponent>()->addToInventory(new InventoryItem{item.quantity(), item.name(), type});
+        game->getCharacter()->getComponent<InventoryComponent>()->addToInventory(
+                new InventoryItem{item.quantity(), item.name(), type});
     }
 
     ResourceManager::getInstance()->loadResource(save->playerData().level());
+    SaveSystem::loadPoolData(file, save->playerData().level());
 
 }
 
-void SaveSystem::saveSave(const std::string &file) {
+void SaveSystem::loadPoolData(const std::string &file, const std::string &level) {
+    auto save = Save::save_(file);
+    auto game = Game::getInstance();
+
+    for (auto object : save->objectData().object()) {
+        std::cout << object.level() << " current level is " << level << std::endl;
+        if (object.level() != level) continue;
+
+        EntityObject &placeable = game->getPoolLevel()->getPool(object.type()).getEntity();
+
+        PhysicsComponent *physicsComponent = placeable.getPhysicsComponent();
+        Game::getInstance()->addEventBodyHandler([physicsComponent] { physicsComponent->setEnabled(true); });
+
+        physicsComponent->setTransform(Vector2(object.position().x(), object.position().y()), false);
+    }
+
+}
+
+void SaveSystem::saveSave(const std::string &file, const std::string &level) {
+
     auto game = Game::getInstance();
 
 
@@ -55,24 +76,70 @@ void SaveSystem::saveSave(const std::string &file) {
     xml.append("            <x>" + std::to_string(game->getCharacter()->getTransform()->getPosition().x) + "</x>\n");
     xml.append("            <y>" + std::to_string(game->getCharacter()->getTransform()->getPosition().y) + "</y>\n");
     xml.append("        </common:position>\n");
-    xml.append("        <health>" + std::to_string(game->getCharacter()->getComponent<HealthComponent>()->getHealth()) +  "</health>\n");
-    xml.append("        <money>" + std::to_string(game->getCharacter()->getComponent<WalletComponent>()->getZombytes()) +  "</money>\n");
-    xml.append("        <level>" + game->getLevel()._levelName +  "</level>\n");
+    xml.append("        <health>" + std::to_string(game->getCharacter()->getComponent<HealthComponent>()->getHealth()) +
+               "</health>\n");
+    xml.append(
+            "        <money>" + std::to_string(game->getCharacter()->getComponent<WalletComponent>()->getZombytes()) +
+            "</money>\n");
+    xml.append("        <level>" + level + "</level>\n");
     xml.append("    </playerData>\n");
 
     // INVENTORY DATA
     xml.append("    <inventoryData>\n");
-    for(InventoryItem *item : game->getCharacter()->getComponent<InventoryComponent>()->getInventoryItems()) {
+    for (InventoryItem *item : game->getCharacter()->getComponent<InventoryComponent>()->getInventoryItems()) {
         xml.append("        <item>\n");
         xml.append("            <name>" + item->getName() + "</name>\n");
         xml.append("            <quantity>" + std::to_string(item->getItemQuantity()) + "</quantity>\n");
-        xml.append("            <type>" +  SaveSystem::typeToString(item->getType()) + "</type>\n");
+        xml.append("            <type>" + SaveSystem::typeToString(item->getType()) + "</type>\n");
         xml.append("        </item>\n");
     }
     xml.append("    </inventoryData>\n");
 
     // TODO: Object data
-    xml.append("    <objectData/>\n");
+    xml.append("    <objectData>\n");
+
+    std::string savePools[] = {"boar", "crate", "wall"};
+
+    if (std::filesystem::exists("../../Resources/Saves/save.xml")) {
+        auto save = Save::save_(file);
+
+        for (auto object : save->objectData().object()) {
+            if (object.level() == game->getLevel()._levelName) continue;
+
+            xml.append("        <object>\n");
+            xml.append("            <type>" + object.type() + "</type>\n");
+            xml.append("            <level>" + object.level() + "</level>\n");
+            xml.append("            <common:position>\n");
+            xml.append("                <x>" + std::to_string(object.position().x()) + "</x>\n");
+            xml.append("                <y>" + std::to_string(object.position().y()) + "</y>\n");
+            xml.append("            </common:position>\n");
+            xml.append("        </object>\n");
+        }
+    }
+
+
+    for (const std::string &pool : savePools) {
+        for (auto *poolItem : game->getPoolLevel()->getPool(pool).entitiesInUse) {
+            xml.append("        <object>\n");
+            xml.append("            <type>" + pool + "</type>\n");
+            xml.append("            <level>" + game->getLevel()._levelName + "</level>\n");
+            xml.append("            <common:position>\n");
+            xml.append(
+                    "                <x>" +
+                    std::to_string(poolItem->getComponent<TransformComponent>()->getPosition().x) +
+                    "</x>\n");
+            xml.append(
+                    "                <y>" +
+                    std::to_string(poolItem->getComponent<TransformComponent>()->getPosition().y) +
+                    "</y>\n");
+            xml.append("            </common:position>\n");
+            xml.append("        </object>\n");
+        }
+    }
+
+
+    xml.append("    </objectData>\n");
+
 
 
     // END FILE
@@ -87,10 +154,13 @@ void SaveSystem::saveSave(const std::string &file) {
 }
 
 std::string SaveSystem::typeToString(EntityObject::EntityType type) {
-    switch(type) {
-        case EntityObject::weapon: return "weapon";
-        case EntityObject::resource: return "resource";
-        case EntityObject::object: return "object";
+    switch (type) {
+        case EntityObject::weapon:
+            return "weapon";
+        case EntityObject::resource:
+            return "resource";
+        case EntityObject::object:
+            return "object";
     }
 
     return "";
