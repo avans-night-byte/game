@@ -42,7 +42,7 @@ private:
 
 public:
     template<class T>
-    void findComponents(std::vector<T> &foundComponents) {
+    void findComponents(std::vector<T*> &foundComponents) {
         static_assert(std::is_base_of<Component, T>::value, "T should inherit from class Component");
 
         for (auto &comp : _entities) {

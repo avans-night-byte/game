@@ -12,6 +12,7 @@
 #include "./Components/EntityObject.hpp"
 #include "Save/SaveSystem.hpp"
 #include <filesystem>
+#include "Helpers/WaveManager.hpp"
 
 typedef signed int int32;
 
@@ -43,7 +44,6 @@ void Game::initialize() {
         resourceManager.loadResource("MainMenu");
     }
 
-//     SaveSystem::loadSave("../../Resources/Saves/save.xml");
 
     resourceManager.loadResource("MainObjects");
 
@@ -105,6 +105,9 @@ void Game::gameLoop() {
                 _poolLevelBase->render(); // TODO Make a list of level base and put for loop here
                 _levelBase->update(i);
                 _poolLevelBase->update(i);
+
+                WaveManager::getInstance().update();
+                WaveManager::getInstance().render();
             }
 
             fpsCounter.render();
@@ -292,6 +295,11 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
     if (_levelBase) {
         unloadLevel();
     }
+    else{
+
+        // Reset the waves when we are coming from menu.
+        auto reset = WaveManager::getInstance(true);
+    }
 
     (*_bodyHandlerAPI).eventOnBodiesHandled([this, levelName, data] {
         renderMenu();
@@ -302,6 +310,8 @@ void Game::initializeLeveL(const std::string &levelName, const LevelData &data) 
         _levelBase->initialize(levelName, data);
         _levelBase->postInitialize();
         SaveSystem::loadPoolData("../../Resources/Saves/save.xml", levelName);
+        // Update the wave spawns.
+        WaveManager::getInstance().levelUpdate();
     });
 }
 
