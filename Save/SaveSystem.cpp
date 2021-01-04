@@ -14,6 +14,8 @@ void SaveSystem::loadSave(const std::string &file) {
             Vector2(save->playerData().position().x(), save->playerData().position().y()), 0);
 
     game->getCharacter()->getComponent<WalletComponent>()->setZombytes(save->playerData().money());
+    game->getCharacter()->getComponent<WalletComponent>()->setScore(save->playerData().score());
+    game->getCharacter()->getComponent<WalletComponent>()->setExperience(save->playerData().xp());
     game->getCharacter()->getComponent<HealthComponent>()->setHealth(save->playerData().health());
 
     for (Save::item item : save->inventoryData().item()) {
@@ -79,6 +81,10 @@ void SaveSystem::saveSave(const std::string &file, const std::string &level) {
     xml.append("        </common:position>\n");
     xml.append("        <health>" + std::to_string(game->getCharacter()->getComponent<HealthComponent>()->getHealth()) +
                "</health>\n");
+    xml.append("        <xp>" + std::to_string(game->getCharacter()->getComponent<WalletComponent>()->getExperience()) +
+               "</xp>\n");
+    xml.append("        <score>" + std::to_string(game->getCharacter()->getComponent<WalletComponent>()->getScore()) +
+               "</score>\n");
     xml.append(
             "        <money>" + std::to_string(game->getCharacter()->getComponent<WalletComponent>()->getZombytes()) +
             "</money>\n");
@@ -169,6 +175,68 @@ std::string SaveSystem::typeToString(EntityObject::EntityType type) {
 
 void SaveSystem::clearSave() {
     std::filesystem::remove("../../Resources/Saves/save.xml");
+}
+
+
+
+void SaveSystem::saveHighscore(const std::string &file) {
+    if(!std::filesystem::exists("../../Resources/Saves/highscores.txt")) {
+        std::ofstream outfile;
+        outfile.open("../../Resources/Saves/highscores.txt");
+
+        outfile << "0,0,0,0,0";
+        outfile.close();
+    }
+
+    if (std::filesystem::exists("../../Resources/Saves/save.xml")) {
+        auto save = Save::save_(file);
+
+        std::string data;
+        std::vector<int> vect;
+
+        std::ifstream infile;
+        infile.open("../../Resources/Saves/highscores.txt");
+
+        infile >> data;
+
+        std::stringstream ss(data);
+        std::vector<int> scores;
+
+        while (ss.good()) {
+            std::string substr;
+            getline(ss, substr, ',');
+            scores.push_back(std::stoi(substr));
+        }
+
+        scores.push_back(save->playerData().score());
+
+      std::sort(scores.begin(), scores.end(), std::greater<int>());
+
+        std::ofstream outfile;
+        outfile.open("../../Resources/Saves/highscores.txt");
+
+        outfile << scores[0] << "," << scores[1] << "," << scores[2] << "," << scores[3] << "," << scores[4];
+        outfile.close();
+    }
+}
+
+std::vector<int> SaveSystem::getHighscores() {
+    std::string data;
+    std::ifstream infile;
+    infile.open("../../Resources/Saves/highscores.txt");
+
+    infile >> data;
+
+    std::stringstream ss(data);
+    std::vector<int> scores;
+
+    while (ss.good()) {
+        std::string substr;
+        getline(ss, substr, ',');
+        scores.push_back(std::stoi(substr));
+    }
+
+    return scores;
 }
 
 
