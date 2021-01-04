@@ -92,6 +92,12 @@ void WalletComponent::postInitialize(EntityObject &entityObject) {
 
 }
 
+void WalletComponent::reset() {
+    setExperience(0);
+    setScore(0);
+    setZombytes(0);
+}
+
 
 
 

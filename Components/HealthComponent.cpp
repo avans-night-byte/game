@@ -1,6 +1,9 @@
 #include "HealthComponent.hpp"
+#include "../Save/SaveSystem.hpp"
 
 #include <iostream>
+#include <filesystem>
+#include "Wallet/WalletComponent.hpp"
 
 float HealthComponent::getHealth() const {
     return this->_healthPoints;
@@ -30,6 +33,13 @@ void HealthComponent::die() {
     this->setHealth(0);
     ResourceManager::getInstance()->quitLevel = true;
     ResourceManager::getInstance()->loadResource("GameOver");
+
+
+
+    // Reset the game on death.
+    SaveSystem::clearSave();
+    this->setHealth(100);
+    Game::getInstance()->getCharacter()->getComponent<WalletComponent>()->reset();
 }
 
 void HealthComponent::render() {

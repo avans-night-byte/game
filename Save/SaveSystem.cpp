@@ -37,20 +37,22 @@ void SaveSystem::loadSave(const std::string &file) {
 }
 
 void SaveSystem::loadPoolData(const std::string &file, const std::string &level) {
-    auto save = Save::save_(file);
-    auto game = Game::getInstance();
+    if (std::filesystem::exists("../../Resources/Saves/save.xml")) {
 
-    for (auto object : save->objectData().object()) {
-        if (object.level() != level) continue;
+        auto save = Save::save_(file);
+        auto game = Game::getInstance();
 
-        EntityObject &placeable = game->getPoolLevel()->getPool(object.type()).getEntity();
+        for (auto object : save->objectData().object()) {
+            if (object.level() != level) continue;
 
-        PhysicsComponent *physicsComponent = placeable.getPhysicsComponent();
-        Game::getInstance()->addEventBodyHandler([physicsComponent] { physicsComponent->setEnabled(true); });
+            EntityObject &placeable = game->getPoolLevel()->getPool(object.type()).getEntity();
 
-        physicsComponent->setTransform(Vector2(object.position().x(), object.position().y()), false);
+            PhysicsComponent *physicsComponent = placeable.getPhysicsComponent();
+            Game::getInstance()->addEventBodyHandler([physicsComponent] { physicsComponent->setEnabled(true); });
+
+            physicsComponent->setTransform(Vector2(object.position().x(), object.position().y()), false);
+        }
     }
-
 }
 
 void SaveSystem::saveSave(const std::string &file, const std::string &level) {
@@ -97,7 +99,7 @@ void SaveSystem::saveSave(const std::string &file, const std::string &level) {
     // TODO: Object data
     xml.append("    <objectData>\n");
 
-    std::string savePools[] = {"boar", "crate", "wall"};
+    std::string savePools[] = {"boar", "crate", "wall", "zombie"};
 
     if (std::filesystem::exists("../../Resources/Saves/save.xml")) {
         auto save = Save::save_(file);
@@ -163,6 +165,10 @@ std::string SaveSystem::typeToString(EntityObject::EntityType type) {
     }
 
     return "";
+}
+
+void SaveSystem::clearSave() {
+    std::filesystem::remove("../../Resources/Saves/save.xml");
 }
 
 
