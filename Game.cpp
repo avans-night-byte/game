@@ -120,6 +120,13 @@ void Game::gameLoop() {
                 isDebuggingPhysics = false;
             }
 
+            if(i.keyMap.code == "=")
+                GameTime::getInstance().increaseMultiplier();
+            else if(i.keyMap.code == "-")
+                GameTime::getInstance().decreaseMultiplier();
+
+
+
             _renderingAPI->render();
         } else {
             _renderingAPI->clear();

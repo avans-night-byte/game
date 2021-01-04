@@ -25,7 +25,7 @@ void GameTime::update() {
     _totalTimeSeconds += _frameTimeSeconds;
 
     while (_accumulator >= _deltaTime) {
-        _fixedUpdateEventHandler(_deltaTime);
+        _fixedUpdateEventHandler(_deltaTime * _multiplier);
 
         _time += _deltaTime;
         _accumulator -= _deltaTime;
@@ -77,5 +77,14 @@ void GameTime::setDeltaTime(float value) {
 
 void GameTime::setTime(float value) {
     _time = value;
+}
+
+void GameTime::increaseMultiplier() {
+    _multiplier = _multiplier + .1f;
+}
+
+void GameTime::decreaseMultiplier() {
+    if(_multiplier > .1f)
+        _multiplier = _multiplier - .1f;
 }
 
