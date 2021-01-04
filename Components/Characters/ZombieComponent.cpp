@@ -74,7 +74,6 @@ void ZombieComponent::onCollisionEnter(EntityObject *self, EntityObject *other) 
                         auto soundIndex = rand() % 2 + 1;
                         Game::getInstance()->getAudioAPI().playFromMemory("zombie_die" + std::to_string(soundIndex));
                     }
-                    other->destroy();
                     bullet->hasHit = false;
                 }
         );

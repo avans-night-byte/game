@@ -34,6 +34,11 @@ void BulletComponent::initialize(EntityObject &entityParent) {
 }
 
 void BulletComponent::onCollisionEnter(EntityObject *self, EntityObject *other) {
+    Game::getInstance()->addEventBodyHandler(
+            [self] {
+                self->destroy();
+            }
+    );
 }
 
 void BulletComponent::onCollisionExit(EntityObject *self, EntityObject *other) {
