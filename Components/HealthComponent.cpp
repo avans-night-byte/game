@@ -34,6 +34,9 @@ void HealthComponent::die() {
     ResourceManager::getInstance()->quitLevel = true;
     ResourceManager::getInstance()->loadResource("GameOver");
 
+    SaveSystem::saveSave("../../Resources/Saves/save.xml", "");
+    SaveSystem::saveHighscore("../../Resources/Saves/save.xml");
+
     std::vector<int> scores = SaveSystem::getHighscores();
 
     MenuParser::getInstance()->setDynamicFieldValue("%score%", "Your score: " + std::to_string(Game::getInstance()->getCharacter()->getComponent<WalletComponent>()->getScore()));
@@ -44,8 +47,6 @@ void HealthComponent::die() {
     MenuParser::getInstance()->setDynamicFieldValue("%highscore_5%", "5. " + std::to_string(scores[4]));
 
     // Reset the game on death.
-    SaveSystem::saveSave("../../Resources/Saves/save.xml", "");
-    SaveSystem::saveHighscore("../../Resources/Saves/save.xml");
     SaveSystem::clearSave();
     this->setHealth(100);
     Game::getInstance()->getCharacter()->getComponent<WalletComponent>()->reset();
