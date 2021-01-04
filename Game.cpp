@@ -158,10 +158,13 @@ void Game::LoadGame(std::string command) {
     if (command != "loadGame") return;
     SaveSystem::loadSave("../../Resources/Saves/save.xml");
 }
+
+
 void Game::NewGame(std::string command) {
     if (command != "newGame") return;
     ResourceManager::getInstance()->loadResource("ShopOutside");
     std::filesystem::remove("../../Resources/Saves/save.xml");
+    getCharacter()->getComponent<WalletComponent>()->reset();
 }
 
 /*
