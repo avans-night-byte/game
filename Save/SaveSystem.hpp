@@ -14,4 +14,8 @@ public:
     static void loadPoolData(const std::string &file, const std::string &level);
 
     static void clearSave();
+
+    static void saveHighscore(const std::string &file);
+
+    static std::vector<int> getHighscores();
 };
