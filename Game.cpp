@@ -163,7 +163,7 @@ void Game::LoadGame(std::string command) {
 void Game::NewGame(std::string command) {
     if (command != "newGame") return;
     ResourceManager::getInstance()->loadResource("ShopOutside");
-    std::filesystem::remove("../../Resources/Saves/save.xml");
+    SaveSystem::clearSave();
     getCharacter()->getComponent<WalletComponent>()->reset();
     Game::getInstance()->getCharacter()->getComponent<HealthComponent>()->setHealth(100);
 }
